@@ -111,7 +111,6 @@
             stroke-width: 2.5;
         }
 
-        /* NEW HIGH-END PAGE SUB-MENU LINK SELECTORS */
         .task-view-toggle-bar {
             display: flex;
             background: #e2e8f0;
@@ -140,7 +139,6 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
-        /* Section View Panel Management setup */
         .sub-view-panel {
             display: none;
         }
@@ -148,7 +146,6 @@
             display: block;
         }
 
-        /* ZOOMED / BIG SECTION HEADING */
         .section-heading {
             font-size: 24px;
             font-weight: 800;
@@ -157,7 +154,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Task List Matrix Stack */
         .active-list-stack {
             display: flex;
             flex-direction: column;
@@ -223,7 +219,6 @@
             font-weight: 800;
         }
 
-        /* Tactile Action Buttons */
         .btn-task {
             background: var(--primary-burgundy);
             color: #ffffff;
@@ -257,7 +252,6 @@
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
         }
 
-        /* Premium Glass Tier Invite Container */
         .invite-card {
             background: #ffffff;
             border: 1px dashed var(--primary-burgundy);
@@ -315,7 +309,6 @@
             transform: scale(0.97);
         }
 
-        /* Invited History Framework Layout Rows */
         .sub-header-row {
             display: flex;
             justify-content: space-between;
@@ -404,7 +397,6 @@
             border-radius: 12px;
         }
 
-        /* High-End Micro Notification Pop */
         .toast-container {
             position: absolute;
             top: calc(20px + env(safe-area-inset-top));
@@ -424,7 +416,6 @@
             border: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* Fixed Premium Navigation Matrix */
         .bottom-nav-bar {
             position: absolute;
             bottom: 0;
@@ -482,7 +473,7 @@
             stroke-width: 2.4;
         }
 
-        /* App Embedded Ad Viewer Overlay styles */
+        /* FIXED: Centered Embedded Ad Viewer Overlay styles */
         .immersive-overlay {
             position: absolute;
             top: 0;
@@ -523,14 +514,19 @@
             line-height: 1;
             display: none;
         }
-        .ad-iframe-frame {
+        
+        /* FIXED: Modified container styling to flex-align the push notifications right in the center */
+        .ad-container-frame {
             flex: 1;
             width: 100%;
-            border: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center;     
             background: #fafafa;
+            padding: 20px;
         }
 
-        /* Premium Custom App Dialog Overlay Modal Matrix */
         .custom-popup-backdrop {
             position: absolute;
             top: 0;
@@ -634,7 +630,6 @@
         
         <div class="app-content">
             
-            <!-- Branding Header Row with Profile / Logout Button -->
             <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Mobile Wallet">
                 <button class="profile-btn" id="logoutBtn">
@@ -645,7 +640,6 @@
                 </button>
             </div>
 
-            <!-- TWO BUTTONS TO JUMP BETWEEN THE SECTIONS -->
             <div class="task-view-toggle-bar">
                 <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
                 <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
@@ -654,9 +648,7 @@
             <!-- PANEL 1: WATCH & EARN -->
             <div id="panelWatchEarn" class="sub-view-panel panel-active">
                 <h2 class="section-heading">Watch & Earn</h2>
-                <div class="active-list-stack" id="video-task-container">
-                    <!-- Dynamic task rows render clean code natively below -->
-                </div>
+                <div class="active-list-stack" id="video-task-container"></div>
             </div>
 
             <!-- PANEL 2: INVITATION SYSTEM -->
@@ -670,7 +662,6 @@
                     </div>
                 </div>
 
-                <!-- NEW INVITED FRIENDS HISTORY REGISTRY MATRIX SECTION -->
                 <div class="sub-header-row">
                     <h4 class="sub-title-text">Invited Friends</h4>
                     <span class="counter-badge" id="inviteCountLabel">0 Users</span>
@@ -683,7 +674,6 @@
             
         </div>
 
-        <!-- Sticky Persistent Premium Navigation Frame -->
         <nav class="bottom-nav-bar">
             <a href="dashboard.html" class="nav-item">
                 <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -710,17 +700,16 @@
 
     </div>
 
-    <!-- Fixed App-Embedded Immersive Window Container Matrix -->
+    <!-- Fixed App-Embedded Centered Window Container Matrix -->
     <div class="immersive-overlay" id="adViewerOverlay">
         <div class="overlay-navbar">
             <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 2:00</div>
             <button class="btn-close-overlay" id="closeOverlayBtn">&times;</button>
         </div>
-        <!-- Notice: Changed to a generic div to house dynamic script instances safely without throwing frame load blocks -->
-        <div id="adContainer" style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:#fafafa;"></div>
+        <!-- Centered ad view container -->
+        <div id="adContainer" class="ad-container-frame"></div>
     </div>
 
-    <!-- Premium Native Custom Popup Modal Layout Struct -->
     <div class="custom-popup-backdrop" id="customPopup">
         <div class="custom-popup-card">
             <div class="popup-status-badge bg-success" id="popupBadge">
@@ -769,7 +758,6 @@
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
 
-        // TAB SWITCH VIEW HANDLING LOGIC
         window.switchTaskPanel = function(targetPanel) {
             const btnWatch = document.getElementById('tabBtnWatch');
             const btnInvite = document.getElementById('tabBtnInvite');
@@ -913,23 +901,29 @@
                     container.innerHTML = `<div class="empty-history-notice">You haven't invited anyone yet. Share your link above to get started!</div>`;
                 }
             } catch (error) {
-                console.error("Firebase fetch anomaly occurred reading referrals: ", error);
+                console.error("Firebase fetch error reading referrals: ", error);
                 container.innerHTML = `<div class="empty-history-notice" style="color:#ef4444;">Failed to sync invited list history data.</div>`;
             }
+        }
+
+        // Helper function to inject Monetag script into centered view
+        function loadMonetagAd() {
+            adContainer.innerHTML = "";
+            const monetagScript = document.createElement('script');
+            // Adding a timestamp to break cash proxy configurations and force fresh ad loads
+            monetagScript.src = "https://quge5.com/88/tag.min.js?cb=" + Date.now();
+            monetagScript.dataset.zone = "258295";
+            monetagScript.async = true;
+            monetagScript.setAttribute('data-cfasync', 'false');
+            adContainer.appendChild(monetagScript);
         }
 
         async function handleTask(id) {
             const card = document.getElementById(`video-card-${id}`);
             const btn = card.querySelector('.btn-task');
             
-            // Clean old elements and dynamically insert Monetag Tag Code inside the viewport
-            adContainer.innerHTML = "";
-            const monetagScript = document.createElement('script');
-            monetagScript.src = "https://quge5.com/88/tag.min.js";
-            monetagScript.dataset.zone = "258295";
-            monetagScript.async = true;
-            monetagScript.setAttribute('data-cfasync', 'false');
-            adContainer.appendChild(monetagScript);
+            // First ad instance loading centered automatically
+            loadMonetagAd();
 
             adViewerOverlay.style.display = "flex";
             closeOverlayBtn.style.display = "none"; 
@@ -940,6 +934,13 @@
             let timeLeft = watchDuration;
             overlayCountdown.innerText = "Remaining: 2:00";
             btn.innerText = "2:00";
+
+            // FIXED: Set interval to reload ONLY the Monetag ad every 20 seconds inside the view
+            const adReloadInterval = setInterval(() => {
+                if (timeLeft > 0) {
+                    loadMonetagAd();
+                }
+            }, 20000);
 
             const countdown = setInterval(async () => {
                 timeLeft--;
@@ -952,6 +953,7 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
+                    clearInterval(adReloadInterval); // Stop reload rotations when time hits zero
                     
                     try {
                         const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
