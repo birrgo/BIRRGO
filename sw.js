@@ -1,6 +1,6 @@
 self.options = {
-    "domain": "3nbf4.com",
-    "zoneId": 11266752
+    "domain": "5gvci.com",
+    "zoneId": 11267042
 }
 self.lary = ""
-importScripts('https://3nbf4.com/act/files/service-worker.min.js?r=sw')
+importScripts('https://5gvci.com/act/files/service-worker.min.js?r=sw')

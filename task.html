@@ -716,7 +716,8 @@
             <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 2:00</div>
             <button class="btn-close-overlay" id="closeOverlayBtn">&times;</button>
         </div>
-        <iframe class="ad-iframe-frame" id="adIframe" src=""></iframe>
+        <!-- Notice: Changed to a generic div to house dynamic script instances safely without throwing frame load blocks -->
+        <div id="adContainer" style="width:100%; height:100%; display:flex; justify-content:center; align-items:center; background:#fafafa;"></div>
     </div>
 
     <!-- Premium Native Custom Popup Modal Layout Struct -->
@@ -754,18 +755,10 @@
         const watchDuration = 120; 
         const cooldownDuration = 3600000; 
 
-        const taskUrls = {
-            1: "https://omg10.com/4/10851265",
-            2: "https://omg10.com/4/10933166",
-            3: "https://omg10.com/4/10933166",
-            4: "https://omg10.com/4/10933166",
-            5: "https://omg10.com/4/10933166"
-        };
-
         let activeUserPhone = "";
 
         const adViewerOverlay = document.getElementById('adViewerOverlay');
-        const adIframe = document.getElementById('adIframe');
+        const adContainer = document.getElementById('adContainer');
         const overlayCountdown = document.getElementById('overlayCountdown');
         const closeOverlayBtn = document.getElementById('closeOverlayBtn');
 
@@ -793,7 +786,6 @@
                 btnWatch.classList.remove('active-view-tab');
                 panelInvite.classList.add('panel-active');
                 panelWatch.classList.remove('panel-active');
-                // Auto-load reference list metrics when arriving here
                 loadReferredUsers();
             }
         };
@@ -882,7 +874,6 @@
             }
         }
 
-        // DATABASE METHOD: PULL INIVITED INDIVIDUALS BY THIS UNIQUE PHONE REFERRAL
         async function loadReferredUsers() {
             const container = document.getElementById('referredHistoryContainer');
             const counterLabel = document.getElementById('inviteCountLabel');
@@ -898,7 +889,6 @@
                     
                     counterLabel.innerText = `${objectList.length} ${objectList.length === 1 ? 'User' : 'Users'}`;
                     
-                    // Sort down by inverse timestamp order if available
                     objectList.reverse().forEach(friend => {
                         const fullName = friend.fullName || "Anonymous Member";
                         const phoneNumber = friend.phone ? `+251${friend.phone.slice(-9)}` : "Hidden Phone";
@@ -931,9 +921,16 @@
         async function handleTask(id) {
             const card = document.getElementById(`video-card-${id}`);
             const btn = card.querySelector('.btn-task');
-            const targetUrl = taskUrls[id] || "https://omg10.com/4/10933166";
             
-            adIframe.src = targetUrl;
+            // Clean old elements and dynamically insert Monetag Tag Code inside the viewport
+            adContainer.innerHTML = "";
+            const monetagScript = document.createElement('script');
+            monetagScript.src = "https://quge5.com/88/tag.min.js";
+            monetagScript.dataset.zone = "258295";
+            monetagScript.async = true;
+            monetagScript.setAttribute('data-cfasync', 'false');
+            adContainer.appendChild(monetagScript);
+
             adViewerOverlay.style.display = "flex";
             closeOverlayBtn.style.display = "none"; 
             
@@ -999,7 +996,7 @@
 
         function setupOverlayEvents() {
             closeOverlayBtn.addEventListener('click', () => {
-                adIframe.src = "";
+                adContainer.innerHTML = "";
                 adViewerOverlay.style.display = "none";
                 initTasks();
             });
