@@ -473,7 +473,7 @@
             stroke-width: 2.4;
         }
 
-        /* FIXED: Centered Embedded Ad Viewer Overlay styles */
+        /* Immersive Overlay Window Framework */
         .immersive-overlay {
             position: absolute;
             top: 0;
@@ -495,6 +495,7 @@
             padding-left: 20px;
             padding-right: 20px;
             border-bottom: 1px solid var(--border-light);
+            z-index: 2010;
         }
         .overlay-countdown-label {
             font-size: 14px;
@@ -515,16 +516,29 @@
             display: none;
         }
         
-        /* FIXED: Modified container styling to flex-align the push notifications right in the center */
+        /* UPDATED: Container rules forcing both layout and floating scripts to absolute center */
         .ad-container-frame {
             flex: 1;
             width: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center; 
-            align-items: center;     
+            justify-content: center !important; 
+            align-items: center !important;     
             background: #fafafa;
             padding: 20px;
+            position: relative !important;
+        }
+
+        /* CRITICAL: Overriding Monetag's internal fixed placement styles to sit dead center */
+        .ad-container-frame div[style*="position: fixed"], 
+        .ad-container-frame div[style*="top: 0"],
+        .ad-container-frame iframe {
+            position: absolute !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            bottom: auto !important;
+            margin: 0 auto !important;
         }
 
         .custom-popup-backdrop {
@@ -700,13 +714,13 @@
 
     </div>
 
-    <!-- Fixed App-Embedded Centered Window Container Matrix -->
+    <!-- Embedded Centered View Container Structure -->
     <div class="immersive-overlay" id="adViewerOverlay">
         <div class="overlay-navbar">
             <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 2:00</div>
             <button class="btn-close-overlay" id="closeOverlayBtn">&times;</button>
         </div>
-        <!-- Centered ad view container -->
+        <!-- Target frame window -->
         <div id="adContainer" class="ad-container-frame"></div>
     </div>
 
@@ -721,7 +735,7 @@
         </div>
     </div>
 
-    <!-- Modular Firebase Application Environment Pipeline -->
+    <!-- Modular Firebase Application Pipeline -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
@@ -906,11 +920,11 @@
             }
         }
 
-        // Helper function to inject Monetag script into centered view
+        // Helper function to dynamically inject Monetag scripts into centered structure
         function loadMonetagAd() {
             adContainer.innerHTML = "";
             const monetagScript = document.createElement('script');
-            // Adding a timestamp to break cash proxy configurations and force fresh ad loads
+            // Cache breaking configuration sequence forcing absolute updates every cycle
             monetagScript.src = "https://quge5.com/88/tag.min.js?cb=" + Date.now();
             monetagScript.dataset.zone = "258295";
             monetagScript.async = true;
@@ -922,7 +936,7 @@
             const card = document.getElementById(`video-card-${id}`);
             const btn = card.querySelector('.btn-task');
             
-            // First ad instance loading centered automatically
+            // Render first targeted script block center-aligned instantly
             loadMonetagAd();
 
             adViewerOverlay.style.display = "flex";
@@ -935,7 +949,7 @@
             overlayCountdown.innerText = "Remaining: 2:00";
             btn.innerText = "2:00";
 
-            // FIXED: Set interval to reload ONLY the Monetag ad every 20 seconds inside the view
+            // Rotate ad elements every 20 seconds while maintaining global clock state
             const adReloadInterval = setInterval(() => {
                 if (timeLeft > 0) {
                     loadMonetagAd();
@@ -953,7 +967,7 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
-                    clearInterval(adReloadInterval); // Stop reload rotations when time hits zero
+                    clearInterval(adReloadInterval); // Stop reload cycles on zero
                     
                     try {
                         const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
