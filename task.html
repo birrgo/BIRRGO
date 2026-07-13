@@ -116,7 +116,7 @@
         </div>
         
         <div class="overlay-navbar">
-            <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 2:00</div>
+            <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 1:00</div>
             <button class="btn-close-overlay" id="closeOverlayBtn">Claim Reward</button>
         </div>
     </div>
@@ -201,7 +201,7 @@
         const db = getDatabase(app);
 
         const totalVideos = 5;
-        const watchDuration = 120; 
+        const watchDuration = 60; // Reduced down to 1 minute (60 seconds)
         const cooldownDuration = 3600000; 
 
         let activeUserPhone = "";
@@ -394,7 +394,7 @@
                         </div>
                         <div class="list-item-info">
                             <h4>Task Video ${currentId}</h4>
-                            <p>Watch 2 minutes<br>Reward: <span class="reward-highlight">20 Birr</span></p>
+                            <p>Watch 1 minute<br>Reward: <span class="reward-highlight">20 Birr</span></p>
                         </div>
                     </div>
                     ${buttonHTML}
@@ -542,8 +542,8 @@
                 loadMonetagAd();
 
                 let timeLeft = watchDuration;
-                overlayCountdown.innerText = "Remaining: 2:00";
-                btn.innerText = "Watching (2:00)";
+                overlayCountdown.innerText = "Remaining: 1:00";
+                btn.innerText = "Watching (1:00)";
 
                 currentAdReloadInterval = setInterval(() => {
                     if (timeLeft > 0 && adActiveStatus) {
