@@ -441,6 +441,12 @@
             .download-text-main { font-size: 10.5px; }
             .download-text-sub { font-size: 8.5px; }
         }
+
+        /* Animation for custom popup sheet */
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -460,6 +466,25 @@
     <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0 40C125 28 250 28 375 40V100H0V40Z" fill="#9A0019"/>
     </svg>
+
+    <!-- Custom Premium UI Already Installed Popup Modal -->
+    <div id="alreadyInstalledModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: flex-end; justify-content: center;">
+        <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 28px 24px 24px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); animation: slideUp 0.3s cubic-bezier(0.1, 0.8, 0.3, 1); box-sizing: border-box; text-align: center;">
+            
+            <!-- Success/App Icon container -->
+            <div style="width: 64px; height: 64px; background: #e8f5e9; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+
+            <h3 style="font-size: 19px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.02em;">Already Installed!</h3>
+            <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; font-weight: 400;">BirrGo Mobile Wallet is already set up on your device. Look for the application shortcut icon directly on your home screen or app launcher to open it instantly.</p>
+            
+            <button id="closeInstalledModalBtn" style="width: 100%; height: 50px; background: var(--primary-gradient); color: #ffffff; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: var(--btn-shadow); outline: none;">Got It</button>
+        </div>
+    </div>
 
     <div class="app-view">
         
@@ -610,38 +635,56 @@
                 }
             }
 
-            // PWA Custom Banner Script Logic
+            // PWA Logic Setup Variables
             let deferredPrompt;
             const pwaBanner = document.getElementById('pwaInstallBanner');
             const pwaBtn = document.getElementById('pwaInstallBtn');
+            const installedModal = document.getElementById('alreadyInstalledModal');
+            const closeModalBtn = document.getElementById('closeInstalledModalBtn');
+
+            // HIDE top download banner completely if app is running in standalone icon mode
+            if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
+                if (pwaBanner) pwaBanner.style.display = 'none';
+            }
 
             window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent standard automated mini-infobar dialog popups
+                // Prevent standard automated mini-infobar popups
                 e.preventDefault();
-                // Store event to fire later
+                // Save prompt event state
                 deferredPrompt = e;
             });
 
             if (pwaBtn) {
                 pwaBtn.addEventListener('click', async () => {
                     if (deferredPrompt) {
-                        // Launch native browser prompt selection
+                        // Open native install wizard dialog menu 
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
-                        console.log(`PWA User Choice Response: ${outcome}`);
-                        // Clear parameters
+                        console.log(`PWA Installation Selection Outcome: ${outcome}`);
                         deferredPrompt = null;
-                        pwaBanner.style.display = 'none';
+                        if (pwaBanner) pwaBanner.style.display = 'none';
                     } else {
-                        // Fallback help instructions if prompt event is not fired yet or app is already setup
-                        alert("To download this Web App, click your mobile browser settings menu (the three vertical dots ⋮ next to URL bar) and select 'Add to Home screen' or 'Install app'.");
+                        // Triggers custom UI popup dialog overlay smoothly 
+                        if (installedModal) installedModal.style.display = 'flex';
                     }
                 });
             }
 
+            // Close Premium Modal Element Controls
+            if (closeModalBtn && installedModal) {
+                closeModalBtn.addEventListener('click', () => {
+                    installedModal.style.display = 'none';
+                });
+                
+                // Close window frame safely if background wrapper shadow gets tapped
+                installedModal.addEventListener('click', (e) => {
+                    if (e.target === installedModal) installedModal.style.display = 'none';
+                });
+            }
+
             window.addEventListener('appinstalled', () => {
-                console.log('BirrGo App successfully mounted via custom prompt.');
-                pwaBanner.style.display = 'none';
+                console.log('BirrGo app successfully attached to system dashboard.');
+                if (pwaBanner) pwaBanner.style.display = 'none';
             });
         });
 
