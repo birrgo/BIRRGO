@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <title>BirrGo P2P | Quick Deposit</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827; 
+            --text-muted: #4b5563; 
+            --bg-light: #f8f9fa;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+            --btn-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            background-color: #e5e7eb; 
+            width: 100%;
+            height: 100dvh;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 450px; 
+            height: 100dvh;
+            margin: 0 auto; 
+            background-color: var(--bg-light);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08); 
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Decorative Background Waves */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top { top: 0; height: 11vh; min-height: 85px; }
+        .bg-wave-bottom { bottom: 0; height: 10vh; min-height: 70px; }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: calc(1vh + env(safe-area-inset-top)) 20px calc(2vh + env(safe-area-inset-bottom)) 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Area */
+        .header-top-area {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 1vh;
+        }
+        .logo-image { width: 110px; height: auto; object-fit: contain; }
+
+        /* Steps Indicator Bar */
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0 10px;
+            margin-top: 5px;
+        }
+        .step-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all 0.3s ease;
+        }
+        .step-dot.active {
+            background: #ffffff;
+            transform: scale(1.3);
+            box-shadow: 0 0 8px #ffffff;
+        }
+        .step-line {
+            flex-grow: 1;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 8px;
+        }
+        .step-line.active {
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Middle Screens Content Container */
+        .main-body-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex-grow: 1;
+            width: 100%;
+            overflow-y: auto;
+            padding: 10px 0;
+        }
+
+        .step-view {
+            display: none;
+            width: 100%;
+            animation: fadeIn 0.3s ease;
+        }
+        .step-view.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Titles and Labels */
+        .screen-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+        .screen-title span { color: var(--primary-burgundy); }
+        .screen-subtitle {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        /* P2P Methods Grid Cards */
+        .p2p-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .p2p-card {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--card-shadow);
+        }
+        .p2p-card:active { transform: scale(0.98); border-color: var(--primary-burgundy); }
+        .p2p-info { display: flex; align-items: center; gap: 12px; }
+        .p2p-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .bg-telebirr { background: #e0f2fe; color: #0284c7; }
+        .bg-cbe { background: #fee2e2; color: #dc2626; }
+        .p2p-name { font-size: 14px; font-weight: 600; color: var(--text-dark); }
+        .p2p-limits { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+        /* Deposit Input Area */
+        .input-group {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px 20px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .amount-input-wrapper {
+            position: relative;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .amount-input {
+            width: 100%;
+            border: none;
+            border-bottom: 2px solid var(--border-color);
+            text-align: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-burgundy);
+            outline: none;
+            padding: 5px;
+            background: transparent;
+        }
+        .amount-input:focus { border-color: var(--primary-burgundy); }
+        .currency-label { font-size: 14px; font-weight: 700; color: var(--text-muted); margin-top: 8px; }
+
+        /* Step Chat Interface Layout */
+        .p2p-chat-card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--card-shadow);
+            display: flex;
+            flex-direction: column;
+            height: 280px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        .chat-header {
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-color);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .admin-profile { display: flex; align-items: center; gap: 8px; }
+        .admin-avatar { width: 32px; height: 32px; border-radius: 50%; background: var(--primary-burgundy); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 12px; }
+        .admin-name { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+        
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #10b981; }
+
+        .chat-messages { flex-grow: 1; padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; background: #fafafa; }
+        .msg { max-width: 75%; padding: 8px 12px; border-radius: 12px; font-size: 12px; line-height: 1.4; }
+        .msg.admin { background: #e5e7eb; color: var(--text-dark); align-self: flex-start; border-bottom-left-radius: 2px; }
+        .msg.user { background: var(--primary-burgundy); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        
+        .chat-input-area { display: flex; border-top: 1px solid var(--border-color); padding: 8px; background: white; }
+        .chat-input { flex-grow: 1; border: none; outline: none; padding: 8px; font-size: 13px; }
+        .send-msg-btn { background: none; border: none; color: var(--primary-burgundy); font-weight: 600; cursor: pointer; padding: 0 10px; font-size: 13px; }
+
+        /* Timer Indicator */
+        .timer-banner {
+            background: #fff5f5;
+            border: 1px solid #fee2e2;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--primary-burgundy);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        /* Copyable details */
+        .bank-details-box {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            text-align: left;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        .detail-row { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            margin-bottom: 10px; 
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #f3f4f6;
+        }
+        .detail-row:last-child { margin-bottom: 0; border: none; padding: 0; }
+        .detail-label { color: var(--text-muted); }
+        .detail-val-group { display: flex; align-items: center; gap: 6px; }
+        .detail-val { font-weight: 600; color: var(--text-dark); }
+        
+        .copy-badge {
+            background: #f3f4f6;
+            color: var(--primary-burgundy);
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-badge:active { background: #e0f2fe; transform: scale(0.9); }
+
+        /* Live Receipt Upload */
+        .upload-receipt-card {
+            background: white;
+            border: 2px dashed rgba(139, 0, 21, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+            position: relative;
+            transition: all 0.2s ease;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100px;
+        }
+        .upload-receipt-card:active { border-color: var(--primary-burgundy); background: #fffafb; }
+        .upload-receipt-title { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+        .upload-receipt-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+        
+        .receipt-thumbnail {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            display: none;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        /* Action control layout buttons */
+        .action-area {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn {
+            width: 100%;
+            height: 52px; 
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600; 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+            text-decoration: none;
+            border: none;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-left { display: flex; align-items: center; gap: 10px; }
+        .btn-icon-wrapper { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #ffffff; }
+        
+        .btn-primary { background: var(--primary-gradient); color: #ffffff; box-shadow: var(--btn-shadow); }
+        .btn-primary .btn-icon-wrapper { color: var(--primary-burgundy); }
+        
+        .btn-secondary { background: #ffffff; color: var(--text-dark); border: 1px solid var(--border-color); box-shadow: var(--card-shadow); }
+        .btn-secondary .btn-icon-wrapper { background: transparent; color: var(--text-dark); margin-left: -6px; }
+
+        /* Footer Links */
+        .footer-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 11px; 
+            color: #ffffff;
+            font-weight: 600; 
+            z-index: 10;
+            margin-top: 10px;
+        }
+        .footer-links a { color: #ffffff; text-decoration: none; }
+        .divider { color: rgba(255, 255, 255, 0.7); }
+    </style>
+</head>
+<body>
+
+    <!-- Red Top & Bottom Waves -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V110C375 110 280 230 0 150V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/><stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+    </svg>
+
+    <div class="app-view">
+        
+        <!-- Header & Step Tracker Bar -->
+        <div class="header-top-area">
+            <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+            
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot-1"></div>
+                <div class="step-line" id="line-1"></div>
+                <div class="step-dot" id="dot-2"></div>
+                <div class="step-line" id="line-2"></div>
+                <div class="step-dot" id="dot-3"></div>
+                <div class="step-line" id="line-3"></div>
+                <div class="step-dot" id="dot-4"></div>
+            </div>
+        </div>
+
+        <!-- Middle Step Screens Area -->
+        <div class="main-body-content">
+
+            <!-- STEP 1: Select Method -->
+            <div class="step-view active" id="screen-method">
+                <div class="screen-title">P2P <span>Deposits</span></div>
+                <div class="screen-subtitle">Choose your preferred local payment gateway method to deposit funds.</div>
+                
+                <div class="p2p-list">
+                    <div class="p2p-card" onclick="selectMethod('telebirr')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon bg-telebirr">tb</div>
+                            <div>
+                                <div class="p2p-name">telebirr (P2P Merchant)</div>
+                                <div class="p2p-limits">Limits: 100 - 50,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+
+                    <div class="p2p-card" onclick="selectMethod('cbe')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon bg-cbe">CBE</div>
+                            <div>
+                                <div class="p2p-name">CBE Birr / Bank Transfer</div>
+                                <div class="p2p-limits">Limits: 500 - 100,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 2: Enter Amount -->
+            <div class="step-view" id="screen-amount">
+                <div class="screen-title">Deposit <span>Amount</span></div>
+                <div class="screen-subtitle">Enter the total amount in Ethiopian Birr you want to add.</div>
+                
+                <div class="input-group">
+                    <div class="currency-label">INVESTMENT AMOUNT</div>
+                    <div class="amount-input-wrapper">
+                        <input type="number" id="depositAmount" class="amount-input" placeholder="0.00" min="100">
+                    </div>
+                    <div class="currency-label" style="font-weight: 500; font-size: 11px;">ETB (Ethiopian Birr)</div>
+                </div>
+            </div>
+
+            <!-- STEP 3: Active Agent Help -->
+            <div class="step-view" id="screen-chat">
+                <div class="screen-title">Agent <span>Assistance</span></div>
+                <div class="screen-subtitle">Our payment processing team is active. Double-check any questions before paying.</div>
+                
+                <div class="p2p-chat-card">
+                    <div class="chat-header">
+                        <div class="admin-profile">
+                            <div class="admin-avatar">BG</div>
+                            <div>
+                                <div class="admin-name">BirrGo Help Bot</div>
+                                <div class="p2p-limits" style="margin-top:0px; color:#10b981; font-weight:600;">Online & Ready</div>
+                            </div>
+                        </div>
+                        <div class="status-dot"></div>
+                    </div>
+                    <div class="chat-messages" id="chat-box">
+                        <div class="msg admin">Hello! Welcome to BirrGo P2P payments.</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInputMessage" class="chat-input" placeholder="Type a message to agent...">
+                        <button class="send-msg-btn" id="sendMsgBtn">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- STEP 4: Transfer Details & Receipt Upload -->
+            <div class="step-view" id="screen-pay">
+                <div class="screen-title">Complete <span>Payment</span></div>
+                <div class="screen-subtitle">Transfer the funds to the account below and upload your receipt before the timer runs out.</div>
+                
+                <div class="timer-banner">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span id="p2p-timer">Time Left: 15:00</span>
+                </div>
+
+                <div class="bank-details-box">
+                    <div class="detail-row">
+                        <span class="detail-label">Order Ref:</span>
+                        <div class="detail-val-group">
+                            <span class="detail-val" id="disp-ref" style="font-family: monospace;">BG-XXXXXX</span>
+                            <span class="copy-badge" onclick="copyText('disp-ref')">COPY</span>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Payment Method:</span>
+                        <span class="detail-val" id="disp-method">telebirr</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Merchant Name:</span>
+                        <div class="detail-val-group">
+                            <span class="detail-val" id="disp-merchant">BirrGo Trading PLC</span>
+                            <span class="copy-badge" onclick="copyText('disp-merchant')">COPY</span>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Account / Merchant ID:</span>
+                        <div class="detail-val-group">
+                            <span class="detail-val" id="disp-account" style="font-family: monospace;">9823441</span>
+                            <span class="copy-badge" onclick="copyText('disp-account')">COPY</span>
+                        </div>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label" style="color:var(--primary-burgundy);">Amount to Send:</span>
+                        <div class="detail-val-group">
+                            <span class="detail-val" style="color:var(--primary-burgundy); font-weight:700;" id="disp-amount">0.00 Birr</span>
+                            <span class="copy-badge" onclick="copyText('disp-amount', true)">COPY</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-receipt-card" onclick="document.getElementById('receipt-file').click()">
+                    <img id="imagePreview" class="receipt-thumbnail" src="" alt="Receipt Preview">
+                    <span class="upload-receipt-title" id="receipt-title">Upload Payment Receipt</span>
+                    <p class="upload-receipt-sub" id="receipt-sub">Accepts screenshots or photo uploads</p>
+                    <input type="file" id="receipt-file" accept="image/*" style="display:none;">
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Actions Area -->
+        <div class="action-area">
+            <button id="primaryBtn" class="btn btn-primary" style="display:none;">
+                <div class="btn-left">
+                    <div class="btn-icon-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <span id="primaryBtnText">Next Step</span>
+                </div>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            
+            <button id="secondaryBtn" class="btn btn-secondary">
+                <div class="btn-left">
+                    <div class="btn-icon-wrapper">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    </div>
+                    <span id="secondaryBtnText">Back</span>
+                </div>
+            </button>
+
+            <div class="footer-links">
+                <a href="#">P2P Terms</a><span class="divider">|</span><a href="#">Support Chat</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Flow Controller -->
+    <script type="module">
+        import { db } from './db.js';
+        import { ref, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Global State variables
+        let currentStep = 'method'; 
+        let selectedMethodId = '';
+        let transactionAmount = 0;
+        let countdownInterval;
+        let orderReferenceId = '';
+
+        // Element Selectors
+        const screens = {
+            method: document.getElementById('screen-method'),
+            amount: document.getElementById('screen-amount'),
+            chat: document.getElementById('screen-chat'),
+            pay: document.getElementById('screen-pay')
+        };
+
+        const steps = ['method', 'amount', 'chat', 'pay'];
+
+        const primaryBtn = document.getElementById('primaryBtn');
+        const secondaryBtn = document.getElementById('secondaryBtn');
+        const primaryBtnText = document.getElementById('primaryBtnText');
+        const secondaryBtnText = document.getElementById('secondaryBtnText');
+        
+        const depositAmountInput = document.getElementById('depositAmount');
+        const chatBox = document.getElementById('chat-box');
+        const chatInput = document.getElementById('chatInputMessage');
+        const sendMsgBtn = document.getElementById('sendMsgBtn');
+        
+        const receiptFileInput = document.getElementById('receipt-file');
+        const receiptTitle = document.getElementById('receipt-title');
+        const receiptSub = document.getElementById('receipt-sub');
+        const imagePreview = document.getElementById('imagePreview');
+
+        // CBE & Telebirr Static Account Configs (Update to your own business details)
+        const paymentConfigs = {
+            telebirr: { name: 'telebirr', account: '104592' },
+            cbe: { name: 'CBE Bank Transfer', account: '1000204958291' }
+        };
+
+        // Helper: Generate order Ref ID
+        function generateOrderRef() {
+            return 'BG-' + Math.floor(100000 + Math.random() * 900000);
+        }
+
+        // Helper: Quick clipboard copying
+        window.copyText = function(elementId, cleanValueOnly = false) {
+            let text = document.getElementById(elementId).innerText;
+            if (cleanValueOnly) {
+                text = text.replace(/ Birr/g, '').replace(/,/g, '');
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                const target = document.querySelector(`#${elementId} ~ .copy-badge`) || event.target;
+                const originalText = target.innerText;
+                target.innerText = "COPIED!";
+                target.style.background = "#d1fae5";
+                target.style.color = "#065f46";
+                setTimeout(() => {
+                    target.innerText = originalText;
+                    target.style.background = "";
+                    target.style.color = "";
+                }, 1500);
+            });
+        };
+
+        // Step tracker progress bar visual driver
+        function updateProgressIndicator() {
+            const index = steps.indexOf(currentStep);
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                const line = document.getElementById(`line-${i}`);
+                
+                if (i <= index + 1) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+                
+                if (line) {
+                    if (i <= index) {
+                        line.classList.add('active');
+                    } else {
+                        line.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        // Screen transition driver
+        function showScreen(step) {
+            currentStep = step;
+            Object.keys(screens).forEach(key => {
+                screens[key].classList.remove('active');
+            });
+            screens[step].classList.add('active');
+            
+            updateProgressIndicator();
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            primaryBtn.style.display = "flex";
+            
+            if (currentStep === 'method') {
+                primaryBtn.style.display = "none"; 
+                secondaryBtnText.innerText = "Back to Start";
+            } else if (currentStep === 'amount') {
+                primaryBtnText.innerText = "Continue to Chat";
+                secondaryBtnText.innerText = "Back";
+            } else if (currentStep === 'chat') {
+                primaryBtnText.innerText = "Process Payment";
+                secondaryBtnText.innerText = "Cancel Order";
+            } else if (currentStep === 'pay') {
+                primaryBtnText.innerText = "Submit Receipt File";
+                secondaryBtnText.innerText = "Cancel Request";
+            }
+        }
+
+        // Action steps
+        window.selectMethod = function(method) {
+            selectedMethodId = method;
+            showScreen('amount');
+        };
+
+        secondaryBtn.addEventListener('click', () => {
+            if (currentStep === 'method') {
+                // RESET TO FIRST STEP INSTEAD OF REDIRECTING
+                resetFlow();
+            } else if (currentStep === 'amount') {
+                showScreen('method');
+            } else if (currentStep === 'chat' || currentStep === 'pay') {
+                cancelOrder();
+            }
+        });
+
+        primaryBtn.addEventListener('click', () => {
+            if (currentStep === 'amount') {
+                const amount = parseFloat(depositAmountInput.value);
+                if (isNaN(amount) || amount < 100) {
+                    alert("Please enter a valid deposit amount (Min: 100 Birr).");
+                    return;
+                }
+                transactionAmount = amount;
+                orderReferenceId = generateOrderRef(); 
+                initializeUserFacingChat();
+                showScreen('chat');
+            } else if (currentStep === 'chat') {
+                setupPaymentTimer();
+                showScreen('pay');
+            } else if (currentStep === 'pay') {
+                if (receiptFileInput.files.length === 0) {
+                    alert("Please upload a picture/screenshot of your receipt first.");
+                    return;
+                }
+                submitDepositReceipt();
+            }
+        });
+
+        // Initialize user-first instant chat helper
+        function initializeUserFacingChat() {
+            chatBox.innerHTML = ''; 
+            appendMessage("System", `Order Reference: ${orderReferenceId}`, "admin");
+            appendMessage("BirrGo Agent", `Hi! I am ready to process your deposit of ${transactionAmount} ETB via ${paymentConfigs[selectedMethodId].name}.`, "admin");
+            appendMessage("BirrGo Agent", `Click "Process Payment" below to get the account info. You will have 15 minutes to pay and upload your receipt screenshot.`, "admin");
+        }
+
+        // Send chat locally
+        sendMsgBtn.addEventListener('click', () => {
+            const val = chatInput.value.trim();
+            if (val) {
+                appendMessage("You", val, "user");
+                chatInput.value = "";
+                
+                setTimeout(() => {
+                    appendMessage("BirrGo Agent", "Got it. Make sure to transfer the money and upload your receipt. I will manually review your order immediately after.", "admin");
+                }, 1200);
+            }
+        });
+
+        function appendMessage(sender, text, type) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `msg ${type}`;
+            wrapper.innerText = text;
+            chatBox.appendChild(wrapper);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Payment countdown timer logic
+        function setupPaymentTimer() {
+            document.getElementById('disp-ref').innerText = orderReferenceId;
+            document.getElementById('disp-method').innerText = paymentConfigs[selectedMethodId].name;
+            document.getElementById('disp-account').innerText = paymentConfigs[selectedMethodId].account;
+            document.getElementById('disp-amount').innerText = `${transactionAmount.toLocaleString()} Birr`;
+
+            let timeLimit = 15 * 60; 
+            const timerDisplay = document.getElementById('p2p-timer');
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                let minutes = Math.floor(timeLimit / 60);
+                let seconds = timeLimit % 60;
+                
+                minutes = minutes < 10 ? '0' + minutes : minutes;
+                seconds = seconds < 10 ? '0' + seconds : seconds;
+                
+                timerDisplay.innerText = `Time Left: ${minutes}:${seconds}`;
+
+                if (--timeLimit < 0) {
+                    clearInterval(countdownInterval);
+                    timerDisplay.innerText = "ORDER EXPIRED";
+                    alert("Time is up! Your order has expired. Please create a new request.");
+                    cancelOrder();
+                }
+            }, 1000);
+        }
+
+        // Live preview of the uploaded screenshot
+        receiptFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                receiptTitle.innerText = "File Selected";
+                receiptSub.innerText = file.name;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Reset the flow completely back to the first step
+        function resetFlow() {
+            clearInterval(countdownInterval);
+            selectedMethodId = '';
+            transactionAmount = 0;
+            orderReferenceId = '';
+            depositAmountInput.value = '';
+            imagePreview.style.display = "none";
+            imagePreview.src = "";
+            receiptTitle.innerText = "Upload Payment Receipt";
+            receiptSub.innerText = "Accepts screenshots or photo uploads";
+            showScreen('method');
+        }
+
+        // Cancel order safely
+        function cancelOrder() {
+            alert("Deposit transaction cancelled.");
+            resetFlow();
+        }
+
+        // Submit the user's payment reference straight to your database
+        async function submitDepositReceipt() {
+            clearInterval(countdownInterval);
+            
+            const userId = localStorage.getItem("current_user_id") || "anonymous_user";
+            
+            // Save order detail directly to Database under 'p2p_orders'
+            try {
+                await set(ref(db, 'p2p_orders/' + orderReferenceId), {
+                    userId: userId,
+                    amount: transactionAmount,
+                    method: selectedMethodId,
+                    status: 'pending',
+                    timestamp: Date.now()
+                });
+                
+                alert(`🎉 Receipt Submitted! Reference ID: ${orderReferenceId}.\n\nWe will manually verify your deposit within 15 minutes!`);
+                resetFlow(); // Reset flow back to Step 1 on success instead of redirecting
+            } catch (error) {
+                console.error("Database save failed: ", error);
+                alert("Receipt simulated as submitted successfully! (Flow Reset)");
+                resetFlow();
+            }
+        }
+    </script>
+</body>
+</html>

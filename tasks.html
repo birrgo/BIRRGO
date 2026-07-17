@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Link Manager</title>
+    <link rel="stylesheet" href="new.css">
+    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 500px; display: block; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-blue">Task Link Manager</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-10px;">Assign 5 separate dynamic destinations for independent paths.</p>
+        <div class="task-input-group">
+            <input type="text" id="taskLink1" class="admin-input" placeholder="Task 1 URL">
+            <input type="text" id="taskLink2" class="admin-input" placeholder="Task 2 URL">
+            <input type="text" id="taskLink3" class="admin-input" placeholder="Task 3 URL">
+            <input type="text" id="taskLink4" class="admin-input" placeholder="Task 4 URL">
+            <input type="text" id="taskLink5" class="admin-input" placeholder="Task 5 URL">
+        </div>
+        <button class="btn-admin-action btn-update" id="updateAllTasksBtn" style="margin-top: 15px;">Update Tasks Matrix</button>
+    </div>
+
+    <script type="module">
+        import { db, ref, get, set } from "./db.js";
+        function alertUser(msg, isSuccess=true) {
+            const t = document.getElementById('adminToast'); t.innerText = msg;
+            t.style.background = isSuccess ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; setTimeout(() => t.style.display='none', 3500);
+        }
+
+        get(ref(db, 'task')).then(snap => {
+            if(snap.exists()) {
+                const d = snap.val();
+                if(d.task1) document.getElementById('taskLink1').value = d.task1;
+                if(d.task2) document.getElementById('taskLink2').value = d.task2;
+                if(d.task3) document.getElementById('taskLink3').value = d.task3;
+                if(d.task4) document.getElementById('taskLink4').value = d.task4;
+                if(d.task5) document.getElementById('taskLink5').value = d.task5;
+            }
+        });
+
+        document.getElementById('updateAllTasksBtn').addEventListener('click', async () => {
+            try {
+                await set(ref(db, 'task'), {
+                    task1: document.getElementById('taskLink1').value.trim(),
+                    task2: document.getElementById('taskLink2').value.trim(),
+                    task3: document.getElementById('taskLink3').value.trim(),
+                    task4: document.getElementById('taskLink4').value.trim(),
+                    task5: document.getElementById('taskLink5').value.trim()
+                }); alertUser("Tasks Sync complete!", true);
+            } catch(e) { alertUser("Sync rejected.", false); }
+        });
+    </script>
+</body>
+</html>

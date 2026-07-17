@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Links Manager</title>
+    <link rel="stylesheet" href="new.css">
+    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm Operations</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 500px; display: block; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-burgundy">Social Links Manager</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-10px;">Deploy deep links view instantly. Updating automatically resets the validation logic.</p>
+        <div class="task-input-group" style="display:flex; flex-direction:column; gap:12px;">
+            <div class="input-field-wrapper"><label>Telegram Deep Link</label><input type="text" id="socialLinkTg" class="admin-input"></div>
+            <div class="input-field-wrapper"><label>Facebook Deep Link</label><input type="text" id="socialLinkFb" class="admin-input"></div>
+            <div class="input-field-wrapper"><label>Instagram Deep Link</label><input type="text" id="socialLinkIg" class="admin-input"></div>
+            <div class="input-field-wrapper"><label>TikTok Deep Link</label><input type="text" id="socialLinkTt" class="admin-input"></div>
+            <div class="input-field-wrapper"><label>YouTube Deep Link</label><input type="text" id="socialLinkYt" class="admin-input"></div>
+        </div>
+        <button class="btn-admin-action btn-broadcast" id="updateSocialLinksBtn" style="margin-top:15px; width:100%;">Push & Reset Social Tasks</button>
+    </div>
+
+    <script type="module">
+        import { db, ref, get, set } from "./db.js";
+        let resolver = null;
+
+        function openModal(title, desc, data, cl, txt) {
+            document.getElementById('modalTitleDisplay').innerText = title; document.getElementById('modalDescriptionDisplay').innerText = desc;
+            document.getElementById('modalDynamicDetails').innerHTML = `<div class="modal-data-row"><span class="modal-data-label">${data[0].label}</span><span class="modal-data-value">${data[0].value}</span></div>`;
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + cl; document.getElementById('modalConfirmBtn').innerText = txt;
+            document.getElementById('customConfirmModal').classList.add('active'); return new Promise(r => resolver = r);
+        }
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(resolver) resolver(true); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => { if(resolver) resolver(false); document.getElementById('customConfirmModal').classList.remove('active'); });
+
+        function triggerAdminAlert(msg, isSuccess=true) {
+            const t = document.getElementById('adminToast'); t.innerText = msg;
+            t.style.background = isSuccess ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; setTimeout(() => t.style.display='none', 3500);
+        }
+
+        get(ref(db, 'new/social_links')).then(snap => {
+            if(snap.exists()) {
+                const d = snap.val();
+                if(d.tg) document.getElementById('socialLinkTg').value = d.tg;
+                if(d.fb) document.getElementById('socialLinkFb').value = d.fb;
+                if(d.ig) document.getElementById('socialLinkIg').value = d.ig;
+                if(d.tt) document.getElementById('socialLinkTt').value = d.tt;
+                if(d.yt) document.getElementById('socialLinkYt').value = d.yt;
+            }
+        });
+
+        document.getElementById('updateSocialLinksBtn').addEventListener('click', async () => {
+            if(!await openModal("Confirm Push", "Deploying changes deep matrix routing logic layers.", [{label:"Path:", value:"new/social_links"}], "btn-update", "Authorize Link Matrix")) return;
+            try {
+                let v = 1; const vs = await get(ref(db, 'new/social_links/version')); if(vs.exists()) v = (parseInt(vs.val())||1)+1;
+                await set(ref(db, 'new/social_links'), {
+                    tg: document.getElementById('socialLinkTg').value.trim() || "tg://resolve?domain=your_channel_username",
+                    fb: document.getElementById('socialLinkFb').value.trim() || "fb://facewebmodal/f?href=https://facebook.com/your_page_username",
+                    ig: document.getElementById('socialLinkIg').value.trim() || "instagram://user?username=your_username",
+                    tt: document.getElementById('socialLinkTt').value.trim() || "snssdk1128://user/profile/your_tiktok_id",
+                    yt: document.getElementById('socialLinkYt').value.trim() || "vnd.youtube://www.youtube.com/user/your_channel_username",
+                    version: v
+                }); triggerAdminAlert(`Pushed Matrix Version: [${v}]`, true);
+            } catch(e) { triggerAdminAlert("Rejected", false); }
+        });
+    </script>
+</body>
+</html>

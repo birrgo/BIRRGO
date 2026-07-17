@@ -7,655 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
-            --accent-glow: rgba(128, 0, 32, 0.15);
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
-            --success-green: #10b981;
-            --warning-amber: #f59e0b;
-            --border-radius-lg: 24px;
-            --border-radius-md: 16px;
-            
-            /* Premium Gold Chip Matrix Colors */
-            --gold-metallic: linear-gradient(135deg, #ffe07d 0%, #f5af19 45%, #e65c00 100%);
-            --gold-lines: rgba(139, 92, 26, 0.25);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100dvh;
-            overflow: hidden;
-            background-color: #f1f5f9;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .app-view {
-            width: 100%;
-            height: 100dvh;
-            max-width: 450px;
-            background-color: var(--bg-light); /* Changed to allow waves to render */
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-        }
-
-        /* Decorative Background Waves pinned inside container */
-        .bg-wave {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .bg-wave-top {
-            top: 0;
-            height: 12vh;
-            min-height: 80px;
-        }
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 10vh;
-            min-height: 70px;
-        }
-
-        .app-content {
-            flex: 1;
-            overflow-y: auto;
-            background-color: transparent; /* Made transparent so waves stay visible underneath */
-            padding: calc(16px + env(safe-area-inset-top)) 20px calc(95px + env(safe-area-inset-bottom)) 20px;
-            scrollbar-width: none;
-            position: relative;
-            z-index: 1;
-        }
-        .app-content::-webkit-scrollbar { display: none; }
-
-        .brand-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-            padding: 4px 2px;
-        }
-
-        .logo-image {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .digital-card {
-            background: var(--primary-gradient);
-            border-radius: var(--border-radius-lg);
-            padding: 24px;
-            color: #ffffff;
-            box-shadow: 0 20px 35px -8px rgba(128, 0, 32, 0.3);
-            margin-bottom: 24px;
-            position: relative;
-            overflow: hidden;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            z-index: 2; /* Keeps card layered above any wave overlaps */
-        }
-
-        .digital-card::before {
-            content: '';
-            position: absolute;
-            bottom: -20px;
-            right: -20px;
-            width: 140px;
-            height: 140px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        .card-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .card-chip {
-            width: 44px;
-            height: 32px;
-            background: var(--gold-metallic);
-            border-radius: 6px;
-            position: relative;
-            box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.15);
-            border: 1px solid rgba(184, 134, 11, 0.4);
-            overflow: hidden;
-        }
-
-        .card-chip::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 14px;
-            width: 14px;
-            height: 100%;
-            border-left: 1px solid var(--gold-lines);
-            border-right: 1px solid var(--gold-lines);
-            pointer-events: none;
-        }
-
-        .card-chip::after {
-            content: '';
-            position: absolute;
-            top: 10px;
-            left: 0;
-            width: 100%;
-            height: 11px;
-            border-top: 1px solid var(--gold-lines);
-            border-bottom: 1px solid var(--gold-lines);
-            pointer-events: none;
-        }
-
-        .card-identity-box {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .btn-card-action {
-            background: rgba(255, 255, 255, 0.15);
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #ffffff;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .btn-card-action:active {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .btn-card-action svg {
-            width: 16px;
-            height: 16px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.5;
-        }
-
-        .card-number {
-            font-size: 18px;
-            font-weight: 600;
-            font-family: monospace;
-            letter-spacing: 2px;
-            margin-top: 15px;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .card-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .card-holder-label {
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: rgba(255, 255, 255, 0.6);
-            margin-bottom: 2px;
-        }
-
-        .card-holder-name {
-            font-size: 14px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-
-        .section-heading {
-            font-size: 19px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 14px;
-            letter-spacing: -0.4px;
-            margin-top: 10px;
-        }
-
-        .history-stack {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
-        }
-
-        .history-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: #ffffff;
-            border: 1px solid var(--border-light);
-            padding: 16px;
-            border-radius: var(--border-radius-md);
-            box-shadow: var(--card-shadow);
-        }
-
-        .history-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .history-icon-box {
-            font-size: 20px;
-            background-color: #f1f5f9;
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .history-info h4 {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 3px;
-        }
-
-        .history-info p {
-            font-size: 12px;
-            font-weight: 500;
-            color: var(--text-muted);
-        }
-
-        .history-right {
-            text-align: right;
-        }
-
-        .history-amount {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 2px;
-        }
-
-        .history-amount.income {
-            color: var(--success-green);
-        }
-
-        .history-amount.expense {
-            color: var(--primary-burgundy);
-        }
-
-        .wallet-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
-        .btn-wallet-action {
-            height: 54px;
-            border-radius: var(--border-radius-md);
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-wallet-action.primary {
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border: none;
-            box-shadow: 0 8px 20px rgba(128, 0, 32, 0.2);
-        }
-
-        .btn-wallet-action.secondary {
-            background: #ffffff;
-            color: var(--text-dark);
-            border: 1px solid var(--border-light);
-            box-shadow: var(--card-shadow);
-        }
-
-        .btn-wallet-action:active {
-            transform: scale(0.97);
-        }
-
-        /* Fixed Navigation Bottom Sticky Bar Framework */
-        .bottom-nav-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(68px + env(safe-area-inset-bottom)); /* Height matched to lottery.html */
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 10;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 11px; /* Font sizes matched to lottery.html */
-            font-weight: 700;
-            gap: 4px;
-            flex: 1;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            fill: none;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item.active-tab {
-            color: var(--primary-burgundy);
-        }
-        
-        .nav-item.active-tab .tab-icon-wrapper {
-            background-color: #fdf2f4;
-            padding: 6px 16px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: -2px;
-        }
-        .nav-item.active-tab svg {
-            stroke: var(--primary-burgundy);
-            stroke-width: 2.4;
-        }
-
-        /* SYSTEM DIALOG POPUPS & BACKDROPS */
-        .custom-popup-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 6000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .custom-popup-backdrop.show-modal {
-            display: flex;
-            opacity: 1;
-        }
-
-        .custom-popup-card {
-            background-color: #ffffff;
-            border-radius: 32px;
-            padding: 32px 24px 24px 24px;
-            width: 88%;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transform: scale(0.85);
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .custom-popup-backdrop.show-modal .custom-popup-card {
-            transform: scale(1);
-        }
-
-        .popup-status-badge {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-        .bg-success { background-color: #e6f7ed; color: #10b981; }
-        .bg-lock { background-color: #fef2f2; color: var(--primary-burgundy); }
-        .bg-error { background-color: #fee2e2; color: #ef4444; }
-
-        .popup-status-badge svg {
-            width: 28px;
-            height: 28px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .custom-popup-title {
-            font-size: 21px;
-            font-weight: 800;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-
-        .custom-popup-msg {
-            font-size: 14px;
-            color: #6b7280;
-            line-height: 1.5;
-            margin-bottom: 24px;
-            font-weight: 500;
-        }
-
-        .btn-popup-confirm {
-            width: 100%;
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: 100px;
-            padding: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(128, 0, 32, 0.2);
-        }
-
-        /* LEDGER PIN MODAL DIALOG MARKUP */
-        .security-modal-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100dvh;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            z-index: 5000;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        .security-modal-backdrop.show-modal {
-            display: flex;
-            opacity: 1;
-        }
-        .security-modal-card {
-            background: #ffffff;
-            width: 100%;
-            max-width: 360px;
-            border-radius: var(--border-radius-lg);
-            padding: 28px 24px 24px 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            transform: scale(0.92);
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        .security-modal-backdrop.show-modal .security-modal-card {
-            transform: scale(1);
-        }
-        .security-modal-icon {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            background: #fdf2f4;
-            color: var(--primary-burgundy);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px auto;
-            transition: all 0.3s ease;
-        }
-        .security-modal-icon.bg-lock {
-            background: #fffbeb;
-            color: var(--warning-amber);
-        }
-        .security-modal-icon svg {
-            width: 26px;
-            height: 26px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.5;
-        }
-        .security-modal-title {
-            font-size: 19px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
-        }
-        .security-modal-desc {
-            font-size: 13.5px;
-            font-weight: 500;
-            color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-        
-        .modal-error-banner {
-            display: none;
-            background: #fef2f2;
-            color: #dc2626;
-            border: 1px solid #fee2e2;
-            padding: 10px 14px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            text-align: center;
-            animation: shakeFeedback 0.35s ease-in-out;
-        }
-
-        @keyframes shakeFeedback {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-6px); }
-            75% { transform: translateX(6px); }
-        }
-
-        .security-password-input {
-            width: 100%;
-            height: 50px;
-            border-radius: var(--border-radius-md);
-            border: 1.5px solid var(--border-light);
-            padding: 0 16px;
-            font-size: 16px;
-            font-weight: 600;
-            text-align: center;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-        .security-password-input:focus {
-            border-color: var(--primary-burgundy);
-        }
-        
-        .security-modal-card.has-error .security-password-input {
-            border-color: #dc2626;
-            background-color: #fffafb;
-        }
-        .security-modal-card.has-error .security-modal-icon {
-            background: #fef2f2;
-            color: #dc2626;
-        }
-
-        .security-modal-actions {
-            display: grid;
-            grid-template-columns: 1fr 2fr;
-            gap: 10px;
-        }
-        .security-modal-actions.single-btn {
-            grid-template-columns: 1fr;
-        }
-        .btn-modal-cancel {
-            height: 48px;
-            background: #f1f5f9;
-            color: var(--text-dark);
-            border: none;
-            border-radius: var(--border-radius-md);
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .btn-modal-submit {
-            height: 48px;
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--border-radius-md);
-            font-size: 14px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
-        }
-        .btn-modal-submit:active, .btn-modal-cancel:active {
-            transform: scale(0.98);
-        }
-    </style>
+    <link rel="stylesheet" href="wallet.css">
 </head>
 <body>
 
@@ -680,10 +32,17 @@
             <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
                 
-                <button class="profile-btn" id="headerProfileBtn" aria-label="Profile" style="width: 44px; height: 44px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.85); border: 2px solid #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
+                <button class="profile-btn" id="headerProfileBtn" aria-label="Profile">
                     <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: #4b5563; stroke: none;">
                         <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
                     </svg>
+                </button>
+            </div>
+
+            <div class="badge-container">
+                <button class="badge-button" id="whatsNewBadgeBtn">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text">Today Giveaway</span>
                 </button>
             </div>
 
@@ -709,13 +68,13 @@
                 <div class="card-number" id="wallet-card-number">•••• •••• •••• ••••</div>
                 
                 <div class="card-bottom">
-                    <div>
+                    <div class="card-col-left">
                         <div class="card-holder-label">Card Holder</div>
                         <div class="card-holder-name" id="wallet-holder-name">•••• ••••••</div>
                     </div>
-                    <div style="text-align: right;">
+                    <div class="card-col-right">
                         <div class="card-holder-label">Total Balance</div>
-                        <div class="card-holder-name" id="wallet-total-balance" style="font-size: 16px; font-weight: 800;">0.00 Birr</div>
+                        <div class="card-holder-name" id="wallet-total-balance">0.00 Birr</div>
                     </div>
                 </div>
             </div>
@@ -733,7 +92,7 @@
 
             <h2 class="section-heading">Transaction History</h2>
             <div class="history-stack" id="transaction-history-container">
-                <div style="text-align: center; padding: 20px; color: var(--text-muted); font-size: 13px;">
+                <div class="history-loading-msg">
                     Streaming system history...
                 </div>
             </div>
@@ -772,25 +131,6 @@
             </div>
         </nav>
 
-        <div class="custom-popup-backdrop" id="profilePopup">
-            <div class="custom-popup-card" style="padding: 24px; max-width: 340px; border-radius: 28px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%;">
-                    <h3 style="font-size: 19px; font-weight: 800; color: #111827; margin: 0;">Account Profile</h3>
-                    <button id="closeProfilePopupBtn" style="background: none; border: none; font-size: 20px; color: #6b7280; cursor: pointer; font-weight: 700;">&times;</button>
-                </div>
-                
-                <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 20px; padding: 20px; width: 100%; box-sizing: border-box; text-align: left; margin-bottom: 24px;">
-                    <p style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin: 0 0 4px 0; letter-spacing: 0.5px;">Full Name</p>
-                    <h4 id="modalFullName" style="font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 16px 0; word-break: break-word;">Loading...</h4>
-                    
-                    <p style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin: 0 0 4px 0; letter-spacing: 0.5px;">Phone Number</p>
-                    <h4 id="modalPhone" style="font-size: 16px; font-weight: 700; color: #111827; margin: 0;">Loading...</h4>
-                </div>
-
-                <button class="btn-popup-confirm" id="modalLogoutBtn" style="width: 100%; background: var(--primary-burgundy); border-radius: 100px; padding: 14px; font-weight: 700; color: white; border: none; cursor: pointer;">Logout</button>
-            </div>
-        </div>
-
         <div class="custom-popup-backdrop" id="customPopup">
             <div class="custom-popup-card">
                 <div class="popup-status-badge bg-success" id="popupBadge">
@@ -812,11 +152,11 @@
                 <svg viewBox="0 0 24 24" id="modalIconSvg"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
             </div>
             <h3 class="security-modal-title" id="modalTitle">Enter PIN</h3>
-            <p class="security-modal-desc" id="modalDesc">Please input your 4-digit account security PIN to decrypt your secure ledger identity details.</p>
+            <p class="security-modal-desc" id="modalDesc">Please input your 6-digit account security PIN to decrypt your secure ledger identity details.</p>
             
             <div class="modal-error-banner" id="modalErrorBanner"></div>
 
-            <input type="password" maxlength="4" inputmode="numeric" class="security-password-input" id="securePassInput" placeholder="••••">
+            <input type="password" maxlength="6" inputmode="numeric" class="security-password-input" id="securePassInput" placeholder="•••••">
             <div class="security-modal-actions" id="modalActionsGroup">
                 <button class="btn-modal-cancel" id="closeModalBtn">Cancel</button>
                 <button class="btn-modal-submit" id="submitPassBtn">Verify</button>
@@ -847,7 +187,6 @@
         let decryptedFullName = "";
         let infoIsVisible = false;
 
-        const profilePopup = document.getElementById('profilePopup');
         const customPopup = document.getElementById('customPopup');
         const popupBadge = document.getElementById('popupBadge');
         const popupIcon = document.getElementById('popupIcon');
@@ -871,8 +210,8 @@
             startLiveWalletListeners();
             setupSecurityToggles();
             setupFeatureGateways();
-            setupProfileEvents();
             setupNavigationHandlers();
+            setupNotificationBadgeHandler();
         });
 
         function displayAppModal(type, title, message, onConfirm = null) {
@@ -905,36 +244,18 @@
             popupConfirmBtn.addEventListener('click', handleClosure);
         }
 
-        function setupProfileEvents() {
-            const openBtn = document.getElementById('headerProfileBtn');
-            const closeBtn = document.getElementById('closeProfilePopupBtn');
-            const logoutBtn = document.getElementById('modalLogoutBtn');
-
-            openBtn.addEventListener('click', () => {
-                profilePopup.style.display = 'flex';
-                setTimeout(() => profilePopup.classList.add('show-modal'), 10);
-            });
-
-            closeBtn.addEventListener('click', () => {
-                profilePopup.classList.remove('show-modal');
-                setTimeout(() => { profilePopup.style.display = 'none'; }, 300);
-            });
-
-            logoutBtn.addEventListener('click', () => {
-                profilePopup.classList.remove('show-modal');
-                profilePopup.style.display = 'none';
-                
-                displayAppModal('lock', 'Logout', 'Are you sure you want to end your session?', () => {
-                    localStorage.removeItem('auth_session_phone');
-                    window.location.href = "new2.html";
-                });
-            });
-        }
-
         function setupNavigationHandlers() {
             document.getElementById('navHome').addEventListener('click', () => goToPage('dashboard.html'));
             document.getElementById('navTasks').addEventListener('click', () => goToPage('task.html'));
             document.getElementById('navLottery').addEventListener('click', () => goToPage('lottery.html'));
+            document.getElementById('headerProfileBtn').addEventListener('click', () => goToPage('profile.html'));
+        }
+
+        function setupNotificationBadgeHandler() {
+            const badgeBtn = document.getElementById('whatsNewBadgeBtn');
+            badgeBtn.addEventListener('click', () => {
+                goToPage('give.html');
+            });
         }
 
         function calculateCardIdentityMatrix() {
@@ -948,8 +269,6 @@
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
                     decryptedFullName = userData.fullName || "Elite Member";
-                    document.getElementById('modalFullName').innerText = decryptedFullName;
-                    document.getElementById('modalPhone').innerText = activeUserPhone;
                 } else {
                     decryptedFullName = "Elite Member";
                 }
@@ -957,7 +276,6 @@
                 decryptedFullName = "Elite Member";
             });
 
-            // Set up Copy Button Trigger Event Pipeline
             document.getElementById('copyCardNumberBtn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 if (!decryptedCardNum) return;
@@ -967,7 +285,6 @@
                         displayAppModal('success', 'Copied Successfully', 'Card number copied to your local clipboard framework storage.');
                     })
                     .catch(() => {
-                        // Fallback implementation logic if Clipboard API execution is denied
                         const fallbackInput = document.createElement('input');
                         fallbackInput.value = decryptedCardNum.replace(/\s/g, '');
                         document.body.appendChild(fallbackInput);
@@ -1007,7 +324,7 @@
                     iconBox.className = "security-modal-icon";
                     iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
                     title.innerText = "Enter PIN";
-                    desc.innerText = "Please input your 4-digit account security PIN to decrypt your secure ledger identity details.";
+                    desc.innerText = "Please input your 6-digit account security PIN to decrypt your secure ledger identity details.";
                     passInput.style.display = "block";
                     passInput.value = "";
                     actionsGroup.className = "security-modal-actions";
@@ -1074,20 +391,15 @@
             const errorBanner = document.getElementById('modalErrorBanner');
             const modalCard = document.getElementById('securityModalCard');
 
-            function launchLockedNotice(type) {
+            function launchLockedNotice() {
                 modalCard.classList.remove('has-error');
                 errorBanner.style.display = "none";
                 
                 iconBox.className = "security-modal-icon bg-lock";
                 iconSvg.innerHTML = `<rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path>`;
                 
-                if (type === 'deposit') {
-                    title.innerText = "Deposit Gateway Locked";
-                    desc.innerText = "The local premium automated deposit pipeline terminal is currently undergoing testing structural checks. Available in the next updates.";
-                } else {
-                    title.innerText = "Withdraw System Locked";
-                    desc.innerText = "The native withdrawal gateway is coming soon! Complete video tasks daily to continue stacking up your database wallet balance.";
-                }
+                title.innerText = "Withdraw System Locked";
+                desc.innerText = "The native withdrawal gateway is coming soon! Complete video tasks daily to continue stacking up your database wallet balance.";
 
                 passInput.style.display = "none";
                 actionsGroup.className = "security-modal-actions single-btn";
@@ -1102,8 +414,11 @@
                 setTimeout(() => modal.classList.add('show-modal'), 10);
             }
 
-            document.getElementById('depositBtn').addEventListener('click', () => launchLockedNotice('deposit'));
-            document.getElementById('withdrawBtn').addEventListener('click', () => launchLockedNotice('withdraw'));
+            document.getElementById('depositBtn').addEventListener('click', () => {
+                window.location.href = "deposit.html";
+            });
+
+            document.getElementById('withdrawBtn').addEventListener('click', () => launchLockedNotice());
         }
 
         function startLiveWalletListeners() {
@@ -1123,6 +438,28 @@
             const historyContainer = document.getElementById('transaction-history-container');
             const userRef = ref(db, `users/${activeUserPhone}`);
 
+            function convertToTimestamp(timeStr) {
+                if (!timeStr || timeStr === 'Just now') return Date.now();
+                
+                if (!isNaN(timeStr)) return Number(timeStr);
+
+                let cleanStr = timeStr.replace(/,/g, '').trim();
+                
+                if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(cleanStr)) {
+                    const sections = cleanStr.split(' ');
+                    const dateParts = sections[0].split('/');
+                    const day = dateParts[0];
+                    const month = dateParts[1];
+                    const year = dateParts[2];
+                    
+                    cleanStr = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+                    if (sections[1]) cleanStr += `T${sections[1]}`;
+                }
+                
+                const finalParsedEpoch = Date.parse(cleanStr);
+                return !isNaN(finalParsedEpoch) ? finalParsedEpoch : 0;
+            }
+
             onValue(userRef, (snapshot) => {
                 historyContainer.innerHTML = ''; 
                 let masterTransactionList = [];
@@ -1133,21 +470,30 @@
                     if (userData.transactions) {
                         Object.keys(userData.transactions).forEach(key => {
                             const tx = userData.transactions[key];
+                            
+                            // Normalize fields to safely run strict matches
+                            const status = (tx.status || '').toLowerCase();
+                            const title = (tx.title || '').toLowerCase();
+
+                            // 🚀 TARGETED FILTER: Skip only pending, rejected, and cancelled transactions
+                            if (
+                                status === 'pending' || 
+                                status === 'rejected' || 
+                                status === 'canceled' || 
+                                status === 'cancelled' ||
+                                title.includes('pending') ||
+                                title.includes('rejected') ||
+                                title.includes('canceled') ||
+                                title.includes('cancelled')
+                            ) {
+                                return; // Skip these completely
+                            }
+
                             let calculatedFallbackSort = 0;
                             if (tx.sortingTime) {
                                 calculatedFallbackSort = Number(tx.sortingTime);
-                            } else if (tx.timestamp && tx.timestamp !== 'Just now') {
-                                let cleanTimestamp = tx.timestamp.replace(/,/g, '').trim();
-                                if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(cleanTimestamp)) {
-                                    const parts = cleanTimestamp.split(' ');
-                                    const dateParts = parts[0].split('/'); 
-                                    const day = dateParts[0];
-                                    const month = dateParts[1];
-                                    const year = dateParts[2];
-                                    cleanTimestamp = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}${parts[1] ? ' ' + parts.slice(1).join(' ') : ''}`;
-                                }
-                                const parseAttempt = Date.parse(cleanTimestamp);
-                                calculatedFallbackSort = !isNaN(parseAttempt) ? parseAttempt : 0;
+                            } else {
+                                calculatedFallbackSort = convertToTimestamp(tx.timestamp);
                             }
 
                             masterTransactionList.push({
@@ -1165,10 +511,13 @@
                             const promo = userData.claimedPromos[codeKey];
                             let dateLabel = 'Just now';
                             let finalSortVal = 0;
+                            
                             if (promo.claimedAt) {
                                 finalSortVal = Number(promo.claimedAt);
                                 const d = new Date(finalSortVal);
                                 dateLabel = d.toLocaleDateString([], {month:'short', day:'numeric'}) + ' ' + d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                            } else {
+                                finalSortVal = Date.now();
                             }
 
                             masterTransactionList.push({
@@ -1184,7 +533,7 @@
 
                 if (masterTransactionList.length === 0) {
                     historyContainer.innerHTML = `
-                        <div style="text-align: center; padding: 24px; color: var(--text-muted); font-size: 13px;">
+                        <div class="history-empty-msg">
                             No account activity tracked yet. Complete a task video or activate promo rewards to see them pop here!
                         </div>`;
                     return;

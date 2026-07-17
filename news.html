@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>BirrGo - Premium Updates Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,33 +33,24 @@
 
         html, body {
             width: 100%;
-            height: 100dvh;
-            overflow: hidden;
-            background-color: #f1f5f9;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            min-height: 100%;
+            background-color: var(--bg-light);
         }
 
         .app-view {
             width: 100%;
-            height: 100dvh;
-            max-width: 450px;
+            min-height: 100vh;
             background-color: #ffffff;
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
         }
 
         .nav-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: calc(16px + env(safe-area-inset-top)) 20px 14px 20px;
+            padding: calc(16px + env(safe-area-inset-top)) 24px 14px 24px;
             border-bottom: 1px solid var(--border-light);
             background: #ffffff;
             z-index: 100;
@@ -105,17 +96,14 @@
 
         .app-content {
             flex: 1;
-            overflow-y: auto;
             background-color: var(--bg-light);
-            padding: 16px 20px 40px 20px;
-            scrollbar-width: none;
+            padding: 24px 24px 60px 24px;
         }
-        .app-content::-webkit-scrollbar { display: none; }
 
         .category-filter-row {
             display: flex;
             gap: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             overflow-x: auto;
             scrollbar-width: none;
             padding: 4px 0;
@@ -145,15 +133,15 @@
         .broadcasts-container {
             display: flex;
             flex-direction: column;
-            gap: 16px;
-            margin-bottom: 20px;
+            gap: 20px;
+            margin-bottom: 24px;
         }
 
         .featured-broadcast-card {
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-lg);
-            padding: 22px;
+            padding: 24px;
             box-shadow: var(--card-shadow);
             position: relative;
             overflow: hidden;
@@ -170,9 +158,9 @@
         }
 
         .featured-broadcast-card.native-ad-card {
-            padding: 18px 22px !important;
-            min-height: 110px !important;
-            margin-bottom: 16px;
+            padding: 20px 24px !important;
+            min-height: 310px !important; 
+            margin-bottom: 20px;
         }
         .featured-broadcast-card.native-ad-card::before {
             background: linear-gradient(135deg, #eab308 0%, #eab308 100%);
@@ -180,7 +168,7 @@
 
         .ad-script-wrapper {
             width: 100%;
-            min-height: 50px;
+            min-height: 250px;
             display: block;
             position: relative;
         }
@@ -221,10 +209,10 @@
 
         .broadcast-image-frame {
             width: 100%;
-            max-height: 180px;
+            max-height: 350px;
             border-radius: var(--border-radius-md);
             overflow: hidden;
-            margin-bottom: 14px;
+            margin-bottom: 16px;
             border: 1px solid var(--border-light);
         }
 
@@ -235,7 +223,7 @@
         }
 
         .broadcast-title {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: 800;
             color: var(--text-dark);
             line-height: 1.35;
@@ -244,7 +232,7 @@
         }
 
         .broadcast-body-text {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 500;
             color: #334155;
             line-height: 1.6;
@@ -256,30 +244,30 @@
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-lg);
-            padding: 20px;
+            padding: 24px;
             box-shadow: var(--card-shadow);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .promo-header-group {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 14px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .promo-gift-badge {
-            font-size: 20px;
+            font-size: 24px;
         }
 
         .promo-header-title {
-            font-size: 14px;
+            font-size: 16px;
             font-weight: 800;
             color: var(--text-dark);
         }
 
         .promo-header-subtitle {
-            font-size: 11px;
+            font-size: 12px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -291,7 +279,7 @@
 
         .promo-input-field {
             flex: 1;
-            padding: 12px 14px;
+            padding: 14px 16px;
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-md);
             font-size: 14px;
@@ -311,12 +299,12 @@
         }
 
         .promo-submit-btn {
-            padding: 0 20px;
+            padding: 0 24px;
             background: var(--primary-gradient);
             color: #ffffff;
             border: none;
             border-radius: var(--border-radius-md);
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 700;
             cursor: pointer;
             box-shadow: 0 4px 12px var(--accent-glow);
@@ -331,7 +319,7 @@
 
         .custom-popup-overlay {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -347,10 +335,10 @@
 
         .custom-popup-modal {
             width: 100%;
-            max-width: 340px;
+            max-width: 400px;
             background: #ffffff;
             border-radius: 24px;
-            padding: 28px 24px;
+            padding: 32px 24px;
             text-align: center;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             transform: scale(0.9);
@@ -365,13 +353,13 @@
         }
 
         .popup-status-icon {
-            font-size: 44px;
+            font-size: 48px;
             margin-bottom: 16px;
             display: inline-block;
         }
 
         .popup-success-amount {
-            font-size: 36px;
+            font-size: 38px;
             font-weight: 800;
             color: #22c55e;
             margin-bottom: 16px;
@@ -380,14 +368,14 @@
         }
 
         .popup-main-title {
-            font-size: 18px;
+            font-size: 19px;
             font-weight: 800;
             color: var(--text-dark);
             margin-bottom: 8px;
         }
 
         .popup-body-desc {
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 500;
             color: var(--text-muted);
             line-height: 1.5;
@@ -413,7 +401,7 @@
 
         .verified-footer-shield {
             text-align: center;
-            padding: 32px 0 12px 0;
+            padding: 40px 0 16px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -421,7 +409,7 @@
         }
 
         .footer-shield-text {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             color: #94a3b8;
             text-transform: uppercase;
@@ -446,7 +434,7 @@
             <a href="dashboard.html" class="back-action-btn" aria-label="Navigate Back">
                 <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </a>
-            <h1 class="header-title-text">Updates Center</h1>
+            <h1 class="header-title-text"> Whats new today? </h1>
             <div class="header-spacer"></div>
         </header>
 
@@ -457,7 +445,6 @@
                 <span class="filter-pill" data-category="Promo Rewards">Promo Rewards</span>
             </div>
 
-            <!-- PROMO REDEEM CARD -->
             <section class="promo-redeem-card" id="promoRedeemSection">
                 <div class="promo-header-group">
                     <span class="promo-gift-badge">🎁</span>
@@ -472,7 +459,6 @@
                 </div>
             </section>
 
-            <!-- PROMO TAB STATIC AD CARD -->
             <article class="featured-broadcast-card native-ad-card" id="promoTabAdCard" style="display: none;">
                 <div class="badge-meta-row" style="margin-bottom: 8px;">
                     <span class="spotlight-pill inline-ad-badge">AD</span>
@@ -481,7 +467,6 @@
                 <div class="ad-script-wrapper" id="promoAdSlotWrapper"></div>
             </article>
 
-            <!-- DYNAMIC BROADCASTS CONTAINER -->
             <div class="broadcasts-container" id="broadcastsContainer">
                 <div class="featured-broadcast-card">
                     <h2 class="broadcast-title" style="font-size:16px; text-align:center;">Connecting to Server Node...</h2>
@@ -539,7 +524,6 @@
         });
 
         function streamLiveAdminUpdatesLog() {
-            // Updated node reference path from 'adminNews' to 'newNews'
             const adminNewsRef = ref(db, `newNews`);
             onValue(adminNewsRef, (snapshot) => {
                 localCachedBroadcasts = [];
@@ -581,26 +565,50 @@
             }
         }
 
-        // Helper function to safely load standard scripts dynamically without iframe blocks
         function triggerNativeAdExecution(containerId) {
             const target = document.getElementById(containerId);
             if (!target) return;
 
-            // Clear the placeholder container completely
             target.innerHTML = '';
 
-            // 1. Create the container div required by your script zone
-            const zoneContainer = document.createElement('div');
-            zoneContainer.id = "container-f87729ca03d3b44c8a05cc9336ce92bf";
-            target.appendChild(zoneContainer);
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '300px';
+            iframe.style.height = '250px';
+            iframe.style.border = 'none';
+            iframe.style.overflow = 'hidden';
+            iframe.style.display = 'block';
+            iframe.style.margin = '0 auto';
+            iframe.scrolling = 'no';
 
-            // 2. Build the script element manually so the browser treats it as main thread layout
-            const adScript = document.createElement('script');
-            adScript.async = true;
-            adScript.setAttribute('data-cfasync', 'false');
-            adScript.src = "https://pl30332226.effectivecpmnetwork.com/f87729ca03d3b44c8a05cc9336ce92bf/invoke.js";
+            target.appendChild(iframe);
+
+            const cacheBuster = Date.now() + Math.floor(Math.random() * 100000);
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
             
-            target.appendChild(adScript);
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }
+                    </style>
+                </head>
+                <body>
+                    <script type="text/javascript">
+                        var atOptions = {
+                            'key' : '13b3ec570952c54b1d86d1063081641d',
+                            'format' : 'iframe',
+                            'height' : 250,
+                            'width' : 300,
+                            'params' : {}
+                        };
+                    <\/script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/13b3ec570952c54b1d86d1063081641d/invoke.js?cb=${cacheBuster}" async="async"><\/script>
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
         }
 
         function renderFilteredBroadcasts() {
@@ -612,7 +620,6 @@
             const promoBox = document.getElementById('promoRedeemSection');
             const promoAd = document.getElementById('promoTabAdCard');
 
-            // Tab View Rule 1: Handle Promo Rewards Module
             if (currentActiveCategoryFilter === "Promo Rewards") {
                 if (promoBox) promoBox.style.display = "block";
                 if (promoAd) {
@@ -637,7 +644,6 @@
                 return;
             }
 
-            // Tab View Rule 2 & 3: Render data loops for All Updates and System Releases
             filtered.forEach((item, index) => {
                 const headline = item.title || "Platform Announcement";
                 const content = item.content || item.message || "";
@@ -667,7 +673,6 @@
                 `;
                 container.appendChild(card);
 
-                // Dynamically inject unique script nodes under each native content banner card
                 if (currentActiveCategoryFilter === "All Updates" || currentActiveCategoryFilter === "System Releases") {
                     const adCard = document.createElement('article');
                     adCard.className = "featured-broadcast-card native-ad-card";
@@ -683,10 +688,9 @@
                     `;
                     container.appendChild(adCard);
 
-                    // Tiny timeout guarantees the DOM element exists before appending script threads
                     setTimeout(() => {
                         triggerNativeAdExecution(dynamicAdSlotId);
-                    }, 20);
+                    }, index * 150 + 20);
                 }
             });
         }

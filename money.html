@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Money Controller - BirrGo Admin</title>
+    <link rel="stylesheet" href="new.css">
+    <style>
+        body { padding: 30px; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <a href="new.html" class="back-link">← Back to Main Dashboard</a>
+
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm Operational Request</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed Execution</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 500px; display: block; position: relative; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-gold">Money Controller Role</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Modify wallet balances instantly using card or phone configurations.</p>
+        
+        <div class="input-field-wrapper">
+            <label>Target 15-Digit Card Number / Phone</label>
+            <input type="text" id="targetIdNumber" class="admin-input" placeholder="e.g. 914447872278441">
+        </div>
+        <div class="input-field-wrapper">
+            <label>Amount (ETB)</label>
+            <input type="number" id="targetFinancialValue" class="admin-input" placeholder="0.00" step="0.01">
+        </div>
+
+        <div class="btn-row">
+            <button class="btn-admin-action btn-credit" id="idCreditBtn">Deposit Funds</button>
+            <button class="btn-admin-action btn-debit" id="idDebitBtn">Withdraw Funds</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, get, runTransaction, push, set } from "./db.js";
+
+        let currentModalResolver = null;
+        let localUserDirectoryCache = {};
+
+        get(ref(db, 'users')).then(snap => { if(snap.exists()) localUserDirectoryCache = snap.val(); });
+
+        function openCustomModal(title, desc, detailsArray, actionClass, actionText) {
+            document.getElementById('modalTitleDisplay').innerText = title;
+            document.getElementById('modalDescriptionDisplay').innerText = desc;
+            const dynamicContainer = document.getElementById('modalDynamicDetails');
+            dynamicContainer.innerHTML = '';
+            detailsArray.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'modal-data-row';
+                row.innerHTML = `<span class="modal-data-label">${item.label}</span><span class="modal-data-value">${item.value}</span>`;
+                dynamicContainer.appendChild(row);
+            });
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + actionClass;
+            document.getElementById('modalConfirmBtn').innerText = actionText;
+            document.getElementById('customConfirmModal').classList.add('active');
+            return new Promise((resolve) => { currentModalResolver = resolve; });
+        }
+
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+            if (currentModalResolver) currentModalResolver(true);
+            document.getElementById('customConfirmModal').classList.remove('active');
+        });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => {
+            if (currentModalResolver) currentModalResolver(false);
+            document.getElementById('customConfirmModal').classList.remove('active');
+        });
+
+        function triggerAdminAlert(msg, isSuccess = true) {
+            const toast = document.getElementById('adminToast');
+            toast.innerText = msg;
+            toast.style.background = isSuccess ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        function generate15DigitCard(phoneStr) {
+            const cleanPhone = phoneStr.replace(/\D/g, '');
+            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
+            return cleanPhone + final6Reversed;
+        }
+
+        async function lookupUserProfileByCardOrPhone(inputString) {
+            const cleanedInput = inputString.replace(/\s/g, '');
+            if (localUserDirectoryCache[cleanedInput]) {
+                return { phoneKey: cleanedInput, profile: localUserDirectoryCache[cleanedInput] };
+            }
+            for (let phoneKey of Object.keys(localUserDirectoryCache)) {
+                const profile = localUserDirectoryCache[phoneKey];
+                const storedCard = profile.cardNumber ? profile.cardNumber.replace(/\s/g, '') : '';
+                const computedCard = generate15DigitCard(phoneKey);
+                if (storedCard === cleanedInput || computedCard === cleanedInput) {
+                    return { phoneKey, profile };
+                }
+            }
+            return null;
+        }
+
+        async function handleIdBalanceAdjustment(isDeposit) {
+            const inputCard = document.getElementById('targetIdNumber').value.trim();
+            const inputAmount = parseFloat(document.getElementById('targetFinancialValue').value.trim());
+
+            if (!inputCard || isNaN(inputAmount) || inputAmount <= 0) {
+                triggerAdminAlert("Please supply accurate parameters.", false);
+                return;
+            }
+
+            try {
+                const userMatch = await lookupUserProfileByCardOrPhone(inputCard);
+                if (!userMatch) {
+                    triggerAdminAlert("No user node located.", false);
+                    return;
+                }
+
+                const targetPhone = userMatch.phoneKey;
+                const accountName = userMatch.profile.fullName || "Anonymous Account";
+                const actionType = isDeposit ? "DEPOSIT" : "WITHDRAWAL";
+
+                const confirmed = await openCustomModal(
+                    "Confirm Account Balance Adjustment",
+                    "Verify matching fields cleanly before launching memory pipelines.",
+                    [
+                        { label: "Profile Name:", value: accountName },
+                        { label: "Action:", value: actionType },
+                        { label: "Change total:", value: inputAmount.toFixed(2) + " ETB" }
+                    ],
+                    isDeposit ? "btn-credit" : "btn-debit",
+                    isDeposit ? "Authorize Deposit" : "Authorize Withdrawal"
+                );
+                
+                if (!confirmed) return;
+
+                await runTransaction(ref(db, `users/${targetPhone}/walletBalance`), (currentBalance) => {
+                    let parsed = parseFloat(currentBalance) || 0;
+                    return isDeposit ? parsed + inputAmount : Math.max(0, parsed - inputAmount);
+                });
+
+                const now = new Date();
+                const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                // FIXED WRITING BLOCK - ADDED UNIFORM RECOGNIZABLE ORDER TIMESTAMP
+                await set(push(ref(db, `users/${targetPhone}/transactions`)), {
+                    title: isDeposit ? "System Admin Wallet Credit" : "System Admin Wallet Debit Overrides",
+                    amount: inputAmount,
+                    type: isDeposit ? "income" : "expense",
+                    timestamp: timeStr,
+                    sortingTime: Date.now()
+                });
+
+                triggerAdminAlert("Balance operations parsed accurately!", true);
+                document.getElementById('targetIdNumber').value = '';
+                document.getElementById('targetFinancialValue').value = '';
+                
+                get(ref(db, 'users')).then(snap => { if(snap.exists()) localUserDirectoryCache = snap.val(); });
+            } catch (err) {
+                triggerAdminAlert("Transactional processing engine dropped.", false);
+            }
+        }
+
+        document.getElementById('idCreditBtn').addEventListener('click', () => handleIdBalanceAdjustment(true));
+        document.getElementById('idDebitBtn').addEventListener('click', () => handleIdBalanceAdjustment(false));
+    </script>
+</body>
+</html>

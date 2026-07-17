@@ -11,11 +11,9 @@
 </head>
 <body>
 
-    <div class="toast-container" id="toast">Invite Link Copied!</div>
-
     <div class="app-view">
+        <div class="toast-container" id="toast">Invite Link Copied!</div>
         
-        <!-- Premium Brand Decorative Waves -->
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
             <defs>
@@ -30,34 +28,30 @@
             <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
         </svg>
 
-        <div class="app-content">
-            <!-- Brand Header Layout -->
-            <div class="brand-header" style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px 8px 20px; position: relative; z-index: 5;">
-                <img src="birrgo-logo.png" alt="BirrGo Logo" class="brand-logo" style="height: 45px; object-fit: contain;">
-                
-                <button class="profile-btn" id="headerProfileBtn" aria-label="Profile" style="width: 44px; height: 44px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.85); border: 2px solid #ffffff; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.05); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
-                    <svg viewBox="0 0 24 24" style="width: 22px; height: 22px; fill: #4b5563; stroke: none;">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
-                    </svg>
-                </button>
-            </div>
+        <div class="brand-header">
+            <img src="birrgo-logo.png" alt="BirrGo Logo" class="brand-logo">
+            
+            <button class="profile-btn" id="headerProfileBtn" aria-label="Profile" onclick="window.location.href='profile.html'">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
+                </svg>
+            </button>
+        </div>
 
-            <!-- Segmented Sub-View Toggle Navigation Row -->
+        <div class="app-content">
             <div class="task-view-toggle-bar">
                 <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
                 <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
             </div>
 
-            <!-- Sub-Panel: Watch & Earn Stack -->
             <div id="panelWatchEarn" class="sub-view-panel panel-active">
                 <div class="active-list-stack" id="video-task-container"></div>
             </div>
 
-            <!-- Sub-Panel: Invitation Interface -->
             <div id="panelInvitation" class="sub-view-panel">
                 <div class="invite-card">
                     <h3 class="invite-title">Invite Friends</h3>
-                    <p class="invite-desc">Share your unique link with friends. When they join BirrGo, you will receive a fixed bonus cash drop of <span class="reward-highlight">50 Birr</span> directly in your wallet balance!</p>
+                    <p class="invite-desc">Share your unique link with friends. When they join BirrGo, you will receive <span class="reward-highlight">50 Birr</span> directly in your wallet balance!</p>
                     <div class="global-action-area">
                         <button class="btn-action-filled" id="shareBtn" disabled>Loading Invite Link...</button>
                     </div>
@@ -69,12 +63,11 @@
                 </div>
                 
                 <div class="referred-history-list" id="referredHistoryContainer">
-                    <div class="empty-history-notice">You haven't invited anyone yet. Share your link above to get started!</div>
+                    <div class="empty-history-notice">You haven't invited anyone yet.</div>
                 </div>
             </div>
         </div>
 
-        <!-- Aligned Navigation Bottom Sticky Bar Framework -->
         <nav class="bottom-nav-bar" id="bottomNavBar">
             <div id="navHome" class="nav-item">
                 <svg viewBox="0 0 24 24">
@@ -106,85 +99,24 @@
                 Wallet
             </div>
         </nav>
-    </div>
 
-    <!-- Immersive Media Interceptor Container -->
-    <div class="immersive-overlay" id="adViewerOverlay">
-        <div class="split-media-viewport">
-            <div id="adContainer" class="ad-container-frame"></div>
-            <div id="youtubePlayerContainer" class="youtube-player-box"></div>
-        </div>
-        
-        <div class="overlay-navbar">
-            <div class="overlay-countdown-label" id="overlayCountdown">Remaining: 1:00</div>
-            <button class="btn-close-overlay" id="closeOverlayBtn">Claim Reward</button>
-        </div>
-    </div>
-
-    <!-- SYSTEM PROFILE POPUP MODAL -->
-    <div class="custom-popup-backdrop" id="profilePopup">
-        <div class="custom-popup-card" style="padding: 24px; max-width: 340px; border-radius: 28px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; width: 100%;">
-                <h3 style="font-size: 19px; font-weight: 800; color: #111827; margin: 0;">Account Profile</h3>
-                <button id="closeProfilePopupBtn" style="background: none; border: none; font-size: 20px; color: #6b7280; cursor: pointer; font-weight: 700;">&times;</button>
+        <div class="custom-popup-backdrop" id="customPopup">
+            <div class="custom-popup-card">
+                <div class="popup-status-badge bg-success" id="popupBadge">
+                    <svg viewBox="0 0 24 24" id="popupIcon">
+                        <polyline points="20 6 9 17 4 12"></polyline>
+                    </svg>
+                </div>
+                <h3 class="custom-popup-title" id="popupTitle">Notification</h3>
+                <p class="custom-popup-msg" id="popupMessage">Message info goes here natively.</p>
+                <button class="btn-popup-confirm" id="popupConfirmBtn">Done</button>
             </div>
-            
-            <div style="background-color: #f9fafb; border: 1px solid #f3f4f6; border-radius: 20px; padding: 20px; width: 100%; box-sizing: border-box; text-align: left; margin-bottom: 24px;">
-                <p style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin: 0 0 4px 0; letter-spacing: 0.5px;">Full Name</p>
-                <h4 id="modalFullName" style="font-size: 16px; font-weight: 700; color: #111827; margin: 0 0 16px 0; word-break: break-word;">Loading...</h4>
-                
-                <p style="font-size: 11px; font-weight: 700; color: #9ca3af; text-transform: uppercase; margin: 0 0 4px 0; letter-spacing: 0.5px;">Phone Number</p>
-                <h4 id="modalPhone" style="font-size: 16px; font-weight: 700; color: #111827; margin: 0;">Loading...</h4>
-            </div>
-
-            <button class="btn-popup-confirm" id="modalLogoutBtn" style="width: 100%; background: var(--primary-burgundy); border-radius: 100px; padding: 14px; font-weight: 700; color: white; border: none; cursor: pointer;">Logout</button>
         </div>
     </div>
-
-    <!-- System Modal Framework for Popups -->
-    <div class="custom-popup-backdrop" id="customPopup">
-        <div class="custom-popup-card">
-            <div class="popup-status-badge bg-success" id="popupBadge">
-                <svg viewBox="0 0 24 24" id="popupIcon">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                </svg>
-            </div>
-            <h3 class="custom-popup-title" id="popupTitle">Notification</h3>
-            <p class="custom-popup-msg" id="popupMessage">Message info goes here natively.</p>
-            <button class="btn-popup-confirm" id="popupConfirmBtn">Done</button>
-        </div>
-    </div>
-
-    <script>
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                mutation.addedNodes.forEach((node) => {
-                    if (node.nodeType === 1) {
-                        const styleStr = node.getAttribute('style') || '';
-                        const className = node.className || '';
-                        
-                        if (
-                            styleStr.includes('position: fixed') || 
-                            styleStr.includes('position:fixed') ||
-                            styleStr.includes('position: absolute') || 
-                            styleStr.includes('position:absolute') ||
-                            className.includes('container') ||
-                            (node.tagName === 'DIV' && (styleStr.includes('top:') || styleStr.includes('bottom:')))
-                        ) {
-                            if (document.getElementById('adViewerOverlay').style.display === 'flex') {
-                                node.classList.add('force-ad-center');
-                            }
-                        }
-                    }
-                });
-            });
-        });
-        observer.observe(document.body, { childList: true, subtree: true });
-    </script>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -201,54 +133,16 @@
         const db = getDatabase(app);
 
         const totalVideos = 5;
-        const watchDuration = 60; // Reduced down to 1 minute (60 seconds)
         const cooldownDuration = 3600000; 
-
         let activeUserPhone = "";
         let activeAccountId = ""; 
-        let adActiveStatus = false;
-        let bypassUnloadShield = false; 
-        
-        let currentCountdownInterval = null;
-        let currentAdReloadInterval = null;
 
-        const bottomNavBar = document.getElementById('bottomNavBar');
-        const adViewerOverlay = document.getElementById('adViewerOverlay');
-        const youtubePlayerContainer = document.getElementById('youtubePlayerContainer');
-        const adContainer = document.getElementById('adContainer');
-        const overlayCountdown = document.getElementById('overlayCountdown');
-        const closeOverlayBtn = document.getElementById('closeOverlayBtn');
-
-        const profilePopup = document.getElementById('profilePopup');
         const customPopup = document.getElementById('customPopup');
         const popupBadge = document.getElementById('popupBadge');
         const popupIcon = document.getElementById('popupIcon');
         const popupTitle = document.getElementById('popupTitle');
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
-
-        function globalClickInterceptor(e) {
-            if (adActiveStatus) return; 
-            let currentCheckNode = e.target;
-            while(currentCheckNode && currentCheckNode !== document.body) {
-                if (currentCheckNode.tagName === 'A' && !currentCheckNode.id) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    e.stopImmediatePropagation();
-                    currentCheckNode.remove();
-                    return false;
-                }
-                currentCheckNode = currentCheckNode.parentNode;
-            }
-        }
-        window.addEventListener('click', globalClickInterceptor, true);
-
-        window.onbeforeunload = function(e) {
-            if (!bypassUnloadShield) {
-                e.preventDefault();
-                return "Are you sure you want to exit?";
-            }
-        };
 
         window.switchTaskPanel = function(targetPanel) {
             const btnWatch = document.getElementById('tabBtnWatch');
@@ -270,27 +164,9 @@
             }
         };
 
-        function terminateAllAdRuntimes() {
-            adActiveStatus = false;
-            if (currentCountdownInterval) { clearInterval(currentCountdownInterval); currentCountdownInterval = null; }
-            if (currentAdReloadInterval) { clearInterval(currentAdReloadInterval); currentAdReloadInterval = null; }
-            youtubePlayerContainer.innerHTML = "";
-            adContainer.innerHTML = "";
-            clearInjectedAds();
-            window.removeEventListener('click', globalClickInterceptor, true);
-        }
-
-        window.goToPage = function(page) {
-            if (page === '#') return;
-            terminateAllAdRuntimes(); 
-            bypassUnloadShield = true;
-            window.location.replace(page);
-        };
-
         document.addEventListener('DOMContentLoaded', async () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
-                bypassUnloadShield = true;
                 window.location.href = "new2.html";
                 return;
             }
@@ -299,9 +175,6 @@
                 const snapshot = await get(ref(db, `users/${activeUserPhone}`));
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
-                    
-                    document.getElementById('modalFullName').innerText = userData.fullName || "Premium User";
-                    document.getElementById('modalPhone').innerText = activeUserPhone;
 
                     if (userData.accountId) {
                         activeAccountId = userData.accountId;
@@ -315,21 +188,14 @@
             }
 
             initTasks();
-            setupOverlayEvents();
-            setupProfileEvents();
             setupNavigationHandlers();
         });
 
         function setupNavigationHandlers() {
-            document.getElementById('navHome').addEventListener('click', () => {
-                goToPage('dashboard.html');
-            });
-            document.getElementById('navLottery').addEventListener('click', () => {
-                goToPage('lottery.html');
-            });
-            document.getElementById('navWallet').addEventListener('click', () => {
-                goToPage('wallet.html');
-            });
+            document.getElementById('navHome').addEventListener('click', () => window.location.href = 'dashboard.html');
+            document.getElementById('navLottery').addEventListener('click', () => window.location.href = 'lottery.html');
+            document.getElementById('navWallet').addEventListener('click', () => window.location.href = 'wallet.html');
+            document.getElementById('headerProfileBtn').addEventListener('click', () => window.location.href = 'profile.html');
         }
 
         function displayAppModal(type, title, message, onConfirm = null) {
@@ -348,22 +214,17 @@
                 popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
             }
 
-            adContainer.innerHTML = "";
-            clearInjectedAds();
-
             customPopup.style.display = 'flex';
             setTimeout(() => customPopup.classList.add('show-modal'), 10);
 
-            const handleClosure = (e) => {
-                customPopup.removeEventListener('click', handleClosure, true);
+            const handleClosure = () => {
                 customPopup.classList.remove('show-modal');
                 setTimeout(() => {
                     customPopup.style.display = 'none';
                     if (onConfirm) onConfirm();
-                    clearInjectedAds();
                 }, 300);
             };
-            popupConfirmBtn.addEventListener('click', handleClosure, true);
+            popupConfirmBtn.onclick = handleClosure;
         }
 
         function initTasks() {
@@ -403,13 +264,13 @@
 
                 const targetBtn = document.getElementById(`btn-action-${currentId}`);
                 if (targetBtn.classList.contains('cooldown')) {
-                    targetBtn.addEventListener('click', (e) => {
-                        showReminder(remainingMinutes);
-                    }, true);
+                    targetBtn.addEventListener('click', () => {
+                        displayAppModal('lock', 'Task Locked', `This video row is locked. Please come back after ${remainingMinutes} minutes!`);
+                    });
                 } else {
-                    targetBtn.addEventListener('click', (e) => {
-                        handleTask(currentId);
-                    }, true);
+                    targetBtn.addEventListener('click', () => {
+                        window.location.href = `taskv.html?id=${currentId}`;
+                    });
                 }
             }
         }
@@ -426,7 +287,6 @@
                     container.innerHTML = '';
                     const rawData = snapshot.val();
                     const objectList = Object.values(rawData);
-                    
                     counterLabel.innerText = `${objectList.length} ${objectList.length === 1 ? 'User' : 'Users'}`;
                     
                     objectList.reverse().forEach(friend => {
@@ -450,192 +310,11 @@
                     });
                 } else {
                     counterLabel.innerText = '0 Users';
-                    container.innerHTML = `<div class="empty-history-notice">You haven't invited anyone yet. Share your link above to get started!</div>`;
+                    container.innerHTML = `<div class="empty-history-notice">You haven't invited anyone yet.</div>`;
                 }
             } catch (error) {
                 console.error(error);
             }
-        }
-
-        function loadMonetagAd() {
-            if (!adActiveStatus) return;
-            adContainer.innerHTML = "";
-            
-            const adIframe = document.createElement('iframe');
-            adIframe.style.width = "100%";
-            adIframe.style.height = "100%";
-            adIframe.style.border = "none";
-            adIframe.style.overflow = "hidden";
-            adIframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups');
-            adContainer.appendChild(adIframe);
-            
-            const iframeDoc = adIframe.contentDocument || adIframe.contentWindow.document;
-            iframeDoc.open();
-            iframeDoc.write(`
-                <html style="margin:0; padding:0; background:#000; overflow:hidden; width:100%; height:100%;">
-                <body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">
-                    <script>
-                        (function() {
-                            const monetagScript = document.createElement('script');
-                            monetagScript.src = "https://quge5.com/88/tag.min.js?cb=" + Date.now();
-                            monetagScript.dataset.zone = "258295";
-                            monetagScript.async = true;
-                            monetagScript.setAttribute('data-cfasync', 'false');
-                            document.body.appendChild(monetagScript);
-                        })();
-                    <\/script>
-                </body>
-                </html>
-            `);
-            iframeDoc.close();
-        }
-
-        function injectUniversalMediaFrame(targetUrl) {
-            if (!targetUrl) {
-                youtubePlayerContainer.innerHTML = `<div style="color:white; padding:40px; text-align:center;">Error: Video missing.</div>`;
-                return;
-            }
-            
-            let videoId = "";
-            if (targetUrl.includes("shorts/")) videoId = targetUrl.split("shorts/")[1]?.split(/[?#]/)[0];
-            else if (targetUrl.includes("youtu.be/")) videoId = targetUrl.split("youtu.be/")[1]?.split(/[?#]/)[0];
-            else if (targetUrl.includes("v=")) videoId = targetUrl.split("v=")[1]?.split(/[&#]/)[0];
-            else if (targetUrl.includes("embed/")) videoId = targetUrl.split("embed/")[1]?.split(/[?#]/)[0];
-
-            if (videoId && videoId.length === 11) {
-                youtubePlayerContainer.innerHTML = `
-                    <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&rel=0&modestbranding=1" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
-                    </iframe>`;
-            } else {
-                youtubePlayerContainer.innerHTML = `<div style="color:white; padding:40px; text-align:center;">Error: Link structural failure.</div>`;
-            }
-        }
-
-        function clearInjectedAds() {
-            adContainer.innerHTML = "";
-            const elements = document.body.children;
-            for (let i = elements.length - 1; i >= 0; i--) {
-                const el = elements[i];
-                if (el.id !== 'customPopup' && el.id !== 'profilePopup' && el.id !== 'adViewerOverlay' && !el.classList.contains('app-view') && el.id !== 'toast' && el.tagName !== 'SCRIPT') {
-                    el.remove();
-                }
-            }
-        }
-
-        async function handleTask(id) {
-            const card = document.getElementById(`video-card-${id}`);
-            const btn = card.querySelector('.btn-task');
-            btn.className = "btn-task watching";
-            btn.disabled = true;
-
-            try {
-                const snapshot = await get(ref(db, `task/task${id}`));
-                const fetchedUrl = snapshot.exists() ? snapshot.val() : "";
-                
-                adActiveStatus = true;
-                bottomNavBar.style.display = "none";
-                adViewerOverlay.style.display = "flex";
-                closeOverlayBtn.style.display = "none"; 
-                
-                injectUniversalMediaFrame(fetchedUrl);
-                loadMonetagAd();
-
-                let timeLeft = watchDuration;
-                overlayCountdown.innerText = "Remaining: 1:00";
-                btn.innerText = "Watching (1:00)";
-
-                currentAdReloadInterval = setInterval(() => {
-                    if (timeLeft > 0 && adActiveStatus) {
-                        clearInjectedAds();
-                        loadMonetagAd();
-                    }
-                }, 20000);
-
-                currentCountdownInterval = setInterval(async () => {
-                    timeLeft--;
-                    const minutes = Math.floor(timeLeft / 60);
-                    const seconds = timeLeft % 60;
-                    const formatted = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                    
-                    btn.innerText = `Watching (${formatted})`;
-                    overlayCountdown.innerText = `Remaining: ${formatted}`;
-
-                    if (timeLeft <= 0) {
-                        terminateAllAdRuntimes();
-                        
-                        try {
-                            await runTransaction(ref(db, `users/${activeUserPhone}/walletBalance`), (curr) => (parseFloat(curr) || 0) + 20);
-                            const newTxNode = push(ref(db, `users/${activeUserPhone}/transactions`));
-                            await set(newTxNode, {
-                                title: `Watch Task Video #${id}`,
-                                amount: 20.00,
-                                type: "income",
-                                timestamp: new Date().toLocaleString()
-                            });
-
-                            localStorage.setItem(`video_cooldown_${id}`, Date.now());
-                            overlayCountdown.innerText = "Finished! +20 Birr";
-                            closeOverlayBtn.style.display = "block"; 
-                            
-                            displayAppModal('success', 'Task Completed', 'Your money is added to wallet.', () => {
-                                terminateAllAdRuntimes(); 
-                                adViewerOverlay.style.display = "none";
-                                bottomNavBar.style.display = "flex";
-                                window.addEventListener('click', globalClickInterceptor, true); 
-                                initTasks();
-                            });
-                        } catch (error) {
-                            displayAppModal('error', 'Sync Failed', 'Network validation error.');
-                        }
-                    }
-                }, 1000);
-            } catch (err) {
-                btn.className = "btn-task";
-                btn.disabled = false;
-                btn.innerText = "Watch";
-            }
-        }
-
-        function setupOverlayEvents() {
-            closeOverlayBtn.addEventListener('click', () => {
-                terminateAllAdRuntimes();
-                adViewerOverlay.style.display = "none";
-                bottomNavBar.style.display = "flex";
-                window.addEventListener('click', globalClickInterceptor, true);
-                initTasks();
-            });
-        }
-
-        function setupProfileEvents() {
-            const openBtn = document.getElementById('headerProfileBtn');
-            const closeBtn = document.getElementById('closeProfilePopupBtn');
-            const logoutBtn = document.getElementById('modalLogoutBtn');
-
-            openBtn.addEventListener('click', () => {
-                profilePopup.style.display = 'flex';
-                setTimeout(() => profilePopup.classList.add('show-modal'), 10);
-            });
-
-            closeBtn.addEventListener('click', () => {
-                profilePopup.classList.remove('show-modal');
-                setTimeout(() => { profilePopup.style.display = 'none'; }, 300);
-            });
-
-            logoutBtn.addEventListener('click', () => {
-                profilePopup.classList.remove('show-modal');
-                profilePopup.style.display = 'none';
-                
-                displayAppModal('lock', 'Logout', 'Are you sure you want to end your session?', () => {
-                    localStorage.removeItem('auth_session_phone');
-                    bypassUnloadShield = true;
-                    window.location.href = "new2.html";
-                });
-            });
-        }
-
-        function showReminder(minutes) {
-            displayAppModal('lock', 'Task Locked', `This video row is locked. Please come back after ${minutes} minutes!`);
         }
 
         function secureCopy(text) {
@@ -646,15 +325,17 @@
             return res ? Promise.resolve() : Promise.reject();
         }
 
-        document.getElementById('shareBtn').addEventListener('click', () => {
+        document.getElementById('shareBtn').onclick = () => {
             if (!activeAccountId) return;
-            const link = window.location.href.split('?')[0].replace('task.html', 'register.html') + "?ref=" + activeAccountId;
+            const productionUrl = "https://birrgo.github.io/birrgo1.github.io/register.html";
+            const link = productionUrl + "?ref=" + activeAccountId;
+            
             secureCopy(link).then(() => {
                 const toast = document.getElementById('toast');
                 toast.style.display = 'block';
                 setTimeout(() => { toast.style.display = 'none'; }, 2000);
             });
-        });
+        };
     </script>
 </body>
 </html>

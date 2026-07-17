@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirrGo Compact Banner</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            font-family: system-ui, -apple-system, sans-serif;
+            height: 100vh;
+        }
+
+        .download-banner-wrapper {
+            position: fixed;
+            top: 10px; 
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            padding: 0 10px;
+            z-index: 1000;
+        }
+
+        .download-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            /* Further compressed padding and gap */
+            gap: 8px;
+            padding: 6px 10px;
+            width: 100%;
+            
+            /* Significantly reduced max-width for tight compression */
+            max-width: 260px;
+            
+            background: rgba(255, 255, 255, 0.35); 
+            border: 1px solid rgba(255, 255, 255, 0.25); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 12px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            color: #ffffff;
+        }
+
+        .download-info strong {
+            font-size: 11px;
+            font-weight: 700;
+            display: block;
+        }
+
+        .download-info span {
+            font-size: 9px; 
+            color: rgba(255, 255, 255, 0.8); 
+            display: block;
+        }
+
+        .download-action-btn {
+            background: #ffffff; 
+            color: #111827;
+            border: none;
+            /* Smaller button padding */
+            padding: 4px 8px;
+            font-weight: 700;
+            font-size: 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Modal styling remains the same for clarity */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            pointer-events: none; 
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+        .modal-card {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 16px;
+            max-width: 280px;
+            width: 85%;
+            text-align: center;
+        }
+
+        .modal-card h3 { margin: 0 0 8px 0; font-size: 16px; }
+        .modal-card p { color: #4b5563; font-size: 12px; margin-bottom: 15px; }
+        .modal-close-btn {
+            background: #111827; color: #ffffff; border: none;
+            padding: 10px; width: 100%; border-radius: 8px; font-weight: 600; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="download-banner-wrapper">
+        <div class="download-banner" id="apkDownloadBanner">
+            <div class="download-info">
+                <strong>Get BirrGo</strong>
+                <span>Secure APK</span>
+            </div>
+            <button id="dlBtnAction" class="download-action-btn">Download</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="installGuideModal">
+        <div class="modal-card">
+            <h3>Install BirrGo Wallet</h3>
+            <p>Your download will start automatically. Tap on the file and click "Install".</p>
+            <button class="modal-close-btn" id="closeModalBtn">Got it</button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const dlBtn = document.getElementById('dlBtnAction');
+            const modal = document.getElementById('installGuideModal');
+            const closeBtn = document.getElementById('closeModalBtn');
+
+            if (dlBtn && modal && closeBtn) {
+                dlBtn.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    modal.classList.add('active');
+                });
+
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.remove('active');
+                    window.location.href = "https://github.com/birrgo/birrgo1.github.io/releases/latest/download/BirrGo.apk";
+                });
+            }
+        });
+    </script>
+</body>
+</html>

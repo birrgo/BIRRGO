@@ -6,447 +6,18 @@
     <title>BirrGo - Create Account</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <style>
-        :root {
-            --primary-burgundy: #8b0015;
-            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
-            --text-dark: #111827;
-            --text-muted: #4b5563;
-            --input-bg: #f3f4f6;
-            --focus-shadow: 0 4px 12px rgba(139, 0, 21, 0.08);
-            --error-red: #df2222;
-            --success-green: #10b981;
-            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100dvh;
-            overflow: hidden; 
-            background-color: #f8f9fa;
-            position: relative;
-        }
-
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .bg-wave {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-        .bg-wave-top {
-            top: 0;
-            height: 12vh;
-            min-height: 80px;
-        }
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 10vh;
-            min-height: 70px;
-        }
-
-        .back-btn {
-            position: absolute;
-            top: calc(20px + env(safe-area-inset-top));
-            left: 20px;
-            color: #ffffff;
-            z-index: 15;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            transition: background 0.2s ease;
-        }
-
-        .back-btn:active {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .app-view {
-            width: 100%;
-            height: 100dvh;
-            max-width: 450px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            padding: calc(10vh + env(safe-area-inset-top)) 24px calc(10vh + env(safe-area-inset-bottom)) 24px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .header-content {
-            text-align: center;
-            margin-bottom: 2vh;
-        }
-
-        .header-content h1 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--text-dark);
-            margin-bottom: 4px;
-            letter-spacing: -0.03em;
-        }
-
-        .header-content p {
-            font-size: 13px;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .step-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 2.5vh;
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .step-dot-active {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--primary-burgundy);
-            border: 2.5px solid #ffccd5;
-        }
-
-        .step-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background-color: #d1d5db;
-        }
-
-        .registration-form {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .input-group {
-            position: relative;
-            width: 100%;
-        }
-
-        .input-box {
-            width: 100%;
-            height: 52px;
-            background-color: var(--input-bg);
-            border: 1.5px solid transparent;
-            border-radius: 14px;
-            padding: 0 45px 0 16px;
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-dark);
-            outline: none;
-            transition: all 0.2s ease;
-        }
-
-        .input-box:focus {
-            border-color: var(--primary-burgundy);
-            background-color: #ffffff;
-            box-shadow: var(--focus-shadow);
-        }
-
-        .field-label {
-            position: absolute;
-            top: -9px;
-            left: 14px;
-            background-color: #f8f9fa;
-            padding: 0 6px;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-dark);
-            z-index: 2;
-        }
-
-        .label-required {
-            color: var(--primary-burgundy);
-            font-weight: 700;
-        }
-
-        .phone-input-wrapper {
-            display: flex;
-            align-items: center;
-        }
-
-        .country-trigger {
-            position: absolute;
-            left: 14px;
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            cursor: pointer;
-            height: 100%;
-            padding-right: 8px;
-            border-right: 1.5px solid #e5e7eb;
-        }
-
-        .trigger-flag {
-            font-size: 18px;
-            line-height: 1;
-        }
-
-        .trigger-code {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-dark);
-        }
-
-        .trigger-arrow {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 1px;
-        }
-
-        .input-box.phone-indent {
-            padding-left: 105px; 
-        }
-
-        .country-modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            z-index: 2000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-        }
-
-        .country-modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .country-modal {
-            width: 90%;
-            max-width: 360px;
-            background: #ffffff;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            transform: scale(0.9); 
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-height: 70vh;
-        }
-
-        .country-modal-overlay.active .country-modal {
-            transform: scale(0.95); 
-        }
-
-        .modal-search-wrapper {
-            padding: 14px;
-            border-bottom: 1px solid #f3f4f6;
-            background: #ffffff;
-        }
-
-        .modal-search {
-            width: 100%;
-            height: 40px;
-            background: #f3f4f6;
-            border: 1.5px solid transparent;
-            border-radius: 10px;
-            padding: 0 12px;
-            font-size: 14px;
-            font-weight: 600;
-            outline: none;
-        }
-
-        .modal-search:focus {
-            border-color: var(--primary-burgundy);
-            background: #ffffff;
-        }
-
-        .country-list-scroll {
-            overflow-y: auto;
-            flex: 1;
-            padding: 6px 0;
-        }
-
-        .country-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 16px;
-            cursor: pointer;
-            transition: background 0.15s ease;
-            gap: 12px;
-        }
-
-        .country-item:active, .country-item:hover {
-            background: #f9fafb;
-        }
-
-        .item-flag {
-            font-size: 20px;
-        }
-
-        .item-name {
-            font-size: 14px;
-            font-weight: 500;
-            color: var(--text-dark);
-            flex: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .item-code {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        .input-helper-text {
-            font-size: 11px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            padding-left: 4px;
-            font-weight: 500;
-        }
-
-        .input-icon-right {
-            position: absolute;
-            right: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: #9ca3af;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            pointer-events: none;
-        }
-
-        .form-action-area {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin-top: 5px;
-            padding-bottom: 28px;
-        }
-
-        .btn-submit {
-            width: 100%;
-            height: 54px;
-            background: var(--primary-gradient);
-            color: #ffffff;
-            font-size: 15px;
-            font-weight: 600;
-            border: none;
-            border-radius: 16px;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
-            transition: transform 0.1s ease, opacity 0.2s ease;
-            letter-spacing: -0.01em;
-        }
-
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
-
-        .btn-submit:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .login-redirect-footer {
-            position: fixed;
-            bottom: calc(4vh + env(safe-area-inset-bottom));
-            left: 0;
-            width: 100%;
-            font-size: 12px;
-            color: #ffffff;
-            text-align: center;
-            font-weight: 600;
-            z-index: 10;
-        }
-
-        .login-redirect-footer a {
-            color: #ffffff;
-            font-weight: 800;
-            text-decoration: underline;
-        }
-
-        .toast-container {
-            position: absolute;
-            top: calc(20px + env(safe-area-inset-top));
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(17, 24, 39, 0.96);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            color: #ffffff;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-size: 13px;
-            font-weight: 600;
-            z-index: 999;
-            display: none;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-            width: 85%;
-            max-width: 360px;
-        }
-
-        @media (max-height: 650px) {
-            .app-view { padding-top: 80px; padding-bottom: 60px; }
-            .header-content h1 { font-size: 22px; }
-            .btn-submit { height: 50px; }
-            .step-indicator { margin-bottom: 1.5vh; }
-        }
-    </style>
+    <link rel="stylesheet" href="register.css">
 </head>
 <body>
 
     <div class="country-modal-overlay" id="countryModalOverlay">
         <div class="country-modal">
             <div class="modal-search-wrapper">
-                <input type="text" id="modalSearchInput" class="modal-search" placeholder="Search country or code...">
+                <input type="text" id="modalSearchInput" class="modal-search" placeholder="Search country..." autocomplete="off">
             </div>
-            <div class="country-list-scroll" id="countryListScroll">
-                <!-- Injected via script -->
-            </div>
+            <div class="country-list-scroll" id="countryListScroll"></div>
         </div>
     </div>
 
@@ -466,27 +37,39 @@
 
     <div class="toast-container" id="toast-message"></div>
 
-    <a href="index.html" class="back-btn" aria-label="Go back">
+    <button id="navBackBtn" class="back-btn" style="border:none; cursor:pointer;" aria-label="Go back">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
             <path d="M19 12H5M12 19l-7-7 7-7"/>
         </svg>
-    </a>
+    </button>
 
     <div class="app-view">
         <div class="header-content">
-            <h1>Create Your Account</h1>
+            <h1 id="screen-title">Create Your Account</h1>
             <p id="referrer-label">Enter your details to get started with BirrGo.</p>
         </div>
 
         <div class="step-indicator">
-            <span class="step-dot-active"></span>
-            <span>1. Details</span>
-            <span class="step-dot"></span>
+            <span id="stepDot1" class="step-dot-active"></span>
+            <span id="stepText1">1. Details</span>
+            <span id="stepDot2" class="step-dot"></span>
+            <span id="stepText2">2. Verify</span>
             <span class="step-dot"></span>
             <span class="step-dot"></span>
         </div>
 
         <form class="registration-form" id="signupForm">
+            <div class="input-group">
+                <span class="field-label">Full Name <span class="label-required">*</span></span>
+                <input type="text" id="regName" class="input-box" placeholder="First Middle Last" required autocomplete="off">
+                <div class="input-icon-right">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </div>
+            </div>
+
             <div>
                 <div class="input-group phone-input-wrapper">
                     <span class="field-label">Phone Number <span class="label-required">*</span></span>
@@ -497,7 +80,7 @@
                         <span class="trigger-arrow">▼</span>
                     </div>
 
-                    <input type="tel" id="regPhone" class="input-box phone-indent" placeholder="Phone number" required>
+                    <input type="tel" id="regPhone" class="input-box phone-indent" placeholder="Phone number" required autocomplete="off">
                     <div class="input-icon-right">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -508,19 +91,19 @@
             </div>
 
             <div class="input-group">
-                <span class="field-label">Full Name <span class="label-required">*</span></span>
-                <input type="text" id="regName" class="input-box" placeholder="First Middle Last" required>
+                <span class="field-label">Email Address <span class="label-required">*</span></span>
+                <input type="email" id="regEmail" class="input-box" placeholder="example@mail.com" required autocomplete="off">
                 <div class="input-icon-right">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                 </div>
             </div>
 
             <div class="input-group">
-                <span class="field-label">Create Pin (4-digits) <span class="label-required">*</span></span>
-                <input type="password" id="regPin" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" class="input-box" placeholder="••••" required>
+                <span class="field-label">Create Pin (6-digits) <span class="label-required">*</span></span>
+                <input type="password" id="regPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
                 <div class="input-icon-right">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -531,283 +114,36 @@
 
             <div class="input-group">
                 <span class="field-label">Confirm Pin <span class="label-required">*</span></span>
-                <input type="password" id="regConfirmPin" maxlength="4" pattern="[0-9]{4}" inputmode="numeric" class="input-box" placeholder="••••" required>
+                <input type="password" id="regConfirmPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
             </div>
 
             <div class="form-action-area">
-                <button type="submit" id="submitBtn" class="btn-submit">Verify & Create Account</button>
+                <button type="submit" id="submitBtn" class="btn-submit">Continue to Verification</button>
             </div>
         </form>
+
+        <div class="verification-view" id="otpView" style="display: none;">
+            <div class="otp-container" id="otpInputsWrapper">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+            </div>
+
+            <p class="resend-text">Didn't receive the email? <span id="resendCodeBtn" class="resend-link disabled">Resend in (30s)</span></p>
+
+            <div class="form-action-area" style="margin-top:20px;">
+                <button type="button" id="verifyOtpBtn" class="btn-submit">Verify OTP & Create Account</button>
+            </div>
+        </div>
 
         <div class="login-redirect-footer">
             Already have an account? <a href="new2.html">Log In</a>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, set, runTransaction, push, query, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
-            authDomain: "birrgo-fdf7e.firebaseapp.com",
-            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
-            projectId: "birrgo-fdf7e",
-            storageBucket: "birrgo-fdf7e.firebasestorage.app",
-            messagingSenderId: "2317445154",
-            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
-            measurementId: "G-24X13TZ43D"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        const countries = [
-            { name: "Ethiopia", code: "+251", flag: "🇪🇹" },
-            { name: "Kenya", code: "+254", flag: "🇰🇪" },
-            { name: "United States", code: "+1", flag: "🇺🇸" },
-            { name: "United Kingdom", code: "+44", flag: "🇬🇧" },
-            { name: "United Arab Emirates", code: "+971", flag: "🇺🇦" },
-            { name: "Sudan", code: "+249", flag: "🇸🇩" },
-            { name: "Somalia", code: "+252", flag: "🇸🇴" },
-            { name: "Djibouti", code: "+253", flag: "🇩🇯" },
-            { name: "Uganda", code: "+256", flag: "🇺🇬" },
-            { name: "Tanzania", code: "+255", flag: "🇹🇿" },
-            { name: "Nigeria", code: "+234", flag: "🇳🇬" },
-            { name: "Ghana", code: "+233", flag: "🇬🇭" },
-            { name: "South Africa", code: "+27", flag: "🇿🇦" },
-            { name: "Saudi Arabia", code: "+966", flag: "🇸🇦" },
-            { name: "Canada", code: "+1", flag: "🇨🇦" },
-            { name: "Germany", code: "+49", flag: "🇩🇪" },
-            { name: "France", code: "+33", flag: "🇫🇷" },
-            { name: "India", code: "+91", flag: "🇮🇳" },
-            { name: "China", code: "+86", flag: "🇨🇳" },
-            { name: "Australia", code: "+61", flag: "🇦🇺" }
-        ];
-
-        let activeSelectedPrefix = "+251";
-        const overlay = document.getElementById('countryModalOverlay');
-        const listScrollContainer = document.getElementById('countryListScroll');
-        const searchInput = document.getElementById('modalSearchInput');
-
-        function populateCountries(filterText = "") {
-            listScrollContainer.innerHTML = "";
-            const cleanFilter = filterText.toLowerCase().trim();
-            
-            const filtered = countries.filter(c => 
-                c.name.toLowerCase().includes(cleanFilter) || 
-                c.code.includes(cleanFilter)
-            );
-
-            filtered.forEach(country => {
-                const row = document.createElement('div');
-                row.className = 'country-item';
-                row.innerHTML = `
-                    <span class="item-flag">${country.flag}</span>
-                    <span class="item-name">${country.name}</span>
-                    <span class="item-code">${country.code}</span>
-                `;
-                row.addEventListener('click', () => {
-                    document.getElementById('currentFlag').innerText = country.flag;
-                    document.getElementById('currentCode').innerText = country.code;
-                    activeSelectedPrefix = country.code;
-                    closeCountryModal();
-                });
-                listScrollContainer.appendChild(row);
-            });
-        }
-
-        function openCountryModal() {
-            populateCountries();
-            searchInput.value = "";
-            overlay.classList.add('active');
-        }
-
-        function closeCountryModal() {
-            overlay.classList.remove('active');
-        }
-
-        document.getElementById('countryTriggerBtn').addEventListener('click', openCountryModal);
-        overlay.addEventListener('click', (e) => {
-            if (e.target === overlay) closeCountryModal();
-        });
-        searchInput.addEventListener('input', (e) => {
-            populateCountries(e.target.value);
-        });
-
-        let referrerAccountId = "";
-        document.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const refParam = urlParams.get('ref');
-            if (refParam) {
-                referrerAccountId = refParam.trim();
-                if (referrerAccountId) {
-                    document.getElementById('referrer-label').innerHTML = `Invited by User: <span style="color:var(--primary-burgundy);font-weight:700;">${referrerAccountId}</span>`;
-                }
-            }
-        });
-
-        document.getElementById('regPhone').addEventListener('input', (e) => {
-            e.target.value = e.target.value.replace(/[^0-9]/g, '');
-        });
-
-        function showNotification(message, isSuccess = false) {
-            const toast = document.getElementById('toast-message');
-            toast.innerText = message;
-            toast.style.background = isSuccess ? 'rgba(16, 185, 129, 0.95)' : 'rgba(223, 34, 34, 0.95)';
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3500);
-        }
-
-        document.getElementById('signupForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            const rawPhone = document.getElementById('regPhone').value.trim();
-            const fullName = document.getElementById('regName').value.trim();
-            const pin = document.getElementById('regPin').value;
-            const confirmPin = document.getElementById('regConfirmPin').value;
-
-            let cleanPhone = rawPhone.replace(/^0+/, '');
-            
-            if (cleanPhone.length < 6 || cleanPhone.length > 14) {
-                showNotification("Please enter a valid phone number length.");
-                return;
-            }
-
-            const nameParts = fullName.split(/\s+/).filter(part => part.length > 0);
-            if (nameParts.length !== 3) {
-                showNotification("Please enter exactly 3 names: First, Middle, and Last name.");
-                return;
-            }
-
-            if (pin.length !== 4 || !/^\d+$/.test(pin)) {
-                showNotification("PIN must be a secure 4-digit combination.");
-                return;
-            }
-            if (pin !== confirmPin) {
-                showNotification("PIN configurations do not match.");
-                return;
-            }
-
-            const formatGlobalPhone = activeSelectedPrefix + cleanPhone;
-            const firstNameOnly = nameParts[0];
-
-            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
-            const computedCardNumber = cleanPhone + final6Reversed;
-
-            try {
-                submitBtn.disabled = true;
-                submitBtn.innerText = "Checking Availability...";
-
-                const userSnapshot = await get(ref(db, 'users/' + cleanPhone));
-
-                if (userSnapshot.exists()) {
-                    showNotification("An account already exists with this phone number.");
-                    submitBtn.disabled = false;
-                    submitBtn.innerText = "Verify & Create Account";
-                    return;
-                }
-
-                submitBtn.innerText = "Saving Profile...";
-
-                let finalizedUserNumber = 1000; 
-                try {
-                    const globalCounterRef = ref(db, 'new/globalUserCounter');
-                    await runTransaction(globalCounterRef, (currentValue) => {
-                        let parsedValue = parseInt(currentValue);
-                        if (isNaN(parsedValue) || parsedValue < 1000) {
-                            return 1001;
-                        }
-                        finalizedUserNumber = parsedValue;
-                        return parsedValue + 1;
-                    });
-                } catch (counterErr) {
-                    console.error("Counter generation latency override fallback applied.", counterErr);
-                }
-
-                const userPayload = {
-                    phoneNumber: formatGlobalPhone,
-                    localPhoneRef: cleanPhone,
-                    firstName: firstNameOnly,
-                    fullName: fullName,
-                    securityPin: pin,
-                    walletBalance: 0.00,
-                    userNumber: finalizedUserNumber,
-                    accountId: "BG-" + finalizedUserNumber, 
-                    cardNumber: computedCardNumber, 
-                    createdAt: new Date().toISOString()
-                };
-
-                await set(ref(db, 'users/' + cleanPhone), userPayload);
-
-                if (referrerAccountId) {
-                    try {
-                        const usersRef = ref(db, 'users');
-                        const referralQuery = query(usersRef, orderByChild('accountId'), equalTo(referrerAccountId));
-                        const querySnapshot = await get(referralQuery);
-
-                        if (querySnapshot.exists()) {
-                            let inviterPhoneNode = "";
-                            
-                            querySnapshot.forEach((child) => {
-                                inviterPhoneNode = child.key; 
-                            });
-
-                            if (inviterPhoneNode && inviterPhoneNode !== cleanPhone) {
-                                const inviterBalanceRef = ref(db, `users/${inviterPhoneNode}/walletBalance`);
-                                const inviterTxRef = ref(db, `users/${inviterPhoneNode}/transactions`);
-                                const referredHistoryRef = ref(db, `users/${inviterPhoneNode}/referredUsers`);
-                                
-                                const fixedBonus = 50.00; 
-
-                                await runTransaction(inviterBalanceRef, (currentBalance) => {
-                                    let parsedBalance = parseFloat(currentBalance);
-                                    if (isNaN(parsedBalance)) parsedBalance = 0;
-                                    return parsedBalance + fixedBonus;
-                                });
-
-                                const now = new Date();
-                                const walletFormattedTime = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
-                                                           now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
-
-                                const newTxNode = push(inviterTxRef);
-                                await set(newTxNode, {
-                                    title: `Referral Bonus (${firstNameOnly})`,
-                                    amount: fixedBonus,
-                                    type: "income",
-                                    timestamp: walletFormattedTime
-                                });
-
-                                const historyLogNode = push(referredHistoryRef);
-                                await set(historyLogNode, {
-                                    fullName: fullName,
-                                    phone: cleanPhone,
-                                    timestamp: walletFormattedTime
-                                });
-                                
-                                console.log("Referral transaction completed successfully.");
-                            }
-                        }
-                    } catch (referralError) {
-                        console.error("Referral processing error: ", referralError);
-                    }
-                }
-
-                showNotification("Account created successfully!", true);
-                localStorage.setItem('auth_session_phone', cleanPhone);
-
-                setTimeout(() => {
-                    window.location.href = "dashboard.html"; 
-                }, 1500);
-
-            } catch (error) {
-                console.error("Database Write Latency Error: ", error);
-                showNotification("Connection lost. Please check your data.");
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Verify & Create Account";
-            }
-        });
-    </script>
+    <script type="module" src="register.js"></script>
 </body>
 </html>

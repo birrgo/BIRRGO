@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Connection Lost | BirrGo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827; 
+            --text-muted: #4b5563; 
+            --bg-light: #f8f9fa;
+            --btn-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh; 
+            overflow: hidden;
+            background-color: var(--bg-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top { top: 0; height: 12vh; min-height: 80px; }
+        .bg-wave-bottom { bottom: 0; height: 10vh; min-height: 70px; }
+
+        .app-view {
+            width: 100%;
+            max-width: 450px; 
+            padding: 20px;
+            text-align: center;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .error-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #fceceb;
+            color: var(--primary-burgundy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 12px;
+            letter-spacing: -0.03em;
+        }
+
+        p {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 32px;
+            padding: 0 20px;
+        }
+
+        .btn-retry {
+            width: 80%;
+            height: 56px; 
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600; 
+            background: var(--primary-gradient);
+            color: #ffffff;
+            box-shadow: var(--btn-shadow);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.15s ease;
+        }
+
+        .btn-retry:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Reusing top decorative wave -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/>
+                <stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <!-- Reusing bottom wave -->
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+    </svg>
+
+    <div class="app-view">
+        <div class="error-icon-wrapper">
+            <!-- Cloud Off / Disconnected Icon -->
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22.61 16.95A5 5 0 0 0 18 10h-1.26a8 8 0 0 0-7.05-6M5 5l14 14"></path>
+                <path d="M17 17H5a5 5 0 0 1-1.66-9.72"></path>
+            </svg>
+        </div>
+
+        <h1>Connection Lost</h1>
+        <p>Your wallet is secure, but BirrGo requires an internet connection to process live payments. Let's try getting you back online.</p>
+
+        <!-- Fixed button handling logic -->
+        <button id="retryBtn" class="btn-retry">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+            </svg>
+            <span id="btnText">Try Again</span>
+        </button>
+    </div>
+
+    <script>
+        // SMART CHECK: Detect intended target page using URL tracking or storage fallback
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetPage = urlParams.get('redirect') || localStorage.getItem('birrgo_last_page') || 'index.html';
+
+        function tryToReconnect() {
+            const btnText = document.getElementById('btnText');
+            const retryBtn = document.getElementById('retryBtn');
+            
+            if (navigator.onLine) {
+                btnText.innerText = "Connecting...";
+                // Redirect straight back to the user's specific page or tab state
+                window.location.href = targetPage;
+            } else {
+                btnText.innerText = "Still Offline...";
+                retryBtn.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    btnText.innerText = "Try Again";
+                    retryBtn.style.opacity = '1';
+                }, 1500);
+            }
+        }
+
+        // Click handler for manual retry
+        document.getElementById('retryBtn').addEventListener('click', tryToReconnect);
+
+        // Auto-recovery: Instantly redirect to the correct target page when service comes back
+        window.addEventListener('online', () => {
+            window.location.href = targetPage;
+        });
+    </script>
+</body>
+</html>

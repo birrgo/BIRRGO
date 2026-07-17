@@ -525,8 +525,8 @@
                 </div>
 
                 <div class="input-group">
-                    <label for="userPinInput">Enter Account PIN (4-digits)</label>
-                    <input type="password" id="userPinInput" maxlength="4" inputmode="numeric" class="input-field" placeholder="••••">
+                    <label for="userPinInput">Enter Account PIN (6-digits)</label>
+                    <input type="password" id="userPinInput" maxlength="6" inputmode="numeric" class="input-field" placeholder="••••••">
                 </div>
 
                 <button class="btn-sheet-confirm" id="confirmPurchaseBtn">Verify & Pay 200 Birr</button>
@@ -663,8 +663,8 @@
 
         confirmPurchaseBtn.addEventListener('click', async () => {
             const enteredPin = document.getElementById('userPinInput').value.trim();
-            if(!enteredPin || enteredPin.length !== 4) {
-                showToast("Please enter your valid 4-digit security PIN.", "error");
+            if(!enteredPin || enteredPin.length !== 6) {
+                showToast("Please enter your valid 6-digit security PIN.", "error");
                 return;
             }
 

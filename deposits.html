@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BirrGo Main Admin - deposits.html</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="deposits.css">
+    
+    <!-- UPGRADED TO EMAILJS SDK V4 FOR PROPER COMPATIBILITY -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        /* Custom UI Toast Pop-up Notification */
+        .custom-toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #1e1e2d;
+            color: #ffffff;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 9999;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border-left: 4px solid var(--success-color, #10b981);
+        }
+        .custom-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .custom-toast .toast-icon {
+            font-size: 18px;
+        }
+        
+        /* Tab live badge notification badges */
+        .nav-badge {
+            background-color: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 20px;
+            margin-left: 6px;
+            display: inline-block;
+        }
+        .nav-badge.zero {
+            background-color: #9ca3af;
+            display: none; /* Auto-hide if there's nothing pending */
+        }
+
+        .nav-badge.unpaid-badge {
+            background-color: #f59e0b; /* Orange for Unpaid Orders */
+        }
+        
+        /* Grid styling helper for dual inputs */
+        .dual-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        @media (max-width: 480px) {
+            .dual-inputs {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="top-nav">
+        <div class="brand-header">
+            <div class="brand-logo">Birr<span>Go Admin Hub </span></div>
+        </div>
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="switchTab('pane-stats', this)">System & Alerts</button>
+            <button class="tab-btn" onclick="switchTab('pane-unpaid', this)">
+                Unpaid Orders <span id="tab-badge-unpaid" class="nav-badge zero unpaid-badge">0</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('pane-deposits', this)">
+                Pending Reviews <span id="tab-badge-pending" class="nav-badge zero">0</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('pane-chats', this)">
+                Chat Services <span id="tab-badge-chats" class="nav-badge zero">0</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="content-body">
+
+        <!-- Tab Panel 1: System and Alerts -->
+        <div id="pane-stats" class="tab-panel active">
+            <div class="scrollable-content">
+                
+                <div class="status-toggle-row">
+                    <div>
+                        <h4 style="font-size: 13px; font-weight:800;">Global Platform Status</h4>
+                        <p style="font-size: 11px; color: var(--text-muted);" id="gateway-label">GATEWAY ONLINE</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="gateway-toggle" checked onchange="toggleGatewayMobile()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="mobile-metric-row">
+                    <div class="mini-stat-card" onclick="simulateIncomingAlerts()" style="cursor: pointer; border: 1.5px dashed var(--warning-color);">
+                        <div class="stat-label">Click to Mock Test ⚡</div>
+                        <div class="stat-value" style="color: var(--warning-color);" id="metric-pending">0</div>
+                    </div>
+                    <div class="mini-stat-card">
+                        <div class="stat-label">Verified Today</div>
+                        <div class="stat-value" style="color: var(--success-color);" id="metric-approved">0 ETB</div>
+                    </div>
+                </div>
+
+                <div class="card" style="border: 2.5px solid var(--primary-burgundy); background-color: #fdf2f4;">
+                    <h3 class="card-title" style="color: var(--primary-burgundy); display: flex; align-items: center; gap: 8px;">
+                        📧 Real-Time Email Dispatcher Config
+                    </h3>
+                    <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                        When new transactions happen or support queries are sent, they are instantly redirected directly to your designated email address.
+                    </p>
+                    
+                    <div class="form-group">
+                        <label>Your Target Admin Email Address</label>
+                        <input type="email" class="form-control" id="target-email" placeholder="e.g. admin@yourdomain.com">
+                    </div>
+                    <div class="form-group">
+                        <label>EmailJS Public Key</label>
+                        <input type="text" class="form-control" id="emailjs-public-key" placeholder="e.g. user_A1b2C3d4...">
+                    </div>
+                    <div class="form-group">
+                        <label>EmailJS Service ID</label>
+                        <input type="text" class="form-control" id="emailjs-service-id" placeholder="e.g. service_gmail">
+                    </div>
+                    <div class="form-group">
+                        <label>EmailJS Template ID</label>
+                        <input type="text" class="form-control" id="emailjs-template-id" placeholder="e.g. template_alerts">
+                    </div>
+                    <button class="btn-primary" onclick="saveEmailSettings()">Save Settings & Test Dispatch</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: var(--primary-burgundy);">Commercial Bank of Ethiopia (CBE)</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Active Admin Account Number</label>
+                            <input type="text" class="form-control" id="cbe-num" placeholder="Account Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Account Holder Full Name</label>
+                            <input type="text" class="form-control" id="cbe-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="saveSettingWithDetails('cbe', 'cbe-num', 'cbe-name')">Save CBE Account</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: #10b981;">Telebirr Wallet</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Telebirr Registered Phone</label>
+                            <input type="text" class="form-control" id="tele-num" placeholder="Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Registered Owner Full Name</label>
+                            <input type="text" class="form-control" id="tele-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #059669 0%, #10b981 100%);" onclick="saveSettingWithDetails('telebirr', 'tele-num', 'tele-name')">Save Telebirr Info</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: #d97706;">Bank of Abyssinia (BoA)</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Active Admin Account</label>
+                            <input type="text" class="form-control" id="boa-num" placeholder="Account Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Account Holder Full Name</label>
+                            <input type="text" class="form-control" id="boa-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #b45309 0%, #d97706 100%);" onclick="saveSettingWithDetails('boa', 'boa-num', 'boa-name')">Save BoA Account</button>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title" style="color: #ef4444;">M-Pesa Safaricom</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Admin Till / Phone</label>
+                            <input type="text" class="form-control" id="mpesa-num" placeholder="Till or Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Merchant / Owner Full Name</label>
+                            <input type="text" class="form-control" id="mpesa-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #dc2626 0%, #ef4444 100%);" onclick="saveSettingWithDetails('mpesa', 'mpesa-num', 'mpesa-name')">Save M-Pesa Merchant</button>
+                </div>
+
+                <div class="card" style="margin-bottom: 32px;">
+                    <h3 class="card-title" style="color: #4f46e5;">CBE Birr</h3>
+                    <div class="dual-inputs">
+                        <div class="form-group">
+                            <label>Admin Wallet Number</label>
+                            <input type="text" class="form-control" id="cbebirr-num" placeholder="Wallet Phone Number">
+                        </div>
+                        <div class="form-group">
+                            <label>Wallet Owner Full Name</label>
+                            <input type="text" class="form-control" id="cbebirr-name" placeholder="Full Name">
+                        </div>
+                    </div>
+                    <button class="btn-primary" style="background: linear-gradient(90deg, #4338ca 0%, #4f46e5 100%);" onclick="saveSettingWithDetails('cbebirr', 'cbebirr-num', 'cbebirr-name')">Save CBE Birr Wallet</button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Tab Panel 2: Unpaid Orders -->
+        <div id="pane-unpaid" class="tab-panel">
+            <div class="scrollable-content" id="unpaid-cards-container">
+            </div>
+        </div>
+
+        <!-- Tab Panel 3: Pending Reviews -->
+        <div id="pane-deposits" class="tab-panel">
+            <div class="scrollable-content" id="tx-cards-container">
+            </div>
+        </div>
+
+        <!-- Tab Panel 4: Chat Services -->
+        <div id="pane-chats" class="tab-panel">
+            <div class="chat-mobile-wrapper">
+                <div class="chat-user-selector" id="chat-list-view"></div>
+                <div class="chat-active-window" id="chat-room-view">
+                    <div class="chat-top-header">
+                        <button class="btn-back" onclick="exitChatRoom()">← Back</button>
+                        <div>
+                            <h4 id="active-user-title" style="font-size: 14px; font-weight:800;">Selected Client</h4>
+                            <p style="font-size: 10px; color: var(--text-muted);">Secure Client Tunnel</p>
+                        </div>
+                    </div>
+                    <div class="chat-scroller" id="chat-messages-box"></div>
+                    <div class="chat-footer">
+                        <input type="text" id="chat-msg-input" class="form-control" placeholder="Type administrative response..." style="flex-grow: 1;">
+                        <button class="btn-primary" id="send-chat-btn" style="width: auto; padding: 0 16px; height: 42px;">Send</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="modal" id="slipModal" onclick="closeSlip()">
+        <div class="modal-body" onclick="event.stopPropagation()">
+            <h4 style="margin-bottom: 8px; font-weight: 800;">P2P Verification Slip</h4>
+            <img id="slipImg" src="" alt="Deposit Proof Receipt">
+            <button class="btn-primary" style="background:#f3f4f6; color:#000;" onclick="closeSlip()">Close Frame</button>
+        </div>
+    </div>
+
+    <div class="custom-toast" id="system-toast">
+        <span class="toast-icon">🚀</span>
+        <span class="toast-text" id="toast-message">System updated successfully!</span>
+    </div>
+
+    <script type="module">
+        import { db, ref, set, get, onValue, push, runTransaction } from './db.js';
+
+        // --- GLOBAL VARIABLES ---
+        let activeUserId = '';
+        let activeDepositList = {};
+
+        // --- CUSTOM TOAST UI POPUP ---
+        window.showToast = function(message, type = 'success') {
+            const toast = document.getElementById('system-toast');
+            const textEl = document.getElementById('toast-message');
+            
+            textEl.innerText = message;
+            
+            if (type === 'success') {
+                toast.style.borderLeft = "4px solid #10b981";
+                toast.querySelector('.toast-icon').innerText = '✅';
+            } else if (type === 'error') {
+                toast.style.borderLeft = "4px solid #ef4444";
+                toast.querySelector('.toast-icon').innerText = '❌';
+            } else {
+                toast.style.borderLeft = "4px solid #f59e0b";
+                toast.querySelector('.toast-icon').innerText = '🔔';
+            }
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        };
+
+        window.switchTab = function(tabId, button) {
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(tabId).classList.add('active');
+            button.classList.add('active');
+        };
+
+        window.exitChatRoom = function() {
+            activeUserId = '';
+            document.getElementById('chat-room-view').classList.remove('active');
+            document.getElementById('chat-list-view').classList.remove('hidden');
+        };
+
+        window.closeSlip = function() {
+            document.getElementById('slipModal').style.display = 'none';
+        };
+
+        window.viewSlip = function(receiptUrl, fallbackRef) {
+            const imgEl = document.getElementById('slipImg');
+            imgEl.src = receiptUrl || `https://placehold.co/400x600/f3f4f6/8b0015?text=${fallbackRef}+Receipt`;
+            document.getElementById('slipModal').style.display = 'flex';
+        };
+
+        // --- REAL-TIME EMAIL NOTIFICATION ENGINE ---
+        function sendEmailNotification(subjectText, txDetails = {}) {
+            get(ref(db, 'settings/email_config')).then((snapshot) => {
+                const config = snapshot.val();
+                if (!config) {
+                    console.warn("Email dispatch skipped: Config metadata not configured inside the Firebase DB.");
+                    return;
+                }
+
+                const targetEmail = config.alert_email_target;
+                const publicKey = config.emailjs_public_key;
+                const serviceId = config.emailjs_service_id;
+                const templateId = config.emailjs_template_id;
+
+                const emailjsInstance = window.emailjs;
+
+                if (emailjsInstance && publicKey && serviceId && templateId && targetEmail) {
+                    emailjsInstance.init({
+                        publicKey: publicKey
+                    });
+
+                    const templateParams = {
+                        name: txDetails.name || txDetails.userId || 'Guest Client',
+                        email: txDetails.email || txDetails.userId || 'N/A',
+                        amount: txDetails.amount || '0',
+                        subject: `⚠️ [BirrGo Alert] ${subjectText}`, 
+                        method: txDetails.method || 'Unknown Gateway',
+                        ref: txDetails.ref || 'N/A',
+                        status: txDetails.status || 'Pending',
+                        reason: txDetails.reason || 'None given'
+                    };
+
+                    emailjsInstance.send(serviceId, templateId, templateParams)
+                        .then(() => console.log('Cloud-driven real-time alert dispatch successful.'))
+                        .catch((err) => console.error('EmailJS dispatch failed: ', err));
+                }
+            }).catch(err => {
+                console.error("Failed to read email config parameters from database: ", err);
+            });
+
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(subjectText, { 
+                    body: `Tx: ${txDetails.ref || 'N/A'} - ${txDetails.amount || 0} ETB via ${txDetails.method || 'N/A'}` 
+                });
+            }
+        }
+
+        // --- SAVE EMAIL SETTINGS DIRECTLY TO THE FIREBASE CLOUD ---
+        window.saveEmailSettings = function() {
+            const email = document.getElementById('target-email').value.trim();
+            const pubKey = document.getElementById('emailjs-public-key').value.trim();
+            const serviceId = document.getElementById('emailjs-service-id').value.trim();
+            const templateId = document.getElementById('emailjs-template-id').value.trim();
+
+            if (!email || !pubKey || !serviceId || !templateId) {
+                window.showToast("All configuration fields are required!", "error");
+                return;
+            }
+
+            set(ref(db, 'settings/email_config'), {
+                alert_email_target: email,
+                emailjs_public_key: pubKey,
+                emailjs_service_id: serviceId,
+                emailjs_template_id: templateId
+            })
+            .then(() => {
+                window.showToast("Cloud Email configurations updated successfully!");
+
+                if ('Notification' in window && Notification.permission !== 'granted') {
+                    Notification.requestPermission();
+                }
+
+                sendEmailNotification("System Cloud Integration Verified", {
+                    name: "BirrGo Administrator",
+                    email: email,
+                    amount: "0",
+                    method: "Database Setup Check",
+                    ref: "SYS-DB-INIT",
+                    status: "Active"
+                });
+            })
+            .catch(err => {
+                window.showToast("Failed to write to Cloud DB: " + err.message, "error");
+            });
+        };
+
+        window.saveSettingWithDetails = function(gateway, numberInputId, nameInputId) {
+            const numberVal = document.getElementById(numberInputId).value.trim();
+            const nameVal = document.getElementById(nameInputId).value.trim();
+
+            if (!numberVal || !nameVal) {
+                window.showToast("Please fill out both the account details and owner name", "error");
+                return;
+            }
+
+            set(ref(db, `settings/accounts/${gateway}`), {
+                number: numberVal,
+                holder_name: nameVal
+            })
+            .then(() => {
+                window.showToast(`${gateway.toUpperCase()} config updated to: ${nameVal}`);
+            })
+            .catch(err => {
+                window.showToast("Cloud write failed: " + err.message, "error");
+            });
+        };
+
+        window.toggleGatewayMobile = function() {
+            const active = document.getElementById('gateway-toggle').checked;
+            set(ref(db, 'settings/gateway_online'), active)
+                .catch(err => {
+                    window.showToast("Error saving gateway state: " + err.message, "error");
+                    document.getElementById('gateway-toggle').checked = !active;
+                });
+        };
+
+        // --- REAL-TIME TRANSACTION ENGINE (SPLIT INTO PENDING AND UNPAID) ---
+        function listenToDeposits() {
+            const container = document.getElementById('tx-cards-container');
+            const unpaidContainer = document.getElementById('unpaid-cards-container');
+            
+            const pendingMetric = document.getElementById('metric-pending');
+            const approvedMetric = document.getElementById('metric-approved');
+            
+            const topMenuPendingBadge = document.getElementById('tab-badge-pending');
+            const topMenuUnpaidBadge = document.getElementById('tab-badge-unpaid');
+
+            let initialLoadComplete = false;
+            const knownTxKeys = new Set();
+
+            onValue(ref(db, 'deposits'), (snapshot) => {
+                const data = snapshot.val() || {};
+                activeDepositList = data; 
+                
+                let pendingCount = 0;
+                let unpaidCount = 0;
+                let approvedTotal = 0;
+                
+                container.innerHTML = '';
+                unpaidContainer.innerHTML = '';
+
+                const keys = Object.keys(data).reverse();
+
+                if (keys.length === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No reviews found.</p>`;
+                    unpaidContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No open unpaid orders found.</p>`;
+                }
+
+                let totalUnpaidRendered = 0;
+                let totalPendingRendered = 0;
+
+                keys.forEach((dbKey) => {
+                    const dep = data[dbKey];
+                    const rawStatus = (dep.status || 'unpaid').toLowerCase();
+
+                    if (rawStatus === 'pending') pendingCount++;
+                    if (rawStatus === 'unpaid') unpaidCount++;
+                    if (dep.status === 'Approved') approvedTotal += parseFloat(dep.amount || 0);
+
+                    // Auto-notification for freshly incoming pending review deposits
+                    if (initialLoadComplete && !knownTxKeys.has(dbKey) && rawStatus === 'pending') {
+                        get(ref(db, `users/${dep.userId}/fullName`)).then((nameSnap) => {
+                            const clientFullName = nameSnap.val() || dep.userId;
+                            sendEmailNotification("New Pending Order Placed", {
+                                name: clientFullName,
+                                email: dep.userId,
+                                amount: dep.amount,
+                                method: dep.method,
+                                ref: dep.ref,
+                                status: 'Pending'
+                            });
+                        }).catch(() => {
+                            sendEmailNotification("New Pending Order Placed", {
+                                name: dep.userId,
+                                email: dep.userId,
+                                amount: dep.amount,
+                                method: dep.method,
+                                ref: dep.ref,
+                                status: 'Pending'
+                            });
+                        });
+                    }
+                    knownTxKeys.add(dbKey);
+
+                    const card = document.createElement('div');
+                    card.className = 'mobile-tx-card';
+                    card.id = `card-${dbKey}`;
+                    
+                    let badgeStyle = '';
+                    if (rawStatus === 'pending') {
+                        badgeStyle = 'background:#fef3c7; color:#d97706;';
+                    } else if (rawStatus === 'unpaid') {
+                        badgeStyle = 'background:rgba(245, 158, 11, 0.15); color:#f59e0b;';
+                    } else if (dep.status === 'Approved') {
+                        badgeStyle = 'background:#d1fae5; color:#059669;';
+                    } else {
+                        badgeStyle = 'background:#fee2e2; color:#dc2626;';
+                    }
+
+                    let reasonDisplay = dep.reject_reason ? `<div class="tx-row" style="color:#ef4444;"><span style="font-weight:600;">Reason:</span> <span>${dep.reject_reason}</span></div>` : '';
+
+                    // Layout changes for unpaid orders vs reviews with slips
+                    const isUnpaidCard = rawStatus === 'unpaid';
+                    const slipActionHtml = isUnpaidCard 
+                        ? `<button class="btn-action-mobile" style="background:#f3f4f6; color:#9ca3af; cursor: not-allowed;" disabled>No Receipt</button>`
+                        : `<button class="btn-action-mobile" style="background:#f3f4f6; color:#111;" id="view-slip-${dbKey}">View Receipt</button>`;
+
+                    const actionPanelHtml = (rawStatus === 'pending' || rawStatus === 'unpaid') ? `
+                        <div class="tx-actions">
+                            ${slipActionHtml}
+                            <button class="btn-action-mobile" style="background:var(--success-color); color:white;" id="approve-${dbKey}">Approve</button>
+                            <button class="btn-action-mobile" style="background:var(--danger-color); color:white;" id="reject-${dbKey}">Reject</button>
+                        </div>
+                    ` : `
+                        <div class="tx-actions">
+                            ${slipActionHtml}
+                        </div>
+                    `;
+
+                    card.innerHTML = `
+                        <div class="tx-header">
+                            <span class="tx-ref">${dep.ref || 'N/A'}</span>
+                            <span style="font-size:10px; font-weight:800; padding:3px 8px; border-radius:6px; text-transform:uppercase; ${badgeStyle}">${dep.status || 'Unpaid'}</span>
+                        </div>
+                        <div class="tx-row">
+                            <span style="color:var(--text-muted);">Gateway:</span>
+                            <span style="font-weight:600;">${dep.method || 'N/A'}</span>
+                        </div>
+                        <div class="tx-row">
+                            <span style="color:var(--text-muted);">Client Ref:</span>
+                            <span style="font-weight:600;" id="client-info-${dbKey}">${dep.userId || 'N/A'}</span>
+                        </div>
+                        <div class="tx-row">
+                            <span style="color:var(--text-muted);">Transfer Amount:</span>
+                            <span style="font-weight:800; color:var(--primary-burgundy);">${parseFloat(dep.amount || 0).toLocaleString()} ETB</span>
+                        </div>
+                        ${reasonDisplay}
+                        ${actionPanelHtml}
+                    `;
+
+                    // Route Card rendering to the appropriate panel view
+                    if (isUnpaidCard) {
+                        unpaidContainer.appendChild(card);
+                        totalUnpaidRendered++;
+                    } else {
+                        container.appendChild(card);
+                        totalPendingRendered++;
+                    }
+
+                    if (dep.userId) {
+                        get(ref(db, `users/${dep.userId}/fullName`)).then((nameSnap) => {
+                            const fullName = nameSnap.val();
+                            const infoEl = document.getElementById(`client-info-${dbKey}`);
+                            if (infoEl && fullName) {
+                                infoEl.innerHTML = `${fullName} <span style="font-weight:400; color:var(--text-muted); font-size:11px;">(${dep.userId})</span>`;
+                            }
+                        }).catch(() => {});
+                    }
+
+                    if (!isUnpaidCard) {
+                        document.getElementById(`view-slip-${dbKey}`).onclick = () => window.viewSlip(dep.receiptUrl, dep.ref);
+                    }
+                    
+                    if (rawStatus === 'pending' || rawStatus === 'unpaid') {
+                        document.getElementById(`approve-${dbKey}`).onclick = () => {
+                            updateTransactionStatus(dbKey, 'Approved', '');
+                            window.showToast("Transaction Approved Successfully!");
+                        };
+                        document.getElementById(`reject-${dbKey}`).onclick = () => {
+                            const reason = prompt("Why are you rejecting this transaction?");
+                            if (reason === null) return; 
+                            
+                            updateTransactionStatus(dbKey, 'Rejected', reason.trim() || 'Invalid details provided');
+                            window.showToast("Transaction Rejected & Logged!", "error");
+                        };
+                    }
+                });
+
+                if (totalUnpaidRendered === 0) {
+                    unpaidContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No unpaid requests active.</p>`;
+                }
+                if (totalPendingRendered === 0) {
+                    container.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No pending reviews active.</p>`;
+                }
+
+                pendingMetric.innerText = pendingCount;
+                approvedMetric.innerText = `${approvedTotal.toLocaleString()} ETB`;
+
+                // Update pending reviews tab configuration
+                topMenuPendingBadge.innerText = pendingCount;
+                if (pendingCount > 0) {
+                    topMenuPendingBadge.classList.remove('zero');
+                } else {
+                    topMenuPendingBadge.classList.add('zero');
+                }
+
+                // Update unpaid orders tab configuration
+                topMenuUnpaidBadge.innerText = unpaidCount;
+                if (unpaidCount > 0) {
+                    topMenuUnpaidBadge.classList.remove('zero');
+                } else {
+                    topMenuUnpaidBadge.classList.add('zero');
+                }
+
+                initialLoadComplete = true;
+            });
+        }
+
+        function updateTransactionStatus(dbKey, newStatus, reason = '') {
+            const depositRef = ref(db, `deposits/${dbKey}`);
+            get(depositRef).then((snapshot) => {
+                const depositData = snapshot.val();
+                if (!depositData) return;
+                
+                let updates = {
+                    status: newStatus
+                };
+                if (newStatus === 'Rejected' && reason) {
+                    updates.reject_reason = reason;
+                }
+
+                set(ref(db, `deposits/${dbKey}`), { ...depositData, ...updates }).then(() => {
+                    const historyRecordRef = ref(db, `users/${depositData.userId}/transactions/${dbKey}`);
+                    const formatLabel = newStatus === 'Approved' 
+                        ? `⚡ Deposit Approved [${depositData.method}]` 
+                        : `🎟️ Deposit Declined [${depositData.method}]`;
+
+                    const dateObj = new Date();
+                    const readableTimestamp = dateObj.toLocaleDateString([], {month:'short', day:'numeric'}) + ' ' + dateObj.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+                    set(historyRecordRef, {
+                        title: formatLabel,
+                        amount: parseFloat(depositData.amount || 0),
+                        type: newStatus === 'Approved' ? 'income' : 'expense',
+                        status: newStatus,
+                        timestamp: readableTimestamp,
+                        sortingTime: Date.now(),
+                        orderRef: depositData.ref,
+                        ...(reason && { reason: reason })
+                    });
+
+                    if (newStatus === 'Approved') {
+                        const amountToAdd = parseFloat(depositData.amount || 0);
+                        const userWalletRef = ref(db, `users/${depositData.userId}/walletBalance`);
+                        runTransaction(userWalletRef, (currentBalance) => {
+                            return (parseFloat(currentBalance) || 0) + amountToAdd;
+                        });
+                    }
+
+                    get(ref(db, `users/${depositData.userId}/fullName`)).then((nameSnap) => {
+                        const clientName = nameSnap.val() || depositData.userId;
+                        sendEmailNotification(`Transaction ${newStatus}`, {
+                            name: clientName,
+                            email: depositData.userId,
+                            amount: depositData.amount,
+                            method: depositData.method,
+                            ref: depositData.ref,
+                            status: newStatus,
+                            reason: reason || 'N/A'
+                        });
+                    }).catch(() => {
+                        sendEmailNotification(`Transaction ${newStatus}`, {
+                            name: depositData.userId,
+                            email: depositData.userId,
+                            amount: depositData.amount,
+                            method: depositData.method,
+                            ref: depositData.ref,
+                            status: newStatus,
+                            reason: reason || 'N/A'
+                        });
+                    });
+                });
+            });
+        }
+
+        // --- REAL-TIME LIVE CHAT ENGINE ---
+        function listenToChatUsers() {
+            const listContainer = document.getElementById('chat-list-view');
+            const topMenuChatsBadge = document.getElementById('tab-badge-chats');
+            
+            onValue(ref(db, 'chats'), (snapshot) => {
+                listContainer.innerHTML = '';
+                const chats = snapshot.val() || {};
+                const userIds = Object.keys(chats);
+                
+                let totalUnreadCount = 0;
+
+                if (userIds.length === 0) {
+                    listContainer.innerHTML = `<p style="text-align: center; color: var(--text-muted); margin-top: 40px;">No customer chats active.</p>`;
+                }
+
+                userIds.forEach(userId => {
+                    const chatData = chats[userId];
+                    const messages = chatData.messages || {};
+                    
+                    let userUnreadCount = 0;
+                    Object.keys(messages).forEach(msgKey => {
+                        const msg = messages[msgKey];
+                        if (msg.sender === 'user' && msg.read !== true) {
+                            userUnreadCount++;
+                        }
+                    });
+
+                    totalUnreadCount += userUnreadCount;
+
+                    const item = document.createElement('div');
+                    item.className = 'chat-list-item';
+                    item.onclick = () => openChatRoom(userId);
+                    
+                    const unreadBadgeHtml = userUnreadCount > 0 
+                        ? `<span class="nav-badge" style="margin-left: auto; margin-right: 12px; display: inline-block;">${userUnreadCount}</span>` 
+                        : '';
+
+                    item.innerHTML = `
+                        <div class="user-badge">${userId.slice(-3).toUpperCase()}</div>
+                        <div style="flex-grow: 1;">
+                            <h4 style="font-size:14px; font-weight:800;">${userId}</h4>
+                            <p style="font-size:11px; color:var(--text-muted);">${userUnreadCount > 0 ? '💬 New message received' : 'Click to chat live'}</p>
+                        </div>
+                        ${unreadBadgeHtml}
+                    `;
+                    listContainer.appendChild(item);
+
+                    if (activeUserId === userId && userUnreadCount > 0) {
+                        clearUnreadMessages(userId, messages);
+                    }
+                });
+
+                topMenuChatsBadge.innerText = totalUnreadCount;
+                if(totalUnreadCount > 0) {
+                    topMenuChatsBadge.classList.remove('zero');
+                } else {
+                    topMenuChatsBadge.classList.add('zero');
+                }
+            });
+        }
+
+        function clearUnreadMessages(userId, messages) {
+            Object.keys(messages).forEach(msgKey => {
+                const msg = messages[msgKey];
+                if (msg.sender === 'user' && msg.read !== true) {
+                    set(ref(db, `chats/${userId}/messages/${msgKey}/read`), true);
+                }
+            });
+        }
+
+        function openChatRoom(userId) {
+            activeUserId = userId;
+            document.getElementById('chat-list-view').classList.add('hidden');
+            document.getElementById('chat-room-view').classList.add('active');
+            document.getElementById('active-user-title').innerText = userId;
+
+            const chatBox = document.getElementById('chat-messages-box');
+            onValue(ref(db, `chats/${userId}/messages`), (snapshot) => {
+                chatBox.innerHTML = '';
+                const msgs = snapshot.val() || {};
+                
+                Object.keys(msgs).forEach(msgKey => {
+                    const msg = msgs[msgKey];
+                    const bubble = document.createElement('div');
+                    bubble.className = `bubble ${msg.sender === 'user' ? 'received' : 'sent'}`;
+                    bubble.innerText = msg.text;
+                    chatBox.appendChild(bubble);
+
+                    if (msg.sender === 'user' && msg.read !== true) {
+                        set(ref(db, `chats/${userId}/messages/${msgKey}/read`), true);
+                    }
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        function submitAdminMessage() {
+            const input = document.getElementById('chat-msg-input');
+            const val = input.value.trim();
+            if (!val || !activeUserId) return;
+
+            const newMsgRef = push(ref(db, `chats/${activeUserId}/messages`));
+            set(newMsgRef, {
+                sender: 'admin',
+                text: val,
+                timestamp: Date.now()
+            }).then(() => {
+                input.value = '';
+            });
+        }
+
+        document.getElementById('send-chat-btn').onclick = submitAdminMessage;
+        document.getElementById('chat-msg-input').onkeydown = (e) => {
+            if (e.key === 'Enter') submitAdminMessage();
+        };
+
+        // --- LIVE DATABASE MOCK TEST EMULATOR ---
+        window.simulateIncomingAlerts = function() {
+            const randomId = '0912345678';
+            const methods = ['Telebirr wallet', 'Commercial Bank of Ethiopia (CBE)'];
+            const randomMethod = methods[Math.floor(Math.random() * methods.length)];
+            const randomAmount = (Math.floor(Math.random() * 20) + 1) * 500;
+            const randomRef = 'BG-' + Math.floor(100000 + Math.random() * 900000);
+            
+            const newOrderRef = push(ref(db, 'deposits'));
+            const payload = {
+                ref: randomRef,
+                method: randomMethod,
+                userId: randomId,
+                amount: randomAmount,
+                status: 'Pending',
+                timestamp: Date.now()
+            };
+
+            set(newOrderRef, payload).then(() => {
+                get(ref(db, `users/${randomId}/fullName`)).then((nameSnap) => {
+                    const clientName = nameSnap.val() || "Mock Test Account";
+                    sendEmailNotification("New Pending Order Placed", {
+                        name: clientName,
+                        email: "test_user@birrgo.com",
+                        amount: payload.amount,
+                        method: payload.method,
+                        ref: payload.ref,
+                        status: 'Pending'
+                    });
+                }).catch(() => {
+                    sendEmailNotification("New Pending Order Placed", {
+                        name: "Mock Test Account",
+                        email: "test_user@birrgo.com",
+                        amount: payload.amount,
+                        method: payload.method,
+                        ref: payload.ref,
+                        status: 'Pending'
+                    });
+                });
+
+                const chatRef = push(ref(db, `chats/${randomId}/messages`));
+                set(chatRef, {
+                    sender: 'user',
+                    text: `Hi! I verified my transfer of ${randomAmount} ETB via ${randomMethod}. Please confirm.`,
+                    read: false,
+                    timestamp: Date.now()
+                });
+                window.showToast("Simulation Event Executed!", "warning");
+            });
+        };
+
+        // --- LIFECYCLE INITIALIZER ---
+        window.addEventListener('DOMContentLoaded', () => {
+            onValue(ref(db, 'settings/email_config'), (snapshot) => {
+                const config = snapshot.val();
+                if (config) {
+                    if (config.alert_email_target) document.getElementById('target-email').value = config.alert_email_target;
+                    if (config.emailjs_public_key) document.getElementById('emailjs-public-key').value = config.emailjs_public_key;
+                    if (config.emailjs_service_id) document.getElementById('emailjs-service-id').value = config.emailjs_service_id;
+                    if (config.emailjs_template_id) document.getElementById('emailjs-template-id').value = config.emailjs_template_id;
+                }
+            });
+
+            get(ref(db, 'settings/accounts')).then((snapshot) => {
+                const acc = snapshot.val() || {};
+                const loadDetails = (gatewayKey, numInputId, nameInputId) => {
+                    if (acc[gatewayKey]) {
+                        const details = acc[gatewayKey];
+                        if (typeof details === 'object') {
+                            document.getElementById(numInputId).value = details.number || '';
+                            document.getElementById(nameInputId).value = details.holder_name || '';
+                        } else {
+                            document.getElementById(numInputId).value = details;
+                        }
+                    }
+                };
+                loadDetails('cbe', 'cbe-num', 'cbe-name');
+                loadDetails('telebirr', 'tele-num', 'tele-name');
+                loadDetails('boa', 'boa-num', 'boa-name');
+                loadDetails('mpesa', 'mpesa-num', 'mpesa-name');
+                loadDetails('cbebirr', 'cbebirr-num', 'cbebirr-name');
+            });
+
+            onValue(ref(db, 'settings/gateway_online'), (snapshot) => {
+                const isOnline = snapshot.val() !== false; 
+                const toggleInput = document.getElementById('gateway-toggle');
+                const label = document.getElementById('gateway-label');
+                toggleInput.checked = isOnline;
+                if (isOnline) {
+                    label.innerText = "GATEWAY ONLINE";
+                    label.style.color = "var(--success-color)";
+                } else {
+                    label.innerText = "GATEWAY OFFLINE";
+                    label.style.color = "var(--danger-color)";
+                }
+            });
+
+            listenToDeposits();
+            listenToChatUsers();
+        });
+    </script>
+</body>
+</html>

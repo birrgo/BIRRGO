@@ -1,0 +1,14 @@
+{
+  "name": "birrgo-otp-backend",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@getbrevo/brevo": "^6.0.0",
+    "express": "^4.19.2",
+    "cors": "^2.8.5",
+    "firebase-admin": "^14.1.0"
+  }
+}

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Admin Control Center</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
+            --text-dark: #111827;
+            --text-muted: #4b5563;
+            --input-bg: #f3f4f6;
+            --focus-shadow: 0 4px 12px rgba(139, 0, 21, 0.08);
+            --error-red: #df2222;
+            --success-green: #10b981;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden; 
+            background-color: #f8f9fa;
+            position: relative;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top {
+            top: 0;
+            height: 12vh;
+            min-height: 80px;
+        }
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 10vh;
+            min-height: 70px;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: calc(10vh + env(safe-area-inset-top)) 24px calc(8vh + env(safe-area-inset-bottom)) 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-section {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 1.5vh;
+        }
+
+        .logo-image {
+            width: 140px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .header-content {
+            text-align: center;
+            margin-bottom: 3vh;
+        }
+
+        .header-content h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            letter-spacing: -0.03em;
+        }
+
+        .header-content p {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .admin-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid #f3f4f6;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .input-group {
+            position: relative;
+            width: 100%;
+        }
+
+        .input-box {
+            width: 100%;
+            height: 54px;
+            background-color: var(--input-bg);
+            border: 1.5px solid transparent;
+            border-radius: 14px;
+            padding: 0 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+            outline: none;
+            transition: all 0.2s ease;
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .input-box:focus {
+            border-color: var(--primary-burgundy);
+            background-color: #ffffff;
+            box-shadow: var(--focus-shadow);
+        }
+
+        .field-label {
+            position: absolute;
+            top: -9px;
+            left: 14px;
+            background-color: #ffffff; 
+            padding: 0 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-dark);
+            z-index: 2;
+        }
+
+        .label-highlight {
+            color: var(--primary-burgundy);
+            font-weight: 700;
+        }
+
+        .current-status {
+            background-color: #fef2f2;
+            border: 1px solid #fee2e2;
+            padding: 14px;
+            border-radius: 14px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--primary-burgundy);
+        }
+
+        .current-status span {
+            font-weight: 800;
+            font-size: 16px;
+            display: block;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            height: 56px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
+            transition: transform 0.1s ease, opacity 0.2s ease;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .toast-container {
+            position: absolute;
+            top: calc(20px + env(safe-area-inset-top));
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(17, 24, 39, 0.96);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #ffffff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            z-index: 3999; 
+            display: none;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            width: 85%;
+            max-width: 360px;
+        }
+    </style>
+</head>
+<body>
+
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/>
+                <stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+    </svg>
+
+    <div class="toast-container" id="toast-message">Notification Message</div>
+
+    <div class="app-view">
+        
+        <div class="brand-section">
+            <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+        </div>
+
+        <div class="header-content">
+            <h1>Game Settings</h1>
+            <p>Premium Lottery Admin Gate Panel</p>
+        </div>
+
+        <div class="admin-card">
+            <div class="current-status">
+                Current Active Premium Password:
+                <span id="currentActivePass">Loading...</span>
+            </div>
+
+            <form id="adminControlForm" style="display: flex; flex-direction: column; gap: 20px;">
+                <div class="input-group">
+                    <span class="field-label">New Password (6-digits) <span class="label-highlight">*</span></span>
+                    <input type="password" id="newPass" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required>
+                </div>
+
+                <button type="submit" id="updateBtn" class="btn-submit">Update System Password</button>
+            </form>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Firebase configuration synchronized with your login database configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const currentActivePassEl = document.getElementById('currentActivePass');
+        const newPassInput = document.getElementById('newPass');
+        const updateBtn = document.getElementById('updateBtn');
+
+        function showNotification(message) {
+            const toast = document.getElementById('toast-message');
+            toast.innerText = message;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        // Restrict password field inputs to digits only
+        newPassInput.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // 1. Fetch and listen to Realtime changes on the Global Premium Gate Pin 
+        const systemPinRef = ref(db, 'settings/premium_gate_password');
+        
+        onValue(systemPinRef, (snapshot) => {
+            if (snapshot.exists()) {
+                currentActivePassEl.innerText = snapshot.val();
+                // Store password locally on admin change as reference backup
+                localStorage.setItem('auth_session_password', snapshot.val());
+            } else {
+                currentActivePassEl.innerText = "Not Configured";
+            }
+        });
+
+        // 2. Write updating values back to Firebase node when admin submits form
+        document.getElementById('adminControlForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const passwordAttempt = newPassInput.value.trim();
+
+            if (passwordAttempt.length !== 6 || !/^\d+$/.test(passwordAttempt)) {
+                showNotification("Error: System password must be exactly 6 digits.");
+                return;
+            }
+
+            try {
+                updateBtn.disabled = true;
+                updateBtn.innerText = "Publishing Changes...";
+
+                // Set database value
+                await set(systemPinRef, passwordAttempt);
+                
+                // Keep locally updated sync for local verification tests
+                localStorage.setItem('auth_session_password', passwordAttempt);
+
+                showNotification("Success! Premium gate password changed.");
+                newPassInput.value = "";
+                
+            } catch (error) {
+                console.error("Database error occurred: ", error);
+                showNotification("Network Connection Lost. Change Rejected.");
+            } finally {
+                updateBtn.disabled = false;
+                updateBtn.innerText = "Update System Password";
+            }
+        });
+    </script>
+</body>
+</html>

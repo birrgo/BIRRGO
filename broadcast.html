@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Broadcast Center</title>
+    <link rel="stylesheet" href="new.css">
+    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm operational pipeline request</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card wide-card" style="display: block; opacity: 1; pointer-events: auto; max-height: 85vh; overflow-y: auto;">
+        <h3 class="section-title title-burgundy" id="panelTitle">News Broadcast Center</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Deploy running notification feeds configurations.</p>
+        
+        <div class="input-field-wrapper">
+            <label>Action Target Category</label>
+            <select class="form-select" id="postCategory">
+                <option value="All Updates">All Updates (General Feed Post)</option>
+                <option value="System Releases">System Releases (Version Update Feed Post)</option>
+                <option value="Promo Rewards">Promo Rewards (Voucher Rules Setup)</option>
+            </select>
+        </div>
+
+        <div id="broadcastFormFields">
+            <div class="input-field-wrapper"><label id="titleInputLabel">Broadcast Title</label><input class="admin-input" type="text" id="newsTitle"></div>
+            <div class="input-field-wrapper">
+                <label id="imageInputLabel">Attach Announcement Photo (Optional)</label>
+                <div class="file-upload-wrapper">
+                    <span class="file-upload-label-text" id="fileNameDisplay"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>Choose Image</span>
+                    <input class="file-upload-input" type="file" id="newsImageFile" accept="image/*">
+                </div>
+            </div>
+            <div class="input-field-wrapper"><label id="messageInputLabel">Broadcast Message Content</label><textarea class="admin-input" id="newsMessage"></textarea></div>
+        </div>
+
+        <div class="custom-fields-container" id="promoRewardsFields" style="display: none;">
+            <div class="input-field-wrapper"><label>Promo Code String</label><input class="admin-input" type="text" id="promoCode" style="text-transform: uppercase;"></div>
+            <div class="input-field-wrapper"><label>Number of First Users Limit</label><input class="admin-input" type="number" id="promoMaxClaims"></div>
+            <div class="input-field-wrapper"><label>Reward Amount (Birr)</label><input class="admin-input" type="number" id="promoRewardAmount"></div>
+        </div>
+
+        <div class="btn-row" style="margin-bottom: 20px; gap: 10px;">
+            <button class="btn-admin-action btn-broadcast" id="publishNewsBtn"><span id="buttonText">Publish Feed Post</span></button>
+            <button class="btn-admin-action btn-delete" id="deleteAllCategoriesBtn" style="width: auto; padding: 0 15px;">Delete All Categories</button>
+        </div>
+
+        <div style="border-top: 1px dashed var(--border-light); padding-top:20px;">
+            <h3 class="section-title title-dark" style="font-size: 16px;">Active Feeds & Engine Formats</h3>
+            <div class="table-scroll-container"><table class="directory-table"><tbody id="liveNewsRecordsBody"></tbody></table></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue, push, set, remove, storage, storageRef, uploadBytes, getDownloadURL } from "./db.js";
+        let res = null, nState = null, pState = null;
+
+        function openModal(t, d, m, c, tx) {
+            document.getElementById('modalTitleDisplay').innerText = t; document.getElementById('modalDescriptionDisplay').innerText = d;
+            document.getElementById('modalDynamicDetails').innerHTML = `<div class="modal-data-row"><span class="modal-data-label">${m[0].label}</span><span class="modal-data-value">${m[0].value}</span></div>`;
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + c; document.getElementById('modalConfirmBtn').innerText = tx;
+            document.getElementById('customConfirmModal').classList.add('active'); return new Promise(r => res = r);
+        }
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(res) res(true); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => { if(res) res(false); document.getElementById('customConfirmModal').classList.remove('active'); });
+
+        function triggerAdminAlert(m, s=true) {
+            const t = document.getElementById('adminToast'); t.innerText = m;
+            t.style.background = s ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; setTimeout(() => t.style.display='none', 3500);
+        }
+
+        onValue(ref(db, 'newNews'), s => { nState = s.val(); render(); });
+        onValue(ref(db, 'globalPromoCampaign'), s => { pState = s.val(); render(); });
+
+        function render() {
+            const b = document.getElementById('liveNewsRecordsBody'); b.innerHTML = ''; let c = 0;
+            if(pState && pState.code) { c++; b.innerHTML += `<tr><td><strong>${pState.code}</strong></td><td>Claims: ${pState.currentClaimCount||0}/${pState.maxClaims||0}</td><td><button class="btn-admin-action btn-debit del-btn" data-type="promo" data-key="globalPromoCampaign">Delete</button></td></tr>`; }
+            if(nState) { Object.keys(nState).forEach(k => { c++; const i = nState[k]; b.innerHTML += `<tr><td>${i.title}</td><td>${i.category}</td><td><button class="btn-admin-action btn-debit del-btn" data-type="news" data-key="${k}">Delete</button></td></tr>`; }); }
+            if(!c) b.innerHTML = '<tr><td>No records running active pipeline nodes.</td></tr>';
+            b.querySelectorAll('.del-btn').forEach(btn => btn.addEventListener('click', async () => {
+                const t = btn.getAttribute('data-type'), k = btn.getAttribute('data-key');
+                if(!await openModal("Confirm Deletion", "Remove asset cluster route logic entries.", [{label:"Target:", value:k}], "btn-delete", "Wipe Cluster")) return;
+                t === 'news' ? await remove(ref(db, `newNews/${k}`)) : await remove(ref(db, 'globalPromoCampaign')); triggerAdminAlert("Purged!");
+            }));
+        }
+
+        document.getElementById('postCategory').addEventListener('change', (e) => {
+            const v = e.target.value;
+            document.getElementById('broadcastFormFields').style.display = v === "Promo Rewards" ? "none" : "block";
+            document.getElementById('promoRewardsFields').style.display = v === "Promo Rewards" ? "flex" : "none";
+        });
+
+        document.getElementById('newsImageFile').addEventListener('change', e => {
+            document.getElementById('fileNameDisplay').innerText = e.target.files.length ? e.target.files[0].name : "Choose Image";
+        });
+
+        document.getElementById('publishNewsBtn').addEventListener('click', async () => {
+            const cat = document.getElementById('postCategory').value;
+            if(cat === "Promo Rewards") {
+                const code = document.getElementById('promoCode').value.trim().toUpperCase(), max = parseInt(document.getElementById('promoMaxClaims').value), am = parseFloat(document.getElementById('promoRewardAmount').value);
+                if(!code || isNaN(max) || isNaN(am)) return triggerAdminAlert("Invalid configurations.", false);
+                await set(ref(db, 'globalPromoCampaign'), { code, maxClaims: max, rewardAmount: am, currentClaimCount: 0 }); triggerAdminAlert("Promo Running live!");
+            } else {
+                const t = document.getElementById('newsTitle').value.trim(), m = document.getElementById('newsMessage').value.trim(), file = document.getElementById('newsImageFile').files[0];
+                if(!t || !m) return triggerAdminAlert("Fields empty.", false);
+                let url = ""; if(file) { const sRef = storageRef(storage, `admin_news_images/b_${Date.now()}`); await uploadBytes(sRef, file); url = await getDownloadURL(sRef); }
+                await set(push(ref(db, 'newNews')), { category: cat, title: t, content: m, imageUrl: url, date: new Date().toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}) });
+                triggerAdminAlert("Published!");
+            }
+        });
+
+        document.getElementById('deleteAllCategoriesBtn').addEventListener('click', async () => {
+            if(!await openModal("CRITICAL WIPE", "Wipes all runtime assets data.", [{label:"Scope:", value:"Feeds & Promos"}], "btn-delete", "Purge Engine")) return;
+            await remove(ref(db, 'newNews')); await remove(ref(db, 'globalPromoCampaign')); triggerAlert("Flushed database directories!");
+        });
+    </script>
+</body>
+</html>

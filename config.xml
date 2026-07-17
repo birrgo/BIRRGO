@@ -1,0 +1,34 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.birrgo.app" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Birr Go</name>
+    <description>
+        My Custom GitHub Pages Web App
+    </description>
+    <author email="dev@birrgo.online" href="https://test.birrgo.online">
+        Birrgo Team
+    </author>
+
+    <!-- Point the app launch source directly to your new domain -->
+    <content src="https://test.birrgo.online" />
+
+    <!-- Icon Configuration -->
+    <!-- This tells Cordova to use your icon.png from the root directory -->
+    <icon src="icon.png" />
+
+    <platform name="android">
+        <!-- Main launcher icon mapping -->
+        <icon src="icon.png" />
+    </platform>
+
+    <!-- Security Rules: Allow your app to load external resources and navigate -->
+    <access origin="https://test.birrgo.online" />
+    <access origin="*" />
+    
+    <allow-navigation href="https://test.birrgo.online/*" />
+    <allow-navigation href="*://*.test.birrgo.online/*" />
+
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    
+    <preference name="KeepRunning" value="true" />
+</widget>

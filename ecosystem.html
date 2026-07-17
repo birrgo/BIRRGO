@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ecosystem Matrix</title>
+    <link rel="stylesheet" href="new.css">
+    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="workspace-card wide-card" style="display: block; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-pink">Ecosystem Matrix Structural Records Mappings</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Real-time node queries tracking active ledger details, parameters, and balances.</p>
+        <div class="input-field-wrapper" style="margin-bottom: 8px;">
+            <label>Realtime Directory Filter</label>
+            <input type="text" id="ecosystemSearchInput" class="admin-input" placeholder="Search cleanly by Mobile number, Card, or Name...">
+        </div>
+        <div class="table-scroll-container">
+            <table class="directory-table">
+                <thead><tr><th>Account ID</th><th>Card Record Token</th><th>First Name</th><th>Full Profile Name</th><th>Phone Identity</th><th>Wallet Balances</th><th>Created Stamp</th></tr></thead>
+                <tbody id="directory-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue } from "./db.js";
+        let cache = {};
+        function genCard(p) { const c = p.replace(/\D/g, ''); return c + c.slice(-6).split('').reverse().join(''); }
+
+        onValue(ref(db, 'users'), (snap) => {
+            cache = snap.exists() ? snap.val() : {}; render();
+        });
+
+        function render(query = '') {
+            const body = document.getElementById('directory-table-body'); body.innerHTML = '';
+            const q = query.toLowerCase().trim().replace(/\s/g, '');
+            Object.keys(cache).forEach(k => {
+                const p = cache[k], b = parseFloat(p.walletBalance) || 0, c = p.cardNumber || genCard(k);
+                if(q && !k.includes(q) && !c.includes(q) && !(p.firstName||'').toLowerCase().includes(q) && !(p.fullName||'').toLowerCase().includes(q)) return;
+                let date = "N/A"; if(p.createdAt) try { date = new Date(p.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); }catch(e){}
+                body.innerHTML += `<tr>
+                    <td><span class="id-badge">BG-${p.userNumber || '1000'}</span></td>
+                    <td style="font-family:monospace;font-weight:600;color:var(--text-muted);">${c}</td>
+                    <td style="font-weight:700;color:var(--text-dark);">${p.firstName || 'N/A'}</td>
+                    <td>${p.fullName || 'Anonymous'}</td>
+                    <td>+251${k}</td>
+                    <td style="font-weight:700;color:var(--primary-burgundy);">${b.toFixed(2)} ETB</td>
+                    <td style="color:var(--text-muted);font-size:12px;">${date}</td>
+                </tr>`;
+            });
+        }
+        document.getElementById('ecosystemSearchInput').addEventListener('input', (e) => render(e.target.value));
+    </script>
+</body>
+</html>

@@ -7,9 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="task.css">
     <style>
-        /* Base Reset & Dynamic Screen Scaling */
+        /* Base Reset & Full White Clean Theme Styling */
         * {
             box-sizing: border-box;
         }
@@ -18,12 +17,12 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #000;
+            background-color: #ffffff;
             overflow: hidden;
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
         
-        /* Fully scalable viewport structure aligned with BirrGo Core layout rules */
+        /* White App Overlay Wrapper Structure */
         .immersive-overlay {
             display: flex;
             flex-direction: column;
@@ -33,86 +32,120 @@
             top: 0;
             left: 0;
             z-index: 9999;
-            background-color: #0c0c0e;
+            background-color: #ffffff;
+            overflow: hidden;
         }
 
-        /* Brand Header styling integrated from BirrGo Main Dashboard UI */
+        /* Clean White Header Bar */
         .brand-header-task {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 16px 20px;
-            background: #16161a;
-            border-bottom: 1px solid #24242e;
+            padding: 10px 20px;
+            background: #ffffff;
+            border-bottom: 1px solid #e2e8f0;
             position: relative;
             z-index: 10;
+            height: 45px;
         }
 
         .brand-logo-task {
-            height: 28px;
+            height: 22px;
             object-fit: contain;
         }
 
-        /* Dynamically splits viewport to load media and monetization units organically */
+        /* Fluid Main Workspace Area - No Scrolling */
         .split-media-viewport {
             display: flex;
             flex-direction: column;
             flex: 1;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: #ffffff;
+            overflow: hidden;
         }
 
-        .ad-container-frame, .youtube-player-box {
+        /* Ad Space Size */
+        .ad-container-frame {
+            width: 100%;
+            height: 85px;
+            min-height: 85px;
+            position: relative;
+            background: #ffffff;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        /* Workspace container altered to pull the video directly down to the bottom bar */
+        .youtube-player-box {
+            display: flex;
             flex: 1;
             width: 100%;
-            height: 50%;
+            justify-content: center;
+            align-items: flex-end; 
+            padding: 0 0 12px 0;   
+            background-color: #ffffff;
             position: relative;
+            overflow: hidden;
         }
 
-        .youtube-player-box iframe {
+        /* Size constraints strictly maintained to keep video size identical */
+        .shorts-wrapper-frame {
+            width: auto;
+            height: 100%;
+            max-height: calc(100vh - 220px); 
+            position: relative;
+            aspect-ratio: 9 / 16;
+            background: #000000;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        .shorts-wrapper-frame iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
         
-        /* Control Dashboard Panel replacing bottom-nav blocks entirely */
+        /* Reduced Size Bottom Bar Layout */
         .overlay-navbar {
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 24px 20px;
-            background-color: #16161a;
-            border-top: 1px solid #24242e;
-            gap: 12px;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            border-top: 1px solid #e2e8f0;
+            height: 55px;
         }
 
-        /* Configured specifically to output countdown state in Red */
-        .overlay-countdown-label {
-            color: #9A0019;
-            font-size: 1.25rem;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-        }
-
+        /* Universal App Counter Control Action Button */
         .btn-close-overlay {
             width: 100%;
             max-width: 340px;
-            padding: 14px;
-            background: #22c55e;
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 1rem;
-            font-weight: 700;
-            cursor: pointer;
+            padding: 10px;
+            background: #f1f5f9;
+            color: #9A0019;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            cursor: not-allowed;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
             font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: 0.5px;
+            transition: all 0.2s ease;
         }
 
-        /* Adaptable Popup Modal Overlay matching BirrGo UX Specs */
+        /* Transition state applied when counting sequence is successfully cleared */
+        .btn-close-overlay.active-claim {
+            background: #22c55e;
+            color: #ffffff;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+        }
+
+        /* Light-Themed Adaptive Choice Dialog Popups */
         .custom-popup-backdrop {
             display: none;
             position: fixed;
@@ -120,7 +153,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
+            background-color: rgba(0, 0, 0, 0.4);
             z-index: 100000;
             justify-content: center;
             align-items: center;
@@ -134,65 +167,33 @@
         }
 
         .custom-popup-card {
-            background-color: #16161a;
-            border: 1px solid #24242e;
-            border-radius: 24px;
-            padding: 28px 24px;
-            width: 100%;
-            max-width: 360px;
-            text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
+            max-width: 360px;
+            padding: 28px 24px;
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
         }
 
         .popup-status-badge {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .bg-success {
-            background-color: rgba(34, 197, 94, 0.12);
-            border: 2px solid #22c55e;
-        }
-
-        .bg-error {
-            background-color: rgba(154, 0, 25, 0.12);
-            border: 2px solid #9A0019;
-        }
-
-        .popup-status-badge svg {
-            width: 28px;
-            height: 28px;
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .bg-success svg {
-            stroke: #22c55e;
-        }
-
-        .bg-error svg {
-            stroke: #9A0019;
+            display: none !important;
         }
 
         .custom-popup-title {
-            color: #fff;
             margin: 0 0 10px 0;
+            color: #1e293b;
             font-size: 1.2rem;
             font-weight: 700;
         }
 
         .custom-popup-msg {
-            color: #94a3b8;
             margin: 0 0 24px 0;
+            color: #64748b;
             font-size: 0.95rem;
             line-height: 1.5;
         }
@@ -206,57 +207,47 @@
         .btn-popup-cancel {
             flex: 1;
             padding: 12px;
-            background: #24242e;
-            color: #fff;
-            border: 1px solid #3b3b4f;
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #cbd5e1;
             border-radius: 12px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.95rem;
         }
 
         .btn-popup-confirm {
             flex: 1;
             padding: 12px;
             background: #22c55e;
-            color: #fff;
+            color: #ffffff;
             border: none;
             border-radius: 12px;
+            font-size: 0.95rem;
             font-weight: 600;
             cursor: pointer;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.95rem;
-        }
-        
-        .reward-highlight {
-            color: #22c55e;
-            font-weight: 700;
         }
     </style>
 </head>
 <body>
 
     <div class="immersive-overlay" id="adViewerOverlay">
-        <!-- Brand Header Bar without quit actions -->
         <div class="brand-header-task">
             <img src="birrgo-logo.png" alt="BirrGo Logo" class="brand-logo-task">
         </div>
 
-        <!-- Split Media Content viewport framework -->
         <div class="split-media-viewport">
             <div id="adContainer" class="ad-container-frame"></div>
             <div id="youtubePlayerContainer" class="youtube-player-box"></div>
         </div>
         
-        <!-- Action control cluster -->
         <div class="overlay-navbar">
-            <div class="overlay-countdown-label" id="overlayCountdown">Loading Task...</div>
-            <button class="btn-close-overlay" id="closeOverlayBtn" style="display: none;">Claim Reward</button>
+            <button class="btn-close-overlay" id="closeOverlayBtn" disabled>Remaining: 1:00</button>
         </div>
     </div>
 
-    <!-- BirrGo Architecture Status / Choice Popup Modal wrapper -->
     <div class="custom-popup-backdrop" id="customPopup">
         <div class="custom-popup-card">
             <div class="popup-status-badge bg-success" id="popupBadge">
@@ -299,7 +290,6 @@
         let currentCountdownInterval = null;
         let currentAdReloadInterval = null;
 
-        const overlayCountdown = document.getElementById('overlayCountdown');
         const closeOverlayBtn = document.getElementById('closeOverlayBtn');
         const youtubePlayerContainer = document.getElementById('youtubePlayerContainer');
         const adContainer = document.getElementById('adContainer');
@@ -312,7 +302,6 @@
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
         const popupCancelBtn = document.getElementById('popupCancelBtn');
 
-        // Page refresh or close browser trap handling
         window.onbeforeunload = function(e) {
             if (!taskCompleted) {
                 e.preventDefault();
@@ -320,7 +309,6 @@
             }
         };
 
-        // System gesture back button interception trap
         window.history.pushState(null, "", window.location.href);
         window.onpopstate = function() {
             if (!taskCompleted) {
@@ -343,7 +331,6 @@
             startVideoTask(taskId);
         });
 
-        // Trigger styled exit modal block if user uses alternative back logic
         function triggerExitWarning() {
             displayAppModal(
                 'error', 
@@ -417,7 +404,7 @@
                 loadMonetagAd();
 
                 timeLeft = watchDuration;
-                overlayCountdown.innerText = "Remaining: 1:00";
+                closeOverlayBtn.innerText = "Remaining: 1:00";
 
                 currentAdReloadInterval = setInterval(() => {
                     loadMonetagAd();
@@ -428,8 +415,7 @@
                     const minutes = Math.floor(timeLeft / 60);
                     const seconds = timeLeft % 60;
                     
-                    // Maintain standard countdown string formatting with Red text design rules
-                    overlayCountdown.innerText = `Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                    closeOverlayBtn.innerText = `Remaining: ${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
 
                     if (timeLeft <= 0) {
                         clearInterval(currentCountdownInterval);
@@ -449,10 +435,9 @@
 
                             localStorage.setItem(`video_cooldown_${id}`, Date.now());
 
-                            // Success text color alteration to clear green once finished
-                            overlayCountdown.style.color = "#22c55e";
-                            overlayCountdown.innerText = "Finished! +20 Birr";
-                            closeOverlayBtn.style.display = "block"; 
+                            closeOverlayBtn.removeAttribute('disabled');
+                            closeOverlayBtn.classList.add('active-claim');
+                            closeOverlayBtn.innerText = "Claim Reward (+20 Birr)"; 
 
                             displayAppModal('success', 'Task Completed', 'Your 20 Birr has been credited directly to your wallet.', () => {
                                 window.onbeforeunload = null;
@@ -484,7 +469,7 @@
             const iframeDoc = adIframe.contentDocument || adIframe.contentWindow.document;
             iframeDoc.open();
             iframeDoc.write(`
-                <html style="margin:0; padding:0; background:#000; overflow:hidden; width:100%; height:100%;">
+                <html style="margin:0; padding:0; background:#fff; overflow:hidden; width:100%; height:100%;">
                 <body style="margin:0; padding:0; display:flex; justify-content:center; align-items:center; width:100%; height:100%;">
                     <script>
                         (function(s){
@@ -506,18 +491,23 @@
             else if (targetUrl.includes("embed/")) videoId = targetUrl.split("embed/")[1]?.split(/[?#]/)[0];
 
             if (videoId && videoId.length === 11) {
+                /* Changed mute=1 to mute=0 to fix audio, and kept controls parameter optimizations */
                 youtubePlayerContainer.innerHTML = `
-                    <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1&rel=0&modestbranding=1" 
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
-                    </iframe>`;
+                    <div class="shorts-wrapper-frame">
+                        <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&controls=0&modestbranding=1&rel=0&playsinline=1&iv_load_policy=3&showinfo=0&fs=0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                        </iframe>
+                    </div>`;
             } else {
-                youtubePlayerContainer.innerHTML = `<div style="color:white; padding:40px; text-align:center;">Error: Link structural failure.</div>`;
+                youtubePlayerContainer.innerHTML = `<div style="color:#ef4444; padding:40px; text-align:center; font-weight:600;">Error: Link structural failure.</div>`;
             }
         }
 
         closeOverlayBtn.onclick = () => {
-            window.onbeforeunload = null;
-            window.location.replace("task.html");
+            if (taskCompleted) {
+                window.onbeforeunload = null;
+                window.location.replace("task.html");
+            }
         };
     </script>
 </body>

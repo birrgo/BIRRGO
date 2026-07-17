@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile Console</title>
+    <link rel="stylesheet" href="new.css">
+    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm Operational Request</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed Execution</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 500px; display: block; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-blue">User Profile Console</h3>
+        <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Query directory using 15-digit card code to perform live field overrides.</p>
+        <div class="input-field-wrapper">
+            <label>Target Card Identifier</label>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="profileSearchInput" class="admin-input" placeholder="e.g. 914447872278441">
+                <button class="btn-admin-action btn-broadcast" id="profileSearchBtn" style="width: auto; padding: 0 20px;">Search</button>
+            </div>
+        </div>
+        <div id="profileManagementFields" style="display: none; flex-direction: column; gap: 14px; margin-top: 15px; border-top: 1px dashed var(--border-light); padding-top: 15px;">
+            <div class="input-field-wrapper"><label>Full Name Matrix</label><input type="text" id="editProfileName" class="admin-input"></div>
+            <div class="input-field-wrapper"><label>Access Password Key</label><input type="text" id="editProfilePass" class="admin-input"></div>
+            <div class="input-field-wrapper"><label>Phone Identity Node</label><input type="text" id="editProfilePhone" class="admin-input"></div>
+            <div class="btn-row" style="margin-top: 10px; gap: 10px;">
+                <button class="btn-admin-action btn-update" id="saveProfileBtn" style="flex: 1;">Save Changes</button>
+                <button class="btn-admin-action btn-delete" id="deleteProfileAccountBtn" style="flex: 1;">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, get, set, remove } from "./db.js";
+        let currentModalResolver = null, localUserDirectoryCache = {}, activeManagedUserPhone = null, activeManagedUserProfile = null;
+
+        get(ref(db, 'users')).then(snap => { if(snap.exists()) localUserDirectoryCache = snap.val(); });
+
+        function openCustomModal(title, desc, detailsArray, actionClass, actionText) {
+            document.getElementById('modalTitleDisplay').innerText = title; document.getElementById('modalDescriptionDisplay').innerText = desc;
+            const container = document.getElementById('modalDynamicDetails'); container.innerHTML = '';
+            detailsArray.forEach(item => { container.innerHTML += `<div class="modal-data-row"><span class="modal-data-label">${item.label}</span><span class="modal-data-value">${item.value}</span></div>`; });
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + actionClass; document.getElementById('modalConfirmBtn').innerText = actionText;
+            document.getElementById('customConfirmModal').classList.add('active'); return new Promise(r => currentModalResolver = r);
+        }
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(currentModalResolver) currentModalResolver(true); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => { if(currentModalResolver) currentModalResolver(false); document.getElementById('customConfirmModal').classList.remove('active'); });
+
+        function triggerAdminAlert(msg, isSuccess = true) {
+            const toast = document.getElementById('adminToast'); toast.innerText = msg;
+            toast.style.background = isSuccess ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            toast.style.display = 'block'; setTimeout(() => toast.style.display = 'none', 3500);
+        }
+
+        function generate15DigitCard(p) { const c = p.replace(/\D/g, ''); return c + c.slice(-6).split('').reverse().join(''); }
+
+        async function lookupUserProfileByCardOrPhone(input) {
+            const clean = input.replace(/\s/g, ''); if(localUserDirectoryCache[clean]) return { phoneKey: clean, profile: localUserDirectoryCache[clean] };
+            for(let k of Object.keys(localUserDirectoryCache)){
+                const p = localUserDirectoryCache[k], s = p.cardNumber ? p.cardNumber.replace(/\s/g, '') : '';
+                if(s === clean || generate15DigitCard(k) === clean) return { phoneKey: k, profile: p };
+            } return null;
+        }
+
+        document.getElementById('profileSearchBtn').addEventListener('click', async () => {
+            const input = document.getElementById('profileSearchInput').value.trim(); if(!input) return triggerAdminAlert("Valid parameter missing.", false);
+            const match = await lookupUserProfileByCardOrPhone(input);
+            if(!match) { triggerAdminAlert("No record found.", false); document.getElementById('profileManagementFields').style.display = 'none'; return; }
+            activeManagedUserPhone = match.phoneKey; activeManagedUserProfile = match.profile;
+            document.getElementById('editProfileName').value = activeManagedUserProfile.fullName || '';
+            document.getElementById('editProfilePass').value = activeManagedUserProfile.password || '';
+            document.getElementById('editProfilePhone').value = activeManagedUserPhone;
+            document.getElementById('profileManagementFields').style.display = 'flex'; triggerAdminAlert("Loaded!", true);
+        });
+
+        document.getElementById('saveProfileBtn').addEventListener('click', async () => {
+            if(!activeManagedUserPhone) return;
+            const name = document.getElementById('editProfileName').value.trim(), pass = document.getElementById('editProfilePass').value.trim(), phone = document.getElementById('editProfilePhone').value.trim().replace(/\D/g, '');
+            if(!name || !pass || !phone) return triggerAdminAlert("Fill all criteria.", false);
+            if(!await openCustomModal("Confirm Modification", "Altering backend node structural records.", [{label:"Name:", value:name}, {label:"Route:", value:"+251"+phone}], "btn-update", "Write Overrides")) return;
+            try {
+                let syn = { ...activeManagedUserProfile, fullName: name, firstName: name.split(' ')[0]||name, password: pass };
+                if (phone !== activeManagedUserPhone) { syn.cardNumber = generate15DigitCard(phone); await set(ref(db, `users/${phone}`), syn); await remove(ref(db, `users/${activeManagedUserPhone}`)); }
+                else { await set(ref(db, `users/${activeManagedUserPhone}`), syn); }
+                triggerAdminAlert("Workspace updated safely!", true); document.getElementById('profileManagementFields').style.display = 'none';
+            } catch(e) { triggerAdminAlert("Mutation rejected.", false); }
+        });
+
+        document.getElementById('deleteProfileAccountBtn').addEventListener('click', async () => {
+            if(!activeManagedUserPhone) return;
+            if(!await openCustomModal("CRITICAL: Wipe Account", "Removes ledger records permanently.", [{label:"Target:", value:"+251"+activeManagedUserPhone}], "btn-delete", "Erase Node")) return;
+            try { await remove(ref(db, `users/${activeManagedUserPhone}`)); triggerAdminAlert("Cleaned!", true); document.getElementById('profileManagementFields').style.display = 'none'; }
+            catch(e) { triggerAdminAlert("Wipe failure.", false); }
+        });
+    </script>
+</body>
+</html>

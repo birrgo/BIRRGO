@@ -278,9 +278,9 @@
     <div id="gameModal" class="modal-overlay">
         <div class="modal-box">
             <div id="modalTitle" class="modal-title">Confirm Ticket</div>
-            <div id="modalLogos" class="modal-logo-count">1 ticket price is 20 Birr. Enter your 4-digit PIN to pay and play.</div>
+            <div id="modalLogos" class="modal-logo-count">1 ticket price is 20 Birr. Enter your 6-digit PIN to pay and play.</div>
             
-            <input type="password" id="userPinInput" maxlength="4" inputmode="numeric" class="input-field" placeholder="••••">
+            <input type="password" id="userPinInput" maxlength="6" inputmode="numeric" class="input-field" placeholder="••••••">
 
             <div class="modal-prize-box" id="modalPrizeBox" style="display: none;">
                 <div style="font-size: 0.85rem; color: #888; text-transform: uppercase;">Your Payout</div>
@@ -379,7 +379,7 @@
             
             document.getElementById('modalTitle').innerText = "Confirm Ticket";
             document.getElementById('modalTitle').className = "modal-title";
-            document.getElementById('modalLogos').innerText = "1 ticket price is 20 Birr. Enter your 4-digit PIN to pay and play.";
+            document.getElementById('modalLogos').innerText = "1 ticket price is 20 Birr. Enter your 6-digit PIN to pay and play.";
             
             const pinInput = document.getElementById('userPinInput');
             pinInput.style.display = "block";
@@ -411,8 +411,8 @@
         window.processTicketPurchase = async function() {
             if(!activeGameState && document.getElementById('userPinInput').style.display !== "none") {
                 const enteredPin = document.getElementById('userPinInput').value.trim();
-                if(!enteredPin || enteredPin.length !== 4) {
-                    showToast("Please enter your valid 4-digit security PIN.", "error");
+                if(!enteredPin || enteredPin.length !== 6) {
+                    showToast("Please enter your valid 6-digit security PIN.", "error");
                     return;
                 }
                 executeTicketTransaction(enteredPin);

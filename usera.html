@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo | User Activity Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Base Global Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #0f0507;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* SVG Background Waves */
+        .bg-wave {
+            position: absolute;
+            width: 100%;
+            left: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .bg-wave-top {
+            top: 0;
+            height: 120px;
+        }
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 150px;
+        }
+
+        /* App Wrapper Container */
+        .app-view {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 410px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px 20px 30px 20px;
+            box-sizing: border-box;
+        }
+
+        /* Top Navigation Header Styles */
+        .header-top-area {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .top-nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-back-top {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+
+        .btn-back-top:hover {
+            background: rgba(255, 255, 255, 0.22);
+            transform: translateY(-1px);
+        }
+
+        /* Main Body Content */
+        .main-body-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            margin-top: 10px;
+        }
+
+        .step-view {
+            display: none;
+            width: 100%;
+        }
+
+        .step-view.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .screen-title span {
+            color: #ff334b;
+        }
+
+        .screen-subtitle {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.5;
+            margin-bottom: 24px;
+        }
+
+        /* Activity Dashboard Tabs - Updated for 5 Tabs */
+        .activity-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 4px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            gap: 2px;
+            overflow-x: auto; /* Handles safe overflow in smaller devices */
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .activity-tabs::-webkit-scrollbar {
+            display: none; /* Safari & Chrome */
+        }
+
+        .activity-tab-btn {
+            flex: 1;
+            min-width: 65px; /* Ensures text is readable when 5 tabs exist */
+            border: none;
+            background: none;
+            padding: 11px 2px;
+            font-size: 11px; /* Slightly reduced font size to fit cleanly */
+            font-weight: 700;
+            color: #9ca3af;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .activity-tab-btn.active {
+            background: #ffffff;
+            color: #0f0507;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Activity List Area */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 440px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        /* Custom Scrollbar */
+        .activity-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .activity-list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .activity-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+        }
+
+        /* Card Item Styles */
+        .activity-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .activity-item.unpaid-actionable {
+            cursor: pointer;
+            border: 1px dashed rgba(251, 191, 36, 0.4);
+            background: rgba(251, 191, 36, 0.03);
+        }
+
+        .activity-item.unpaid-actionable:hover {
+            background: rgba(251, 191, 36, 0.08);
+            transform: scale(1.01);
+        }
+
+        .activity-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-item-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .activity-item-amount {
+            font-weight: 700;
+            font-size: 15px;
+            color: #ff334b;
+        }
+
+        .activity-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-badge.unpaid { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .activity-badge.pending { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .activity-badge.expired { background: rgba(107, 114, 128, 0.15); color: #9ca3af; border: 1px solid rgba(107, 114, 128, 0.3); }
+        .activity-badge.approved { background: rgba(5, 150, 105, 0.15); color: #34d399; border: 1px solid rgba(5, 150, 105, 0.3); }
+        .activity-badge.rejected { background: rgba(220, 38, 38, 0.15); color: #f87171; border: 1px solid rgba(220, 38, 38, 0.3); }
+        .activity-badge.cancelled { background: rgba(156, 163, 175, 0.15); color: #d1d5db; border: 1px solid rgba(156, 163, 175, 0.3); }
+        
+        .activity-meta {
+            font-size: 12px;
+            color: #9ca3af;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .empty-activity-state {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 14px;
+            color: #6b7280;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Modal Overlay for Resolution Page */
+        .resolution-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 5, 7, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .resolution-card {
+            background: #18090c;
+            border: 1px solid #ff334b33;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 370px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .resolution-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(239, 68, 68, 0.1);
+            border: 2px solid #ef4444;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px auto;
+            color: #ef4444;
+        }
+
+        .resolution-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+
+        .resolution-desc {
+            font-size: 13px;
+            color: #9ca3af;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .resolution-details {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 24px;
+            font-size: 12px;
+            text-align: left;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .resolution-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        .resolution-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .resolution-btn {
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            margin-bottom: 10px;
+        }
+
+        .btn-pay-now {
+            background: linear-gradient(135deg, #ff334b 0%, #b80017 100%);
+            color: #ffffff;
+        }
+        .btn-pay-now:active {
+            transform: scale(0.98);
+        }
+
+        .btn-cancel-order {
+            background: rgba(255, 255, 255, 0.08);
+            color: #9ca3af;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .btn-cancel-order:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* Footer Action Area */
+        .action-area {
+            margin-top: 30px;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff;
+        }
+
+        .divider {
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 11px;
+        }
+    </style>
+</head>
+<body>
+
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V40C375 40 280 80 0 50V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/><stop offset="1" stop-color="#1a0003"/>
+            </linearGradient>
+        </defs>
+    </svg>
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 150H0V100C0 100 120 50 375 90V150Z" fill="#1f0004"/>
+    </svg>
+
+    <div class="resolution-overlay" id="resolutionPage">
+        <div class="resolution-card">
+            <div class="resolution-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div class="resolution-title">Your Time is Up!</div>
+            <div class="resolution-desc">
+                This transaction ticket has expired. Please cancel this order, or click below to proceed with a strict 5-minute checkout grace period.
+            </div>
+            
+            <div class="resolution-details">
+                <div class="resolution-row">
+                    <span style="color: #9ca3af;">Ref ID:</span>
+                    <span id="res-ref" style="font-weight: 600; color: #ffffff;">-</span>
+                </div>
+                <div class="resolution-row">
+                    <span style="color: #9ca3af;">Amount:</span>
+                    <span id="res-amount" style="font-weight: 700; color: #ff334b;">0.00 Birr</span>
+                </div>
+            </div>
+
+            <button class="resolution-btn btn-pay-now" id="btnGracePay">Pay Now (5 Mins)</button>
+            <button class="resolution-btn btn-cancel-order" id="btnCancelOrder">Cancel Order</button>
+        </div>
+    </div>
+
+    <div class="app-view">
+        
+        <div class="header-top-area">
+            <div class="top-nav-header">
+                <button class="btn-back-top" onclick="window.location.href='deposit.html'">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Back
+                </button>
+                <div style="flex-grow: 1;"></div>
+            </div>
+        </div>
+
+        <div class="main-body-content">
+            <div class="step-view active" id="screen-activity">
+                <div class="screen-title">User <span>Activity</span></div>
+                <div class="screen-subtitle">Track, monitor, and audit your ongoing, approved, or rejected deposits.</div>
+
+                <!-- Expanded tabs wrapper to contain the 5th tab comfortably -->
+                <div class="activity-tabs">
+                    <button class="activity-tab-btn active" id="tab-unpaid" onclick="filterActivity('unpaid')">Unpaid</button>
+                    <button class="activity-tab-btn" id="tab-ongoing" onclick="filterActivity('ongoing')">Pending</button>
+                    <button class="activity-tab-btn" id="tab-approved" onclick="filterActivity('approved')">Approved</button>
+                    <button class="activity-tab-btn" id="tab-rejected" onclick="filterActivity('rejected')">Rejected</button>
+                    <button class="activity-tab-btn" id="tab-cancelled" onclick="filterActivity('cancelled')">Cancelled</button>
+                </div>
+
+                <div class="activity-list" id="activity-list-container">
+                    <div class="empty-activity-state">Connecting to servers...</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-area">
+            <div class="footer-links">
+                <a href="#">P2P Terms</a><span class="divider">|</span><a href="deposit.html">New Deposit</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let userId = localStorage.getItem("auth_session_phone") || localStorage.getItem("current_user_id") || "DEV_USER";
+        let userTransactionsList = [];
+        let currentActivityFilter = 'unpaid';
+
+        console.log("Activity tracker initiated for user ID:", userId);
+
+        function fetchUserTransactionsRealtime() {
+            const userHistoryRef = ref(db, `users/${userId}/transactions`);
+            onValue(userHistoryRef, (snapshot) => {
+                userTransactionsList = [];
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        userTransactionsList.push({
+                            id: childSnapshot.key,
+                            ...data
+                        });
+                    });
+                    userTransactionsList.reverse();
+                    console.log("Transactions fetched dynamically:", userTransactionsList);
+                } else {
+                    console.log("No transactions found under path: users/" + userId + "/transactions");
+                }
+                renderActivityItems();
+            });
+        }
+
+        window.filterActivity = function(filter) {
+            currentActivityFilter = filter;
+            document.querySelectorAll('.activity-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${filter}`).classList.add('active');
+            renderActivityItems();
+        };
+
+        function getMethodIdFromTitle(title) {
+            const lowerTitle = (title || '').toLowerCase();
+            if (lowerTitle.includes('cbe birr')) return 'cbebirr';
+            if (lowerTitle.includes('commercial bank')) return 'cbe';
+            if (lowerTitle.includes('abyssinia')) return 'boa';
+            if (lowerTitle.includes('telebirr')) return 'telebirr';
+            if (lowerTitle.includes('mpesa') || lowerTitle.includes('m-pesa')) return 'mpesa';
+            return 'telebirr'; 
+        }
+
+        function checkIsExpired(timestampStr) {
+            if (!timestampStr) return false;
+            let timeString = timestampStr;
+            if (typeof timeString === 'string' && timeString.includes('/')) {
+                timeString = timeString.replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1');
+            }
+            const createdTime = new Date(timeString).getTime();
+            const now = Date.now();
+            return (now - createdTime > (15 * 60 * 1000));
+        }
+
+        window.redirectToPayment = function(orderRef, amount, rawTitle, timestampStr, dbKey) {
+            const methodId = getMethodIdFromTitle(rawTitle);
+            const isExpired = checkIsExpired(timestampStr);
+
+            if (isExpired) {
+                // Open Resolution Screen directly
+                document.getElementById('res-ref').innerText = orderRef;
+                document.getElementById('res-amount').innerText = `${parseFloat(amount).toLocaleString()} Birr`;
+                document.getElementById('resolutionPage').style.display = 'flex';
+
+                // Configure action buttons dynamically
+                document.getElementById('btnGracePay').onclick = () => {
+                    const redirectUrl = `deposit.html?step=pay&method=${encodeURIComponent(methodId)}&amount=${encodeURIComponent(amount)}&ref=${encodeURIComponent(orderRef)}&key=${encodeURIComponent(dbKey)}&grace=true`;
+                    window.location.href = redirectUrl;
+                };
+
+                document.getElementById('btnCancelOrder').onclick = () => {
+                    const updates = {};
+                    // Save explicitly as 'cancelled' to route it dynamically to the Cancelled Tab
+                    updates[`users/${userId}/transactions/${dbKey}/status`] = 'cancelled';
+                    updates[`deposits/${dbKey}/status`] = 'Cancelled';
+                    updates[`deposits/${dbKey}/rejectReason`] = 'Cancelled by user after timeout';
+
+                    update(ref(db), updates).then(() => {
+                        document.getElementById('resolutionPage').style.display = 'none';
+                        filterActivity('cancelled');
+                    }).catch((error) => {
+                        console.error("Failed to cancel order:", error);
+                    });
+                };
+            } else {
+                // Normal Active state
+                const redirectUrl = `deposit.html?step=pay&method=${encodeURIComponent(methodId)}&amount=${encodeURIComponent(amount)}&ref=${encodeURIComponent(orderRef)}&key=${encodeURIComponent(dbKey)}`;
+                window.location.href = redirectUrl;
+            }
+        };
+
+        function renderActivityItems() {
+            const container = document.getElementById('activity-list-container');
+            container.innerHTML = '';
+
+            const filteredList = userTransactionsList.filter(item => {
+                const status = (item.status || 'unpaid').toLowerCase();
+                const title = (item.title || '').toLowerCase();
+                const type = (item.type || '').toLowerCase();
+                
+                const isDeposit = title.includes('deposit') || type.includes('deposit') || (!item.title && !item.type);
+                const isExpired = checkIsExpired(item.timestamp);
+
+                if (currentActivityFilter === 'unpaid') {
+                    return (status === 'unpaid' || status === 'pending') && isDeposit && !isExpired;
+                } else if (currentActivityFilter === 'ongoing') {
+                    return (status === 'pending' || status === 'unpaid') && isDeposit && isExpired;
+                } else if (currentActivityFilter === 'approved') {
+                    return status === 'approved' || status === 'success' || status === 'completed';
+                } else if (currentActivityFilter === 'rejected') {
+                    return status === 'rejected' || status === 'failed';
+                } else if (currentActivityFilter === 'cancelled') {
+                    return status === 'cancelled';
+                }
+                return false;
+            });
+
+            if (filteredList.length === 0) {
+                container.innerHTML = `<div class="empty-activity-state">No ${currentActivityFilter} orders found.</div>`;
+                return;
+            }
+
+            filteredList.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('activity-item');
+                
+                let displayStatus = item.status || 'unpaid';
+                const isExpired = checkIsExpired(item.timestamp);
+
+                if (currentActivityFilter === 'unpaid') {
+                    displayStatus = 'unpaid';
+                    card.classList.add('unpaid-actionable');
+                    card.setAttribute('onclick', `redirectToPayment('${item.orderRef || ""}', '${item.amount || 0}', '${item.title || ""}', '${item.timestamp || ""}', '${item.id || ""}')`);
+                } else if (currentActivityFilter === 'ongoing') {
+                    displayStatus = 'expired';
+                    card.classList.add('unpaid-actionable');
+                    card.setAttribute('onclick', `redirectToPayment('${item.orderRef || ""}', '${item.amount || 0}', '${item.title || ""}', '${item.timestamp || ""}', '${item.id || ""}')`);
+                }
+
+                const cleanAmount = parseFloat(item.amount || 0).toLocaleString();
+
+                card.innerHTML = `
+                    <div class="activity-item-header">
+                        <span class="activity-item-title">${item.title || '📥 Deposit'}</span>
+                        <span class="activity-badge ${displayStatus.toLowerCase()}">${displayStatus}</span>
+                    </div>
+                    <div class="activity-meta">
+                        <span>Ref: ${item.orderRef || 'N/A'}</span>
+                        <span class="activity-item-amount" style="color: ${currentActivityFilter === 'unpaid' ? '#f59e0b' : '#ff334b'}">${cleanAmount} Birr</span>
+                    </div>
+                    <div class="activity-meta" style="margin-top:2px; font-size:10px;">
+                        <span>Created: ${item.timestamp || ''}</span>
+                        ${(currentActivityFilter === 'unpaid' || currentActivityFilter === 'ongoing') ? '<span style="color: #fbbf24; font-weight: 700; font-size: 11px;">Pay Now &rarr;</span>' : ''}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        setInterval(() => {
+            if (currentActivityFilter === 'unpaid' || currentActivityFilter === 'ongoing') {
+                renderActivityItems();
+            }
+        }, 10000);
+
+        fetchUserTransactionsRealtime();
+    </script>
+</body>
+</html>

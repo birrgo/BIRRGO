@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Premium Core Matrix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Space+Grotesk:wght=500;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm Operational Request</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed Execution</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="role-modal-overlay" id="modal-news">
+        <div class="workspace-card wide-card" style="max-height: 85vh; overflow-y: auto;">
+            <button class="btn-close-modal" onclick="closeRoleModal('modal-news')">✕</button>
+            <h3 class="section-title title-burgundy" id="panelTitle">News Broadcast Center</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Select targets to push notifications feeds, update voucher limits instantly, or manage running entries.</p>
+            
+            <div class="input-field-wrapper">
+                <label>Action Target Category</label>
+                <select class="form-select" id="postCategory">
+                    <option value="All Updates">All Updates (General Feed Post)</option>
+                    <option value="System Releases">System Releases (Version Update Feed Post)</option>
+                    <option value="Promo Rewards">Promo Rewards (Voucher Rules Setup)</option>
+                </select>
+            </div>
+
+            <div id="broadcastFormFields">
+                <div class="input-field-wrapper">
+                    <label id="titleInputLabel">Broadcast Title</label>
+                    <input class="admin-input" type="text" id="newsTitle" placeholder="e.g., Massive Bonus Event!" autocomplete="off">
+                </div>
+
+                <div class="input-field-wrapper">
+                    <label id="imageInputLabel">Attach Announcement Photo (Optional)</label>
+                    <div class="file-upload-wrapper">
+                        <span class="file-upload-label-text" id="fileNameDisplay">
+                            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                            Choose Image from Device
+                        </span>
+                        <input class="file-upload-input" type="file" id="newsImageFile" accept="image/*">
+                    </div>
+                </div>
+
+                <div class="input-field-wrapper">
+                    <label id="messageInputLabel">Broadcast Message Content</label>
+                    <textarea class="admin-input" id="newsMessage" placeholder="Type what you want your app users to read today..."></textarea>
+                </div>
+            </div>
+
+            <div class="custom-fields-container" id="promoRewardsFields" style="display: none;">
+                <div class="input-field-wrapper">
+                    <label>Promo Code String</label>
+                    <input class="admin-input" type="text" id="promoCode" placeholder="e.g., BIRR1000BONUS" style="text-transform: uppercase;">
+                </div>
+                <div class="input-field-wrapper">
+                    <label>Number of First Users Limit</label>
+                    <input class="admin-input" type="number" id="promoMaxClaims" placeholder="e.g., 10" min="1">
+                </div>
+                <div class="input-field-wrapper">
+                    <label>Reward Amount (Birr)</label>
+                    <input class="admin-input" type="number" id="promoRewardAmount" placeholder="e.g., 1000" min="1">
+                </div>
+            </div>
+
+            <div class="btn-row" style="margin-bottom: 20px; gap: 10px;">
+                <button class="btn-admin-action btn-broadcast" id="publishNewsBtn" style="flex: 1;">
+                    <span id="buttonText">Publish Feed Post</span>
+                </button>
+                <button class="btn-admin-action btn-delete" id="deleteAllCategoriesBtn" style="width: auto; padding: 0 15px; font-size: 13px;">
+                    Delete All Categories
+                </button>
+            </div>
+
+            <div style="border-top: 1px dashed var(--border-light); padding-top:20px; margin-top:10px;">
+                <h3 class="section-title title-dark" style="font-size: 16px;">Active Feeds & Engine Formats</h3>
+                <p style="font-size:12px;color:var(--text-muted);margin-top:-10px;">Review live feed deployments or purge existing entries instantly from the pipeline database.</p>
+                
+                <div class="table-scroll-container" style="max-height: 250px; overflow-y: auto;">
+                    <table class="directory-table" style="font-size: 13px;">
+                        <thead>
+                            <tr>
+                                <th>Category / Code</th>
+                                <th>Details / Parameters</th>
+                                <th style="text-align: right;">Operations</th>
+                            </tr>
+                        </thead>
+                        <tbody id="liveNewsRecordsBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="role-modal-overlay" id="modal-ecosystem">
+        <div class="workspace-card wide-card">
+            <button class="btn-close-modal" onclick="closeRoleModal('modal-ecosystem')">✕</button>
+            <h3 class="section-title title-pink">Ecosystem Matrix Structural Records Mappings</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Real-time node queries tracking active ledger details, parameters, and balances.</p>
+            
+            <div class="input-field-wrapper" style="margin-bottom: 8px;">
+                <label>Realtime Directory Filter</label>
+                <input type="text" id="ecosystemSearchInput" class="admin-input" placeholder="Search cleanly by Mobile number (+251...), Card references, or Name fields...">
+            </div>
+
+            <div class="table-scroll-container">
+                <table class="directory-table">
+                    <thead>
+                        <tr>
+                            <th>Account ID</th>
+                            <th>Card Record Token</th>
+                            <th>First Name</th>
+                            <th>Full Profile Name</th>
+                            <th>Phone Identity</th>
+                            <th>Wallet Balances</th>
+                            <th>Created Stamp</th>
+                        </tr>
+                    </thead>
+                    <tbody id="directory-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="role-modal-overlay" id="modal-money">
+        <div class="workspace-card">
+            <button class="btn-close-modal" onclick="closeRoleModal('modal-money')">✕</button>
+            <h3 class="section-title title-gold">Money Controller Role</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Modify wallet balances instantly using card or phone configurations.</p>
+            
+            <div class="input-field-wrapper">
+                <label>Target 15-Digit Card Number / Phone</label>
+                <input type="text" id="targetIdNumber" class="admin-input" placeholder="e.g. 914447872278441">
+            </div>
+            <div class="input-field-wrapper">
+                <label>Amount (ETB)</label>
+                <input type="number" id="targetFinancialValue" class="admin-input" placeholder="0.00" step="0.01">
+            </div>
+
+            <div class="btn-row">
+                <button class="btn-admin-action btn-credit" id="idCreditBtn">Deposit Funds</button>
+                <button class="btn-admin-action btn-debit" id="idDebitBtn">Withdraw Funds</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="role-modal-overlay" id="modal-tasks">
+        <div class="workspace-card">
+            <button class="btn-close-modal" onclick="closeRoleModal('modal-tasks')">✕</button>
+            <h3 class="section-title title-blue">Task Link Manager</h3>
+            <p style="font-size:13px;color:var(--text-muted);margin-top:-10px;">Assign 5 separate dynamic destinations for independent paths.</p>
+            <div class="task-input-group">
+                <input type="text" id="taskLink1" class="admin-input" placeholder="Task 1 URL">
+                <input type="text" id="taskLink2" class="admin-input" placeholder="Task 2 URL">
+                <input type="text" id="taskLink3" class="admin-input" placeholder="Task 3 URL">
+                <input type="text" id="taskLink4" class="admin-input" placeholder="Task 4 URL">
+                <input type="text" id="taskLink5" class="admin-input" placeholder="Task 5 URL">
+            </div>
+            <button class="btn-admin-action btn-update" id="updateAllTasksBtn">Update Tasks Matrix</button>
+        </div>
+    </div>
+
+    <div class="role-modal-overlay" id="modal-secure">
+        <div class="workspace-card">
+            <button class="btn-close-modal" onclick="closeRoleModal('modal-secure')">✕</button>
+            
+            <div style="display:flex; flex-direction:column; gap:16px;">
+                <h3 class="section-title title-dark">Account Sweeper Role</h3>
+                <p style="font-size:13px;color:var(--text-muted);margin-top:-10px;">Permanently terminate storage records nodes via identifiers.</p>
+                <input type="text" id="deleteTargetInput" class="admin-input" placeholder="Card number or phone reference...">
+                <button class="btn-admin-action btn-delete" id="deleteAccountBtn">Expunge Account Node</button>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:14px; border-top: 1px dashed var(--border-light); padding-top:20px;">
+                <h3 class="section-title title-dark">Manage Extra Admins</h3>
+                <p style="font-size:13px;color:var(--text-muted);margin-top:-10px;">Monitor currently registered auxiliary accounts and clear access.</p>
+                <div class="table-scroll-container" style="max-height: 180px; overflow-y: auto;">
+                    <table class="directory-table" style="font-size: 13px;">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th style="text-align: right;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subAdminsListBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:14px; border-top: 1px dashed var(--border-light); padding-top:20px;">
+                <h3 class="section-title title-dark">Create Extra Admin User</h3>
+                <input type="text" id="newAdminUser" class="admin-input" placeholder="New Extra Username">
+                <input type="text" id="newAdminPass" class="admin-input" placeholder="New Extra Passphrase Key">
+                <button class="btn-admin-action btn-save-gold" id="updateAdminCredsBtn">Register Extra Admin Account</button>
+            </div>
+
+            <div style="display:flex; flex-direction:column; gap:14px; border-top: 1px dashed var(--border-light); padding-top:20px;">
+                <h3 class="section-title title-dark">Change Main Admin Password</h3>
+                <input type="text" id="mainAdminUser" class="admin-input" placeholder="Main Admin Username (e.g. admin)">
+                <input type="password" id="mainAdminPass" class="admin-input" placeholder="New Root System Password">
+                <button class="btn-admin-action btn-broadcast" id="changeMainAdminBtn">Update Core Root Credentials</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1>BirrGo Admin Dashboard</h1>
+            <button class="btn-logout" id="exitAdminBtn">Logout Engine</button>
+        </div>
+
+        <div class="role-control-grid">
+            <button class="role-nav-btn btn-role-stats" id="btn-toggle-stats">
+                <span class="icon">📊</span> Toggle Stats View
+            </button>
+            <button class="role-nav-btn btn-role-ecosystem" onclick="openRoleModal('modal-ecosystem')">
+                <span class="icon">🌐</span> Ecosystem Matrix
+            </button>
+            <button class="role-nav-btn btn-role-money" onclick="openRoleModal('modal-money')">
+                <span class="icon">💰</span> Money Controller
+            </button>
+            <button class="role-nav-btn btn-role-tasks" onclick="openRoleModal('modal-tasks')">
+                <span class="icon">🔗</span> Enter Tasks
+            </button>
+            <button class="role-nav-btn btn-role-news" onclick="openRoleModal('modal-news')">
+                <span class="icon">📢</span> Broadcast & Promos
+            </button>
+            <button class="role-nav-btn btn-role-secure" onclick="openRoleModal('modal-secure')">
+                <span class="icon">🛡️</span> System Security
+            </button>
+        </div>
+
+        <div id="stats-panel" class="metrics-grid">
+            <div class="metric-card">
+                <p>Global Active Users</p>
+                <h2 id="metric-total-users">0</h2>
+            </div>
+            <div class="metric-card vault">
+                <p>Total User Liabilities balance</p>
+                <h2><span id="metric-total-vault">0.00</span> ETB</h2>
+            </div>
+            <div class="metric-card lottery">
+                <p>Admin Capital Pool Balance</p>
+                <h2><span id="metric-lottery-vault">0.00</span> ETB</h2>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, onValue, runTransaction, push, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        if (sessionStorage.getItem('birrgo_admin_session') !== 'active') {
+            window.location.href = "admin_login.html";
+        }
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const storage = getStorage(app);
+
+        // SYSTEM MODAL PANEL HOOKS
+        window.openRoleModal = (id) => document.getElementById(id).classList.add('active');
+        window.closeRoleModal = (id) => document.getElementById(id).classList.remove('active');
+
+        document.getElementById('btn-toggle-stats').addEventListener('click', () => {
+            const panel = document.getElementById('stats-panel');
+            panel.style.display = (panel.style.display === 'none') ? 'grid' : 'none';
+        });
+
+        let currentModalResolver = null;
+
+        function openCustomModal(title, desc, detailsArray, actionClass, actionText) {
+            document.getElementById('modalTitleDisplay').innerText = title;
+            document.getElementById('modalDescriptionDisplay').innerText = desc;
+            
+            const dynamicContainer = document.getElementById('modalDynamicDetails');
+            dynamicContainer.innerHTML = '';
+            
+            detailsArray.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'modal-data-row';
+                row.innerHTML = `<span class="modal-data-label">${item.label}</span><span class="modal-data-value">${item.value}</span>`;
+                dynamicContainer.appendChild(row);
+            });
+
+            const actionBtn = document.getElementById('modalConfirmBtn');
+            actionBtn.className = "btn-admin-action " + actionClass;
+            actionBtn.innerText = actionText;
+
+            document.getElementById('customConfirmModal').classList.add('active');
+
+            return new Promise((resolve) => { currentModalResolver = resolve; });
+        }
+
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => {
+            if (currentModalResolver) currentModalResolver(true);
+            document.getElementById('customConfirmModal').classList.remove('active');
+        });
+
+        document.getElementById('modalCancelBtn').addEventListener('click', () => {
+            if (currentModalResolver) currentModalResolver(false);
+            document.getElementById('customConfirmModal').classList.remove('active');
+        });
+
+        function triggerAdminAlert(msg, isSuccess = true) {
+            const toast = document.getElementById('adminToast');
+            toast.innerText = msg;
+            toast.style.background = isSuccess ? 'var(--success-gradient)' : 'var(--danger-gradient)';
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 3500);
+        }
+
+        function generate15DigitCard(phoneStr) {
+            const cleanPhone = phoneStr.replace(/\D/g, '');
+            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
+            return cleanPhone + final6Reversed;
+        }
+
+        let localUserDirectoryCache = {};
+
+        onValue(ref(db, 'users'), (snapshot) => {
+            if (!snapshot.exists()) {
+                document.getElementById('directory-table-body').innerHTML = '';
+                document.getElementById('metric-total-users').innerText = '0';
+                document.getElementById('metric-total-vault').innerText = '0.00';
+                document.getElementById('metric-lottery-vault').innerText = '0.00';
+                localUserDirectoryCache = {};
+                return;
+            }
+            localUserDirectoryCache = snapshot.val();
+            processAndRenderEcosystemTable();
+        });
+
+        function processAndRenderEcosystemTable(searchQueryString = '') {
+            const tableBody = document.getElementById('directory-table-body');
+            tableBody.innerHTML = '';
+
+            let totalUsers = 0;
+            let totalVaultLiabilities = 0;
+            let foundAdminBalance = 0;
+            const parsedQuery = searchQueryString.toLowerCase().trim().replace(/\s/g, '');
+
+            Object.keys(localUserDirectoryCache).forEach((phoneKey) => {
+                totalUsers++;
+                const profile = localUserDirectoryCache[phoneKey];
+                const balance = parseFloat(profile.walletBalance) || 0;
+                const displayCard = profile.cardNumber || generate15DigitCard(phoneKey);
+
+                if (phoneKey.includes("000000") || displayCard.includes("000000")) {
+                    foundAdminBalance = balance;
+                } else {
+                    totalVaultLiabilities += balance;
+                }
+
+                const matchPhone = phoneKey.toLowerCase().includes(parsedQuery);
+                const matchCard = displayCard.toLowerCase().includes(parsedQuery);
+                const matchFirstName = (profile.firstName || '').toLowerCase().includes(parsedQuery);
+                const matchFullName = (profile.fullName || '').toLowerCase().includes(parsedQuery);
+
+                if (parsedQuery !== '' && !matchPhone && !matchCard && !matchFirstName && !matchFullName) {
+                    return; 
+                }
+
+                let dateFormatted = "N/A";
+                if(profile.createdAt) {
+                    try { dateFormatted = new Date(profile.createdAt).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}); } catch(e){}
+                }
+
+                const rowHtml = `
+                    <tr>
+                        <td><span class="id-badge">BG-${profile.userNumber || '1000'}</span></td>
+                        <td style="font-family:monospace;font-weight:600;color:var(--text-muted);">${displayCard}</td>
+                        <td style="font-weight:700;color:var(--text-dark);">${profile.firstName || 'N/A'}</td>
+                        <td>${profile.fullName || 'Anonymous Account'}</td>
+                        <td>+251${phoneKey}</td>
+                        <td style="font-weight:700;color:var(--primary-burgundy);">${balance.toFixed(2)} ETB</td>
+                        <td style="color:var(--text-muted);font-size:12px;">${dateFormatted}</td>
+                    </tr>
+                `;
+                tableBody.insertAdjacentHTML('beforeend', rowHtml);
+            });
+
+            document.getElementById('metric-total-users').innerText = totalUsers;
+            document.getElementById('metric-total-vault').innerText = totalVaultLiabilities.toFixed(2);
+            document.getElementById('metric-lottery-vault').innerText = foundAdminBalance.toFixed(2);
+        }
+
+        document.getElementById('ecosystemSearchInput').addEventListener('input', (e) => {
+            processAndRenderEcosystemTable(e.target.value);
+        });
+
+        get(ref(db, 'task')).then((snapshot) => {
+            if (snapshot.exists()) {
+                const taskData = snapshot.val();
+                if (taskData.task1) document.getElementById('taskLink1').value = taskData.task1;
+                if (taskData.task2) document.getElementById('taskLink2').value = taskData.task2;
+                if (taskData.task3) document.getElementById('taskLink3').value = taskData.task3;
+                if (taskData.task4) document.getElementById('taskLink4').value = taskData.task4;
+                if (taskData.task5) document.getElementById('taskLink5').value = taskData.task5;
+            }
+        }).catch(() => {});
+
+        async function lookupUserProfileByCardOrPhone(inputString) {
+            if (!localUserDirectoryCache) return null;
+            const cleanedInput = inputString.replace(/\s/g, '');
+
+            if (localUserDirectoryCache[cleanedInput]) {
+                return { phoneKey: cleanedInput, profile: localUserDirectoryCache[cleanedInput] };
+            }
+
+            for (let phoneKey of Object.keys(localUserDirectoryCache)) {
+                const profile = localUserDirectoryCache[phoneKey];
+                const storedCard = profile.cardNumber ? profile.cardNumber.replace(/\s/g, '') : '';
+                const computedCard = generate15DigitCard(phoneKey);
+                
+                if (storedCard === cleanedInput || computedCard === cleanedInput) {
+                    return { phoneKey, profile };
+                }
+            }
+            return null;
+        }
+
+        async function handleIdBalanceAdjustment(isDeposit) {
+            const inputCard = document.getElementById('targetIdNumber').value.trim();
+            const inputAmount = parseFloat(document.getElementById('targetFinancialValue').value.trim());
+
+            if (!inputCard || isNaN(inputAmount) || inputAmount <= 0) {
+                triggerAdminAlert("Please supply accurate parameters.", false);
+                return;
+            }
+
+            try {
+                const userMatch = await lookupUserProfileByCardOrPhone(inputCard);
+                if (!userMatch) {
+                    triggerAdminAlert("No user node located.", false);
+                    return;
+                }
+
+                const targetPhone = userMatch.phoneKey;
+                const accountName = userMatch.profile.fullName || "Anonymous Account";
+                const actionType = isDeposit ? "DEPOSIT" : "WITHDRAWAL";
+
+                const confirmed = await openCustomModal(
+                    "Confirm Account Balance Adjustment",
+                    "Verify matching fields cleanly before launching memory pipelines.",
+                    [
+                        { label: "Profile Name:", value: accountName },
+                        { label: "Action:", value: actionType },
+                        { label: "Change total:", value: inputAmount.toFixed(2) + " ETB" }
+                    ],
+                    isDeposit ? "btn-credit" : "btn-debit",
+                    isDeposit ? "Authorize Deposit" : "Authorize Withdrawal"
+                );
+                
+                if (!confirmed) return;
+
+                await runTransaction(ref(db, `users/${targetPhone}/walletBalance`), (currentBalance) => {
+                    let parsed = parseFloat(currentBalance) || 0;
+                    return isDeposit ? parsed + inputAmount : Math.max(0, parsed - inputAmount);
+                });
+
+                const now = new Date();
+                const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                                now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                await set(push(ref(db, `users/${targetPhone}/transactions`)), {
+                    title: isDeposit ? "System Admin Wallet Credit" : "System Admin Wallet Debit Overrides",
+                    amount: inputAmount,
+                    type: isDeposit ? "income" : "expense",
+                    timestamp: timeStr
+                });
+
+                triggerAdminAlert("Balance operations parsed accurately!", true);
+                closeRoleModal('modal-money');
+                document.getElementById('targetIdNumber').value = '';
+                document.getElementById('targetFinancialValue').value = '';
+            } catch (err) {
+                triggerAdminAlert("Transactional processing engine dropped.", false);
+            }
+        }
+
+        // FIXED: DYNAMIC PREVIEW, DELETION & CATEGORY PURGE ENGINE
+        const categorySelector = document.getElementById('postCategory');
+        const broadcastFormFields = document.getElementById('broadcastFormFields');
+        const promoRewardsFields = document.getElementById('promoRewardsFields');
+        const titleInputLabel = document.getElementById('titleInputLabel');
+        const newsTitleInput = document.getElementById('newsTitle');
+        const messageInputLabel = document.getElementById('messageInputLabel');
+        const newsMessageInput = document.getElementById('newsMessage');
+        const fileInputElement = document.getElementById('newsImageFile');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const publishNewsBtn = document.getElementById('publishNewsBtn');
+        const buttonText = document.getElementById('buttonText');
+        const panelTitle = document.getElementById('panelTitle');
+        const liveNewsRecordsBody = document.getElementById('liveNewsRecordsBody');
+
+        let globalNewsState = null;
+        let globalPromoState = null;
+
+        function setupNewsAndPromoSync() {
+            onValue(ref(db, 'adminNews'), (snapshot) => {
+                globalNewsState = snapshot.val();
+                renderCombinedManagementTable();
+            });
+
+            onValue(ref(db, 'globalPromoCampaign'), (snapshot) => {
+                globalPromoState = snapshot.val();
+                renderCombinedManagementTable();
+            });
+        }
+        setupNewsAndPromoSync();
+
+        function renderCombinedManagementTable() {
+            liveNewsRecordsBody.innerHTML = '';
+            let rowsCount = 0;
+
+            if (globalPromoState && globalPromoState.code) {
+                rowsCount++;
+                const promoRowHtml = `
+                    <tr style="background: rgba(212, 175, 55, 0.05);">
+                        <td>
+                            <span class="id-badge" style="background:linear-gradient(135deg, #d4af37, #aa7c11);">PROMO</span><br>
+                            <strong style="font-family:monospace; font-size:14px; color:var(--primary-burgundy);">${globalPromoState.code}</strong>
+                        </td>
+                        <td>
+                            <div style="font-weight:600;">Reward: ${parseFloat(globalPromoState.rewardAmount || 0).toFixed(2)} ETB</div>
+                            <div style="font-size:11px; color:var(--text-muted);">Pool Claims Limit: ${globalPromoState.currentClaimCount || 0} / ${globalPromoState.maxClaims || 0}</div>
+                        </td>
+                        <td style="text-align: right; vertical-align: middle;">
+                            <button class="btn-admin-action btn-debit delete-news-btn" 
+                                    style="height:30px; width:85px; font-size:11px; border-radius:8px;" 
+                                    data-type="promo" data-key="globalPromoCampaign">
+                                Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                liveNewsRecordsBody.insertAdjacentHTML('beforeend', promoRowHtml);
+            }
+
+            if (globalNewsState) {
+                Object.keys(globalNewsState).forEach((key) => {
+                    rowsCount++;
+                    const item = globalNewsState[key];
+                    const isSystem = item.category === "System Releases";
+                    const badgeStyle = isSystem ? 'background:linear-gradient(135deg, #007bff, #0056b3);' : 'background:linear-gradient(135deg, #800020, #4a0012);';
+                    
+                    const newsRowHtml = `
+                        <tr>
+                            <td>
+                                <span class="id-badge" style="${badgeStyle}">${isSystem ? 'PATCH' : 'FEED'}</span><br>
+                                <span style="font-size:11px; color:var(--text-muted);">${item.date || ''}</span>
+                            </td>
+                            <td>
+                                <div style="font-weight:700; color:var(--text-dark);">${item.title || ''}</div>
+                                <div style="font-size:12px; color:var(--text-muted); max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${item.content || ''}</div>
+                                ${item.imageUrl ? `<div style="font-size:11px; color:var(--primary-pink)">🖼️ Media Asset Linked</div>` : ''}
+                            </td>
+                            <td style="text-align: right; vertical-align: middle;">
+                                <button class="btn-admin-action btn-debit delete-news-btn" 
+                                        style="height:30px; width:85px; font-size:11px; border-radius:8px;" 
+                                        data-type="news" data-key="${key}">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    liveNewsRecordsBody.insertAdjacentHTML('beforeend', newsRowHtml);
+                });
+            }
+
+            if (rowsCount === 0) {
+                liveNewsRecordsBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:16px;">No dynamic feeds found across system metrics.</td></tr>`;
+                return;
+            }
+
+            // RE-BIND DELETE HANDLERS
+            liveNewsRecordsBody.querySelectorAll('.delete-news-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const type = btn.getAttribute('data-type');
+                    const key = btn.getAttribute('data-key');
+
+                    const confirmed = await openCustomModal(
+                        "Confirm Action Deletion",
+                        "Are you certain you want to remove this record parameter cluster?",
+                        [{ label: "Database Route:", value: type === 'news' ? `adminNews/${key}` : 'globalPromoCampaign' }],
+                        "btn-delete",
+                        "Wipe Node Record"
+                    );
+
+                    if (!confirmed) return;
+
+                    try {
+                        if (type === 'news') {
+                            await remove(ref(db, `adminNews/${key}`));
+                        } else {
+                            await remove(ref(db, 'globalPromoCampaign'));
+                        }
+                        triggerAdminAlert("Broadcast entry updated out of matrix successfully!", true);
+                    } catch (e) {
+                        triggerAdminAlert("Failed to alter remote structural assets.", false);
+                    }
+                });
+            });
+        }
+
+        // PURGE ALL CATEGORIES HANDLER
+        document.getElementById('deleteAllCategoriesBtn').addEventListener('click', async () => {
+            const confirmed = await openCustomModal(
+                "CRITICAL: Wipe All Categories",
+                "This action clears all active Feeds, System Patches, and Promotional Engine parameters across the database layout.",
+                [
+                    { label: "Target Nodes:", value: "adminNews & globalPromoCampaign" },
+                    { label: "Operational Risk:", value: "PERMANENT DATA LOSS" }
+                ],
+                "btn-delete",
+                "Wipe All Categories"
+            );
+
+            if (!confirmed) return;
+
+            try {
+                await remove(ref(db, 'adminNews'));
+                await remove(ref(db, 'globalPromoCampaign'));
+                triggerAdminAlert("All system application categories flushed completely!", true);
+                closeRoleModal('modal-news');
+            } catch (err) {
+                triggerAdminAlert("Failed to delete network directory categories.", false);
+            }
+        });
+
+        categorySelector.addEventListener('change', (e) => {
+            const val = e.target.value;
+            if (val === "All Updates") {
+                broadcastFormFields.style.display = "block";
+                promoRewardsFields.style.display = "none";
+                titleInputLabel.innerText = "Broadcast Title";
+                newsTitleInput.placeholder = "e.g., Massive Bonus Event!";
+                messageInputLabel.innerText = "Broadcast Message Content";
+                newsMessageInput.placeholder = "Type what you want your app users to read today...";
+                buttonText.innerText = "Publish Feed Post";
+                panelTitle.innerText = "News Broadcast Center";
+            } else if (val === "System Releases") {
+                broadcastFormFields.style.display = "block";
+                promoRewardsFields.style.display = "none";
+                titleInputLabel.innerText = "Release Version Title";
+                newsTitleInput.placeholder = "e.g., Version Upgrade v3.4.0 Live!";
+                messageInputLabel.innerText = "Release Technical Details & Changelog";
+                newsMessageInput.placeholder = "Specify what code additions, fixes or optimizations are deployed...";
+                buttonText.innerText = "Publish System Release";
+                panelTitle.innerText = "System Patch Core";
+            } else if (val === "Promo Rewards") {
+                broadcastFormFields.style.display = "none";
+                promoRewardsFields.style.display = "flex";
+                buttonText.innerText = "Activate Engine Promo";
+                panelTitle.innerText = "Promo Configuration Router";
+            }
+        });
+
+        fileInputElement.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                fileNameDisplay.innerHTML = `🖼️ Selected: <strong>${e.target.files[0].name}</strong>`;
+            } else {
+                fileNameDisplay.innerHTML = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> Choose Image from Device`;
+            }
+        });
+
+        publishNewsBtn.addEventListener('click', async () => {
+            const selectedCategory = categorySelector.value;
+            const formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const adminNewsListRef = ref(db, 'adminNews');
+
+            if (selectedCategory === "All Updates" || selectedCategory === "System Releases") {
+                const enteredTitle = newsTitleInput.value.trim();
+                const enteredMessage = newsMessageInput.value.trim();
+                const chosenFile = fileInputElement.files[0];
+
+                if (!enteredTitle || !enteredMessage) {
+                    triggerAdminAlert("Please supply complete Title and Message context targets.", false);
+                    return;
+                }
+
+                publishNewsBtn.disabled = true;
+                const originalText = buttonText.innerText;
+                buttonText.innerText = "Uploading asset components...";
+
+                try {
+                    let finalStorageImageUrl = "";
+                    if (chosenFile) {
+                        const ext = chosenFile.name.split('.').pop();
+                        const targetFileRef = storageRef(storage, `admin_news_images/broadcast_${Date.now()}.${ext}`);
+                        const uploadSnapshot = await uploadBytes(targetFileRef, chosenFile);
+                        finalStorageImageUrl = await getDownloadURL(uploadSnapshot.ref);
+                    }
+
+                    await set(push(adminNewsListRef), {
+                        category: selectedCategory, 
+                        title: enteredTitle,
+                        imageUrl: finalStorageImageUrl,
+                        content: enteredMessage,
+                        date: formattedDate,
+                        createdAtTimestamp: Date.now()
+                    });
+
+                    triggerAdminAlert(`Broadcast published live under ${selectedCategory}!`, true);
+                    newsTitleInput.value = '';
+                    newsMessageInput.value = '';
+                    fileInputElement.value = '';
+                    fileNameDisplay.innerHTML = `<svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg> Choose Image from Device`;
+                    closeRoleModal('modal-news');
+                } catch (err) {
+                    triggerAdminAlert("Broadcast payload delivery failure.", false);
+                } finally {
+                    publishNewsBtn.disabled = false;
+                    buttonText.innerText = originalText;
+                    categorySelector.dispatchEvent(new Event('change'));
+                }
+
+            } else if (selectedCategory === "Promo Rewards") {
+                const codeVal = document.getElementById('promoCode').value.trim().toUpperCase();
+                const maxClaimsVal = parseInt(document.getElementById('promoMaxClaims').value);
+                const rewardAmountVal = parseFloat(document.getElementById('promoRewardAmount').value);
+
+                if (!codeVal || isNaN(maxClaimsVal) || isNaN(rewardAmountVal)) {
+                    triggerAdminAlert("Please supply valid configuration values inside forms.", false);
+                    return;
+                }
+
+                publishNewsBtn.disabled = true;
+                const originalText = buttonText.innerText;
+                buttonText.innerText = "Synchronizing criteria values...";
+
+                try {
+                    const promoCampaignRef = ref(db, 'globalPromoCampaign');
+                    await set(promoCampaignRef, {
+                        code: codeVal,
+                        maxClaims: maxClaimsVal,
+                        rewardAmount: rewardAmountVal,
+                        currentClaimCount: 0 
+                    });
+                    triggerAdminAlert("Campaign parameter controls are updated running live instantly!", true);
+                    document.getElementById('promoCode').value = '';
+                    document.getElementById('promoMaxClaims').value = '';
+                    document.getElementById('promoRewardAmount').value = '';
+                    closeRoleModal('modal-news');
+                } catch (err) {
+                    triggerAdminAlert("The database connection setup rejected validations.", false);
+                } finally {
+                    publishNewsBtn.disabled = false;
+                    buttonText.innerText = originalText;
+                    categorySelector.dispatchEvent(new Event('change'));
+                }
+            }
+        });
+
+        document.getElementById('updateAllTasksBtn').addEventListener('click', async () => {
+            const link1 = document.getElementById('taskLink1').value.trim();
+            const link2 = document.getElementById('taskLink2').value.trim();
+            const link3 = document.getElementById('taskLink3').value.trim();
+            const link4 = document.getElementById('taskLink4').value.trim();
+            const link5 = document.getElementById('taskLink5').value.trim();
+
+            try {
+                const updatedTasks = {
+                    task1: link1, task2: link2, task3: link3, task4: link4, task5: link5      
+                };
+                await set(ref(db, 'task'), updatedTasks);
+                triggerAdminAlert("Tasks Matrix updated successfully!", true);
+                closeRoleModal('modal-tasks');
+            } catch (err) {
+                triggerAdminAlert("Link matrix update failed.", false);
+            }
+        });
+
+        onValue(ref(db, 'admin/sub_credentials'), (snapshot) => {
+            const listBody = document.getElementById('subAdminsListBody');
+            listBody.innerHTML = '';
+
+            if (!snapshot.exists()) {
+                listBody.innerHTML = `<tr><td colspan="2" style="text-align:center; color:var(--text-muted); padding: 12px;">No auxiliary administrators found.</td></tr>`;
+                return;
+            }
+
+            const subAdminsData = snapshot.val();
+            Object.keys(subAdminsData).forEach((username) => {
+                const rowHtml = `
+                    <tr>
+                        <td style="font-weight:700; color:var(--text-dark);">${username}</td>
+                        <td style="text-align: right;">
+                            <button class="btn-admin-action btn-debit" 
+                                    style="height:32px; width:100px; font-size:12px; border-radius:10px; display:inline-flex;" 
+                                    data-user="${username}">
+                                Revoke
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                listBody.insertAdjacentHTML('beforeend', rowHtml);
+            });
+
+            listBody.querySelectorAll('.btn-debit').forEach(button => {
+                button.addEventListener('click', () => {
+                    const targetUser = button.getAttribute('data-user');
+                    removeExtraSubAdmin(targetUser);
+                });
+            });
+        });
+
+        async function removeExtraSubAdmin(username) {
+            const confirmRevocation = await openCustomModal(
+                "Revoke Auxiliary Account Privileges",
+                `Terminating access configuration parameters for: ${username}`,
+                [{ label: "Target Account:", value: username }],
+                "btn-delete",
+                "Confirm Access Deletion"
+            );
+
+            if (!confirmRevocation) return;
+
+            try {
+                await remove(ref(db, `admin/sub_credentials/${username}`));
+                triggerAdminAlert(`Admin session keys for [${username}] destroyed successfully!`, true);
+            } catch (err) {
+                triggerAdminAlert("Failed to clear authorization reference.", false);
+            }
+        }
+
+        document.getElementById('updateAdminCredsBtn').addEventListener('click', async () => {
+            const user = document.getElementById('newAdminUser').value.trim();
+            const pass = document.getElementById('newAdminPass').value.trim();
+
+            if (!user || !pass) {
+                triggerAdminAlert("Please structure values completely.", false);
+                return;
+            }
+
+            try {
+                await set(ref(db, `admin/sub_credentials/${user}`), { 
+                    username: user, password: pass, role: "sub_admin", addedAt: Date.now()
+                });
+                triggerAdminAlert("Extra admin account registered safely!", true);
+                document.getElementById('newAdminUser').value = '';
+                document.getElementById('newAdminPass').value = '';
+            } catch (err) {
+                triggerAdminAlert("Extra credential payload dropped.", false);
+            }
+        });
+
+        document.getElementById('changeMainAdminBtn').addEventListener('click', async () => {
+            const mainUser = document.getElementById('mainAdminUser').value.trim();
+            const mainPass = document.getElementById('mainAdminPass').value.trim();
+
+            if (!mainUser || !mainPass) {
+                triggerAdminAlert("Please fill in both Main Admin fields completely.", false);
+                return;
+            }
+
+            const confirmOverride = await openCustomModal(
+                "Warning: Overwriting Root Credentials",
+                "This action alters your core administration entry data. Make sure you remember these details.",
+                [
+                    { label: "Main Username:", value: mainUser },
+                    { label: "Security Status:", value: "CRITICAL CORE CHANGE" }
+                ],
+                "btn-delete",
+                "Authorize Password Overwrite"
+            );
+
+            if (!confirmOverride) return;
+
+            try {
+                await set(ref(db, 'admin/credentials'), { username: mainUser, password: mainPass });
+                triggerAdminAlert("Main root password modified successfully!", true);
+                closeRoleModal('modal-secure');
+                document.getElementById('mainAdminUser').value = '';
+                document.getElementById('mainAdminPass').value = '';
+            } catch (err) {
+                triggerAdminAlert("Failed to update core database credentials.", false);
+            }
+        });
+
+        document.getElementById('deleteAccountBtn').addEventListener('click', async () => {
+            const deleteInput = document.getElementById('deleteTargetInput').value.trim();
+            if (!deleteInput) return;
+
+            try {
+                const userMatch = await lookupUserProfileByCardOrPhone(deleteInput);
+                if (!userMatch) {
+                    triggerAdminAlert("No user identity found.", false);
+                    return;
+                }
+
+                const nodeKey = userMatch.phoneKey;
+                const name = userMatch.profile.fullName || "Anonymous Account";
+
+                const confirm = await openCustomModal(
+                    "Critical: Erase Account Record",
+                    "Wipes target reference clusters permanently without server trace records.",
+                    [{ label: "Profile target:", value: name }, { label: "Index Phone ID:", value: "+251" + nodeKey }],
+                    "btn-delete",
+                    "Wipe Node Record"
+                );
+                
+                if (!confirm) return;
+
+                await remove(ref(db, `users/${nodeKey}`));
+                triggerAdminAlert(`Record node [${name}] dropped from cluster.`, true);
+                closeRoleModal('modal-secure');
+                document.getElementById('deleteTargetInput').value = '';
+            } catch (err) {
+                triggerAdminAlert("System dropped parameters due to errors.", false);
+            }
+        });
+
+        document.getElementById('idCreditBtn').addEventListener('click', () => handleIdBalanceAdjustment(true));
+        document.getElementById('idDebitBtn').addEventListener('click', () => handleIdBalanceAdjustment(false));
+        
+        document.getElementById('exitAdminBtn').addEventListener('click', () => {
+            sessionStorage.removeItem('birrgo_admin_session');
+            window.location.href = "admin_login.html";
+        });
+    </script>
+</body>
+</html>

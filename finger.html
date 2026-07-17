@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biometric Scan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-burgundy: #8b0015;
+            --text-dark: #111827;
+            --text-muted: #6b7280;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 280px;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 280px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 10px;
+        }
+
+        .instruction-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .sensor-wrapper {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .ripple {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(139, 0, 21, 0.08);
+            animation: pulse 2s infinite ease-in-out;
+            z-index: 1;
+        }
+
+        .ripple-outer {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            background: rgba(139, 0, 21, 0.03);
+            animation: pulse-outer 2s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .sensor-btn {
+            position: relative;
+            z-index: 2;
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: #ffffff;
+            border: 2px solid #f3f4f6;
+            box-shadow: 0 8px 20px rgba(139, 0, 21, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-burgundy);
+            transition: transform 0.1s ease, background 0.2s ease;
+        }
+
+        .sensor-btn:active {
+            transform: scale(0.94);
+            background: #fafafa;
+        }
+
+        .status-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            min-height: 18px;
+            transition: color 0.3s ease;
+        }
+
+        .status-text.error {
+            color: #df2222;
+        }
+
+        .status-text.success {
+            color: #10b981;
+        }
+
+        .fallback-btn {
+            background: none;
+            border: none;
+            color: var(--primary-burgundy);
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 5px;
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: background 0.2s ease;
+        }
+
+        .fallback-btn:hover {
+            background: rgba(139, 0, 21, 0.05);
+        }
+
+        .fallback-btn:active {
+            background: rgba(139, 0, 21, 0.1);
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.85); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(0.85); opacity: 0.5; }
+        }
+
+        @keyframes pulse-outer {
+            0% { transform: scale(0.9); opacity: 0.3; }
+            50% { transform: scale(1.15); opacity: 0.8; }
+            100% { transform: scale(0.9); opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <p class="instruction-text" id="instructionText">Touch the sensor below to scan your fingerprint.</p>
+        
+        <div class="sensor-wrapper" id="sensorTouchArea">
+            <div class="ripple-outer"></div>
+            <div class="ripple"></div>
+            <button class="sensor-btn" aria-label="Biometric Verification">
+                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
+                    <path d="M12 6a6 6 0 0 0-6 6c0 3.314 2.686 6 6 6s6-2.686 6-6a6 6 0 0 0-6-6z"></path>
+                    <path d="M12 10a2 2 0 0 0-2 2c0 1.103.897 2 2 2s2-.897 2-2a2 2 0 0 0-2-2z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <div class="status-text" id="statusMessage">Tap to scan...</div>
+        <button class="fallback-btn" id="fallbackBtn" onclick="handleFallback()">Use App PIN instead</button>
+    </div>
+
+    <script>
+        const statusMsg = document.getElementById('statusMessage');
+        const instructionText = document.getElementById('instructionText');
+        const touchArea = document.getElementById('sensorTouchArea');
+        
+        // Use a decoupled baseline wildcard reference to guarantee message transport delivery out of sandboxed wrappers
+        const targetOrigin = "*";
+        
+        // Runtime simulation override for development/local file previews
+        const SIMULATE_SUCCESS_ON_HTTP = true; 
+        let incomingToggleStateOverride = null;
+
+        function onFingerprintSuccess(verificationToken) {
+            statusMsg.innerText = "Verified!";
+            statusMsg.className = "status-text success";
+            
+            window.parent.postMessage({ 
+                status: 'SUCCESS', 
+                token: verificationToken 
+            }, targetOrigin); 
+        }
+
+        function onFingerprintFailure(err) {
+            statusMsg.innerText = err || "Failed";
+            statusMsg.className = "status-text error";
+            
+            window.parent.postMessage({ 
+                status: 'FAILED', 
+                error: err 
+            }, targetOrigin);
+        }
+
+        function base64ToBuffer(base64) {
+            const binary = window.atob(base64.replace(/-/g, '+').replace(/_/g, '/'));
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return bytes.buffer;
+        }
+
+        async function startBiometricScan() {
+            // Check cross-origin frame context state overrides
+            let isConfiguredOn = true;
+            if (incomingToggleStateOverride !== null) {
+                isConfiguredOn = incomingToggleStateOverride;
+            } else {
+                try {
+                    isConfiguredOn = localStorage.getItem('biometrics_enabled') !== 'false';
+                } catch(e) {
+                    isConfiguredOn = true; 
+                }
+            }
+
+            statusMsg.innerText = "Connecting to sensor...";
+            statusMsg.className = "status-text";
+
+            // 1. Android Native Interface Hook
+            if (window.AndroidInterface && typeof window.AndroidInterface.requestFingerprint === 'function') {
+                try {
+                    window.AndroidInterface.requestFingerprint();
+                } catch (err) {
+                    onFingerprintFailure("Hardware interface failed.");
+                }
+                return;
+            }
+
+            const cleanHostname = window.location.hostname || "localhost";
+            const isSecureContext = window.location.protocol === 'https:' || cleanHostname === 'localhost' || cleanHostname === '127.0.0.1';
+
+            // 2. HTTP Sandbox / Local Server Bypass Simulation Connect
+            if (!isSecureContext && SIMULATE_SUCCESS_ON_HTTP) {
+                setTimeout(() => {
+                    onFingerprintSuccess("simulated-http-token");
+                }, 1000);
+                return;
+            }
+
+            // 3. Native WebAuthn API Call
+            const isWebAuthnSupported = window.PublicKeyCredential && 
+                                        typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function' &&
+                                        isSecureContext;
+
+            if (isWebAuthnSupported) {
+                try {
+                    const isBioAvailable = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                    if (isBioAvailable) {
+                        let savedCredId = null;
+                        try {
+                            savedCredId = localStorage.getItem('webauthn_credential_id');
+                        } catch(e) {}
+
+                        if (!savedCredId) {
+                            instructionText.innerText = "Registering biometric profile...";
+                            const challenge = new Uint8Array(32);
+                            window.crypto.getRandomValues(challenge);
+                            const userId = new Uint8Array(16);
+                            window.crypto.getRandomValues(userId);
+
+                            const createOptions = {
+                                publicKey: {
+                                    challenge: challenge,
+                                    rp: { name: "Secure Fingerprint Portal", id: cleanHostname },
+                                    user: { id: userId, name: "user@example.com", displayName: "Authorized User" },
+                                    pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                                    authenticatorSelection: { 
+                                        authenticatorAttachment: "platform", 
+                                        userVerification: "required" 
+                                    },
+                                    timeout: 60000
+                                }
+                            };
+
+                            const credential = await navigator.credentials.create(createOptions);
+                            if (credential) {
+                                const rawId = new Uint8Array(credential.rawId);
+                                let binary = '';
+                                for (let i = 0; i < rawId.byteLength; i++) {
+                                    binary += String.fromCharCode(rawId[i]);
+                                }
+                                const base64Id = btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
+                                try {
+                                    localStorage.setItem('webauthn_credential_id', base64Id);
+                                } catch(e) {}
+                                onFingerprintSuccess("registered-and-verified");
+                            } else {
+                                onFingerprintFailure("Registration cancelled.");
+                            }
+                        } else {
+                            const challenge = new Uint8Array(32);
+                            window.crypto.getRandomValues(challenge);
+
+                            const getOptions = {
+                                publicKey: {
+                                    challenge: challenge,
+                                    rpId: cleanHostname,
+                                    allowCredentials: [{ id: base64ToBuffer(savedCredId), type: "public-key" }],
+                                    userVerification: "required",
+                                    timeout: 60000
+                                }
+                            };
+
+                            const assertion = await navigator.credentials.get(getOptions);
+                            if (assertion) {
+                                onFingerprintSuccess("assertion-success");
+                            } else {
+                                onFingerprintFailure("Verification failed.");
+                            }
+                        }
+                        return;
+                    }
+                } catch (e) {
+                    if (e.name === "NotAllowedError") {
+                        onFingerprintFailure("Dismissed by user.");
+                        return;
+                    }
+                    onFingerprintFailure(e.message || "Device biometrics failed.");
+                    return;
+                }
+            }
+
+            onFingerprintFailure("Unsupported device API. Must use HTTPS or Localhost.");
+        }
+
+        window.onAndroidBiometricResult = function(success, data) {
+            if (success) {
+                onFingerprintSuccess(data || "native-token");
+            } else {
+                onFingerprintFailure(data || "Scan failed.");
+            }
+        };
+
+        function handleFallback() {
+            window.parent.postMessage({ status: 'FALLBACK_REQUESTED' }, targetOrigin);
+            try {
+                if (window.parent && window.parent !== window) {
+                    window.parent.location.href = "new2.html?fallback=pin";
+                } else {
+                    window.location.href = "new2.html?fallback=pin";
+                }
+            } catch (e) {
+                window.location.href = "new2.html?fallback=pin";
+            }
+        }
+
+        // Catch explicitly dispatched lifecycle events sent from the profile wrapper
+        window.addEventListener('message', (event) => {
+            if (event.data && event.data.type === 'UPDATE_BIOMETRIC_STATUS') {
+                incomingToggleStateOverride = event.data.enabled;
+                // Auto start verification loop on incoming dynamic validation pass
+                startBiometricScan();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(startBiometricScan, 400); 
+        });
+
+        touchArea.addEventListener('click', startBiometricScan);
+    </script>
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Verification Engine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Space+Grotesk:wght=500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            950: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        h1, h2, h3 {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen p-6">
+
+    <div class="max-w-6xl mx-auto space-y-8">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-800 pb-6">
+            <div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent">
+                    🔑 Verification Matrix
+                </h1>
+                <p class="text-slate-400 text-sm mt-1">Configure global registration credentials, monitor real-time verification logs, and send secure custom OTPs.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="dashboard.html" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 rounded-xl text-xs font-semibold tracking-wide transition">
+                    ← Core Dashboard
+                </a>
+                <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    Admin Session Active
+                </span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1 space-y-6">
+                <div class="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-200">System Gateway</h2>
+                        <button type="button" id="saveConfigBtn" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-lg transition-all shadow-md">
+                            💾 Save Sync
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-3">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400">Brevo API Key (v3)</label>
+                            <input type="password" id="apiKey" required placeholder="xkeysib-..." 
+                                class="mt-1 w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs text-slate-300 font-mono">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400">Sender Authorized Email</label>
+                            <input type="email" id="senderEmail" required placeholder="admin@birrgo.com" 
+                                class="mt-1 w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs text-slate-300">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400">Brevo Template ID</label>
+                            <input type="number" id="templateId" required placeholder="e.g., 3" 
+                                class="mt-1 w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs text-slate-300">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400">Sender Identity Display Name</label>
+                            <input type="text" id="senderName" placeholder="BirrGo Secure Portal" 
+                                class="mt-1 w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs text-slate-300">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-lg font-bold text-slate-200">Force Bypass Override</h2>
+                    
+                    <form id="otpForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-medium text-slate-400">Target Email</label>
+                            <input type="email" id="recipientEmail" required placeholder="user@example.com" 
+                                class="mt-1 w-full p-2.5 bg-slate-950 border border-slate-800 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:outline-none text-xs text-slate-300">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400">OTP Generation</label>
+                                <input type="text" value="Auto-Generated" readonly
+                                    class="mt-1 w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-center font-semibold tracking-wide text-slate-500 focus:outline-none cursor-not-allowed">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400">Expiry (Mins)</label>
+                                <input type="number" id="expiryMinutes" required value="5" readonly
+                                    class="mt-1 w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-400 focus:outline-none cursor-not-allowed">
+                            </div>
+                        </div>
+
+                        <button type="submit" id="dispatchOtpBtn" class="w-full mt-2 bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-500 hover:to-green-500 text-white font-bold py-2.5 px-4 rounded-xl text-xs transition shadow-lg">
+                            Dispatch Secure Backend OTP
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="lg:col-span-2 space-y-4">
+                <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-xl overflow-hidden">
+                    <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/20">
+                        <div>
+                            <h3 class="text-lg font-bold text-slate-200">Live Verification Logs</h3>
+                            <p class="text-xs text-slate-500">Real-time sync feeding active OTP transactions directly from Firebase.</p>
+                        </div>
+                        <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" title="Connected to Firebase"></span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
+                                    <th class="p-4 font-semibold">User Email</th>
+                                    <th class="p-4 font-semibold text-center">Active OTP</th>
+                                    <th class="p-4 font-semibold text-center">Expiry Target</th>
+                                    <th class="p-4 font-semibold text-right">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="logsTableBody" class="divide-y divide-slate-800/60">
+                                <tr>
+                                    <td colspan="4" class="p-8 text-center text-slate-500">Awaiting database handshake...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="statusMessage" class="hidden fixed bottom-6 right-6 p-4 rounded-xl text-xs font-semibold shadow-2xl max-w-sm transition-all duration-300 transform scale-95 border"></div>
+    </div>
+
+    <!-- Loaded securely as a module -->
+    <script type="module" src="verified.js"></script>
+</body>
+</html>

@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo | P2P Deposit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="deposit.css">
+    
+    <!-- Import EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+    <style>
+        /* Top Navigation Header Styles */
+        .top-nav-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 16px;
+            margin-top: 2px;
+            width: 100%;
+            box-sizing: border-box;
+            z-index: 10;
+        }
+        .btn-back-top {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 255, 255, 0.25);
+            border: 1.5px solid rgba(255, 255, 255, 0.4);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 6px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: background 0.2s, transform 0.1s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+        .btn-back-top:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+        .btn-back-top:active {
+            transform: scale(0.96);
+        }
+        
+        /* First-page Pending Stat Box */
+        .pending-stat-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08);
+            transition: transform 0.2s;
+        }
+        .pending-stat-box:active {
+            transform: scale(0.98);
+        }
+        .stat-box-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .stat-box-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #b45309;
+        }
+        .stat-box-desc {
+            font-size: 10px;
+            color: #d97706;
+        }
+        .pulse-orange {
+            width: 8px;
+            height: 8px;
+            background-color: #f59e0b;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+            animation: orange-pulse 1.6s infinite;
+        }
+        @keyframes orange-pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 6px rgba(245, 158, 11, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+            }
+        }
+
+        /* Unified Complete Payment Box */
+        .unified-pay-card {
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid var(--border-color, #e5e7eb);
+            padding: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            margin-bottom: 14px;
+        }
+        .unified-pay-card .timer-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            background: #fef2f2;
+            color: #b91c1c;
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            border: 1px solid #fee2e2;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="modal-overlay" id="appAlertModal">
+        <div class="modal-card">
+            <div class="modal-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+            </div>
+            <div class="modal-title" id="alertModalTitle">Unavailable</div>
+            <div class="modal-text" id="alertModalText">This payment is not available for now.</div>
+            <button class="modal-btn" onclick="closeCustomAlert()">Understood</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="appealModal" style="display: none; z-index: 9999;">
+        <div class="appeal-modal-card">
+            <div class="modal-title" style="text-align: center; color: var(--primary-burgundy); margin-bottom: 10px;">Escalate Appeal</div>
+            <p style="font-size: 12px; text-align: center; color: var(--text-muted); margin-bottom: 18px; line-height: 1.45;">
+                Your verification has timed out. Submit this appeal to send your receipt and payment details directly to our disputes team.
+            </p>
+            
+            <div class="appeal-info-row">
+                <span style="color: var(--text-muted);">Merchant Name:</span>
+                <span id="appeal-merchant-val" style="font-weight:600;">-</span>
+            </div>
+            <div class="appeal-info-row">
+                <span style="color: var(--text-muted);">Account / ID:</span>
+                <span id="appeal-account-val" style="font-family:monospace;">-</span>
+            </div>
+            <div class="appeal-info-row" style="border:none;">
+                <span style="color: var(--text-muted);">Amount Paid:</span>
+                <span id="appeal-amount-val" style="font-weight:700; color: var(--online-color);">0.00 Birr</span>
+            </div>
+
+            <div style="margin: 12px 0; text-align: center;">
+                <span style="font-size: 11px; color: var(--text-muted); display:block; margin-bottom:5px;">Receipt Image Preview:</span>
+                <img id="appealImagePreview" style="max-height: 100px; max-width: 100%; border-radius: 6px; border: 1px dashed var(--border-color);" src="" alt="Slip Preview">
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 18px;">
+                <button class="modal-btn" style="background: #e5e7eb; color: var(--text-dark); margin:0;" onclick="closeAppealModal()">Cancel</button>
+                <button class="modal-btn" style="background: var(--primary-gradient); margin:0;" onclick="submitEscalatedAppeal()">Send Appeal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Read-Only Status Badge (Not interactive) -->
+    <div class="admin-status-toggle" style="cursor: default; pointer-events: none;">
+        <span style="display:inline-block; border-radius:50%; background-color: var(--online-color);" id="admin-status-indicator-dot"></span>
+        <span>BirrGo:</span>
+        <span id="admin-status-label" style="color: var(--online-color);">Online</span>
+    </div>
+
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V40C375 40 280 80 0 50V0Z" fill="url(#paint0_linear)"/>
+        <defs>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#9A0019"/><stop offset="1" stop-color="#700010"/>
+            </linearGradient>
+        </defs>
+    </svg>
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 150H0V100C0 100 120 50 375 90V150Z" fill="#9A0019"/>
+    </svg>
+
+    <div class="app-view">
+        
+        <div class="header-top-area">
+            <div class="top-nav-header">
+                <button id="topBackBtn" class="btn-back-top" onclick="triggerBackAction()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                    Back
+                </button>
+                <div style="flex-grow: 1;"></div>
+            </div>
+
+            <div class="step-indicator">
+                <div class="step-dot active" id="dot-1"></div>
+                <div class="step-line" id="line-1"></div>
+                <div class="step-dot" id="dot-2"></div>
+                <div class="step-line" id="line-2"></div>
+                <div class="step-dot" id="dot-3"></div>
+                <div class="step-line" id="line-3"></div>
+                <div class="step-dot" id="dot-4"></div>
+            </div>
+
+            <div class="top-chat-bar" id="integrated-chat-bar" onclick="toggleChatWindow(event)">
+                <div class="merchant-badge-group">
+                    <div class="status-pulse-dot" id="top-status-indicator"></div>
+                    <div>
+                        <div class="merchant-status-title">BirrGo Support</div>
+                        <div class="merchant-status-sub" id="top-status-text">Checking Status...</div>
+                    </div>
+                </div>
+                <div class="support-action-btn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+                    Support
+                </div>
+            </div>
+        </div>
+
+        <div class="main-body-content">
+
+            <div class="step-view active" id="screen-method">
+                <div class="screen-title">P2P <span>Deposits</span></div>
+                <div class="screen-subtitle"></div>
+                
+                <div class="pending-stat-box" id="pending-stat-box" style="display: none;" onclick="window.location.href='usera.html'">
+                    <div class="stat-box-content">
+                        <span class="pulse-orange"></span>
+                        <div>
+                            <div class="stat-box-title">Ongoing Deposit Pending</div>
+                            <div class="stat-box-desc">Click here to track your user activity</div>
+                        </div>
+                    </div>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </div>
+
+                <div class="p2p-list">
+                    <div class="p2p-card" onclick="selectMethod('cbe')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon"><img src="c2.jpg" alt="CBE Logo"></div>
+                            <div>
+                                <div class="p2p-name">Commercial Bank of Ethiopia</div>
+                                <div class="p2p-limits">Min: 1,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+
+                    <div class="p2p-card" onclick="selectMethod('boa')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon"><img src="a1.jpg" alt="Abyssinia Logo"></div>
+                            <div>
+                                <div class="p2p-name">Bank of Abyssinia</div>
+                                <div class="p2p-limits">Min: 1,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+
+                    <div class="p2p-card" onclick="selectMethod('telebirr')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon"><img src="t1.jpg" alt="Telebirr Logo"></div>
+                            <div>
+                                <div class="p2p-name">Telebirr wallet</div>
+                                <div class="p2p-limits">Min: 1,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+
+                    <div class="p2p-card" onclick="selectMethod('cbebirr')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon"><img src="c1.jpg" alt="CBE Birr Logo"></div>
+                            <div>
+                                <div class="p2p-name">CBE birr wallet</div>
+                                <div class="p2p-limits">Min: 1,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+
+                    <div class="p2p-card" onclick="selectMethod('mpesa')">
+                        <div class="p2p-info">
+                            <div class="p2p-icon"><img src="m1.jpg" alt="M-Pesa Logo"></div>
+                            <div>
+                                <div class="p2p-name">M-Pesa wallet</div>
+                                <div class="p2p-limits">Min: 1,000 Birr</div>
+                            </div>
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-view" id="screen-amount">
+                <div class="screen-title">Deposit <span>Amount</span></div>
+                <div class="screen-subtitle">Enter the total volume in Birr you wish to add.</div>
+                
+                <div class="input-group">
+                    <div class="currency-label">INVESTMENT AMOUNT</div>
+                    <div class="amount-input-wrapper">
+                        <input type="number" id="depositAmount" class="amount-input" placeholder="1000.00" min="1000">
+                    </div>
+                    <div class="currency-label" style="font-weight: 500; font-size: 11px;">ETB (Min: 1,000 Ethiopian Birr)</div>
+                </div>
+            </div>
+
+            <div class="step-view" id="screen-guide">
+                <div class="screen-title">How It <span>Works</span></div>
+                <div class="screen-subtitle">Read the simple instructions below carefully before proceeding.</div>
+                
+                <div class="guide-box">
+                    <div class="guide-item">
+                        <div class="guide-number">1</div>
+                        <div class="guide-text">
+                            Retrieve Account Details
+                            <span>The next page generates temporary recipient credentials.</span>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <div class="guide-number">2</div>
+                        <div class="guide-text">
+                            Make Transfer
+                            <span>Manually pay the matching ETB amount to our details.</span>
+                        </div>
+                    </div>
+                    <div class="guide-item">
+                        <div class="guide-number">3</div>
+                        <div class="guide-text">
+                            Provide Proof
+                            <span>Attach a clean receipt screenshot for approval to finish.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-view" id="screen-pay">
+                <div class="screen-title">Complete <span>Payment</span></div>
+                <div class="screen-subtitle">Transfer the funds to the account below and upload your receipt.</div>
+                
+                <div class="unified-pay-card">
+                    <div class="timer-banner">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        <span id="p2p-timer">Time Left: 05:00</span>
+                    </div>
+
+                    <div class="bank-details-box" style="margin: 0; padding: 0; border: none; background: none; box-shadow: none;">
+                        <div class="detail-row">
+                            <span class="detail-label">Order Ref:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" id="disp-ref" style="font-family: monospace;">BG-XXXXXX</span>
+                                <span class="copy-badge" onclick="copyText('disp-ref')">COPY</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Payment Method:</span>
+                            <span class="detail-val" id="disp-method">telebirr</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Merchant Name:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" id="disp-merchant" style="font-weight: 600;">Pending...</span>
+                                <span class="copy-badge" onclick="copyText('disp-merchant')">COPY</span>
+                            </div>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Account / Merchant ID:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" id="disp-account" style="font-family: monospace;">Pending...</span>
+                                <span class="copy-badge" onclick="copyText('disp-account')">COPY</span>
+                            </div>
+                        </div>
+                        <div class="detail-row" style="border-bottom: none; padding-bottom: 0;">
+                            <span class="detail-label" style="color:var(--primary-burgundy);">Amount to Send:</span>
+                            <div class="detail-val-group">
+                                <span class="detail-val" style="color:var(--primary-burgundy); font-weight:700;" id="disp-amount">0.00 Birr</span>
+                                <span class="copy-badge" onclick="copyText('disp-amount', true)">COPY</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="upload-receipt-card" onclick="document.getElementById('receipt-file').click()">
+                    <img id="imagePreview" class="receipt-thumbnail" src="" alt="Receipt Preview">
+                    <span class="upload-receipt-title" id="receipt-title">Upload Payment Receipt</span>
+                    <p class="upload-receipt-sub" id="receipt-sub">Accepts screenshots or photo uploads</p>
+                    <input type="file" id="receipt-file" accept="image/*" style="display:none;">
+                </div>
+            </div>
+
+        </div>
+
+        <div class="action-area">
+            <button id="primaryBtn" class="btn btn-primary" style="display:none;">
+                <div class="btn-left">
+                    <div class="btn-icon-wrapper">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    </div>
+                    <span id="primaryBtnText">Next Step</span>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+            
+            <button id="secondaryBtn" class="btn btn-secondary" style="display: none;"></button>
+
+            <div class="footer-links" id="footer-chat-links" style="display: none;">
+                <a href="#">P2P Terms</a><span class="divider">|</span><a href="#" onclick="toggleChatWindow(event)">Support Chat</a>
+            </div>
+            <div class="footer-links" id="footer-normal-links">
+                <a href="#">P2P Terms</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="chat-window" id="chatWindow">
+        <div class="chat-header">
+            <div class="chat-merchant-info">
+                <div class="chat-avatar">
+                    BG
+                    <div class="status-dot-inner" id="chat-header-dot"></div>
+                </div>
+                <div>
+                    <div class="chat-title">BirrGo Live Support</div>
+                    <div class="chat-status-text" id="chat-status-text">Online</div>
+                </div>
+            </div>
+            <button class="close-chat-btn" onclick="toggleChatWindow(event)">&times;</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Message support..." onkeydown="handleChatKey(event)">
+            <button class="chat-send-btn" onclick="sendUserMessage()">Send</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set, push, onChildAdded, off, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        let userId = localStorage.getItem("auth_session_phone") || localStorage.getItem("current_user_id") || "DEV_USER";
+        
+        let currentStep = 'method'; 
+        let selectedMethodId = '';
+        let transactionAmount = 0;
+        let countdownInterval;
+        let orderReferenceId = '';
+        let databaseOrderKey = '';
+        let isMerchantOnline = true; 
+        let isChatListenerAttached = false;
+        let dbStatusListenerRef = null;
+
+        const screens = {
+            method: document.getElementById('screen-method'),
+            amount: document.getElementById('screen-amount'),
+            guide: document.getElementById('screen-guide'),
+            pay: document.getElementById('screen-pay')
+        };
+        const steps = ['method', 'amount', 'guide', 'pay'];
+
+        const primaryBtn = document.getElementById('primaryBtn');
+        const primaryBtnText = document.getElementById('primaryBtnText');
+        const secondaryBtn = document.getElementById('secondaryBtn');
+        const topBackBtn = document.getElementById('topBackBtn');
+        const depositAmountInput = document.getElementById('depositAmount');
+        const receiptFileInput = document.getElementById('receipt-file');
+        const receiptTitle = document.getElementById('receipt-title');
+        const receiptSub = document.getElementById('receipt-sub');
+        const imagePreview = document.getElementById('imagePreview');
+        const integratedChatBar = document.getElementById('integrated-chat-bar');
+        const footerChatLinks = document.getElementById('footer-chat-links');
+        const footerNormalLinks = document.getElementById('footer-normal-links');
+
+        let paymentConfigs = {
+            cbe: { name: 'Commercial Bank of Ethiopia', account: '', holder_name: '' },
+            boa: { name: 'Bank of Abyssinia', account: '', holder_name: '' }, 
+            telebirr: { name: 'Telebirr wallet', account: '', holder_name: '' },
+            cbebirr: { name: 'CBE birr wallet', account: '', holder_name: '' },
+            mpesa: { name: 'M-Pesa wallet', account: '', holder_name: '' }
+        };
+
+        window.showCustomAlert = function(title, text) {
+            document.getElementById('alertModalTitle').innerText = title;
+            document.getElementById('alertModalText').innerText = text;
+            document.getElementById('appAlertModal').style.display = 'flex';
+        };
+
+        window.closeCustomAlert = function() {
+            document.getElementById('appAlertModal').style.display = 'none';
+        };
+
+        window.copyText = function(elementId, cleanValueOnly = false) {
+            let text = document.getElementById(elementId).innerText;
+            if (cleanValueOnly) {
+                text = text.replace(/ Birr/g, '').replace(/,/g, '');
+            }
+            navigator.clipboard.writeText(text).then(() => {
+                showCustomAlert("Success", "Copied directly to clipboard!");
+            });
+        };
+
+        window.selectMethod = function(method) {
+            if (!paymentConfigs[method] || !paymentConfigs[method].account || paymentConfigs[method].account === '') {
+                showCustomAlert("Unavailable", "This payment is not available for now.");
+                return;
+            }
+            selectedMethodId = method;
+            showScreen('amount');
+        };
+
+        window.toggleChatWindow = function(e) {
+            if(e) e.preventDefault();
+            const win = document.getElementById('chatWindow');
+            if (win.style.display === 'flex') {
+                win.style.display = 'none';
+            } else {
+                win.style.display = 'flex';
+                initializeChatListener();
+            }
+        };
+
+        window.sendUserMessage = function() {
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = '';
+
+            const userChatRef = ref(db, `chats/${userId}/messages`);
+            push(userChatRef, {
+                sender: 'user',
+                text: text,
+                timestamp: Date.now()
+            });
+        };
+
+        window.handleChatKey = function(event) {
+            if (event.key === 'Enter') {
+                sendUserMessage();
+            }
+        };
+
+        function initializeChatListener() {
+            if (isChatListenerAttached) return; 
+            isChatListenerAttached = true;
+
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = ''; 
+
+            const messagesRef = ref(db, `chats/${userId}/messages`);
+            onChildAdded(messagesRef, (snapshot) => {
+                const message = snapshot.val();
+                if (message && message.text) {
+                    appendChatMessage(message.text, message.sender || 'merchant');
+                }
+            });
+        }
+
+        function generateOrderRef() {
+            return 'BG-' + Math.floor(100000 + Math.random() * 900000);
+        }
+
+        function updateProgressIndicator() {
+            const index = steps.indexOf(currentStep);
+            for (let i = 1; i <= 4; i++) {
+                const dot = document.getElementById(`dot-${i}`);
+                const line = document.getElementById(`line-${i}`);
+                if (i <= index + 1) dot.classList.add('active');
+                else dot.classList.remove('active');
+                if (line) {
+                    if (i <= index) line.classList.add('active');
+                    else line.classList.remove('active');
+                }
+            }
+        }
+
+        function showScreen(step) {
+            currentStep = step;
+            Object.keys(screens).forEach(key => screens[key].classList.remove('active'));
+            screens[step].classList.add('active');
+
+            if (step === 'pay') {
+                integratedChatBar.style.display = 'flex';
+                footerChatLinks.style.display = 'flex';
+                footerNormalLinks.style.display = 'none';
+            } else {
+                integratedChatBar.style.display = 'none';
+                footerChatLinks.style.display = 'none';
+                footerNormalLinks.style.display = 'flex';
+                document.getElementById('chatWindow').style.display = 'none';
+            }
+
+            updateProgressIndicator();
+            updateNavigationButtons();
+        }
+
+        function updateNavigationButtons() {
+            primaryBtn.style.display = "flex";
+            topBackBtn.style.display = "flex";
+            secondaryBtn.style.display = "none";
+
+            if (currentStep === 'method') {
+                primaryBtn.style.display = "none"; 
+            } else if (currentStep === 'amount') {
+                primaryBtnText.innerText = "Continue";
+            } else if (currentStep === 'guide') {
+                primaryBtnText.innerText = "I Understand";
+            } else if (currentStep === 'pay') {
+                primaryBtnText.innerText = "Submit Receipt";
+                
+                secondaryBtn.innerText = "Cancel Deposit";
+                secondaryBtn.style.display = "block";
+                secondaryBtn.onclick = cancelOrder;
+            }
+        }
+
+        window.triggerBackAction = function() {
+            if (currentStep === 'method') {
+                window.location.href = "wallet.html";
+            } else if (currentStep === 'amount') {
+                showScreen('method');
+            } else if (currentStep === 'guide') {
+                showScreen('amount');
+            } else if (currentStep === 'pay') {
+                showScreen('guide');
+            }
+        }
+
+        function createUnpaidDatabaseRecord() {
+            const globalDepositsRef = ref(db, 'deposits');
+            const newOrderRef = push(globalDepositsRef);
+            databaseOrderKey = newOrderRef.key;
+
+            const unpaidPayload = {
+                ref: orderReferenceId,
+                method: paymentConfigs[selectedMethodId].name,
+                userId: userId,
+                amount: transactionAmount,
+                status: 'Unpaid',
+                receiptUrl: '',
+                timestamp: Date.now(),
+                rejectReason: ''
+            };
+
+            set(newOrderRef, unpaidPayload).then(() => {
+                const userHistoryRef = ref(db, `users/${userId}/transactions/${databaseOrderKey}`);
+                set(userHistoryRef, {
+                    title: `🎟️ Deposit Ticket [${paymentConfigs[selectedMethodId].name}]`,
+                    amount: transactionAmount,
+                    type: 'income',
+                    status: 'unpaid',
+                    orderRef: orderReferenceId,
+                    timestamp: new Date().toLocaleString()
+                });
+            }).catch(err => {
+                console.error("Database initialization failed:", err);
+            });
+        }
+
+        primaryBtn.addEventListener('click', () => {
+            if (currentStep === 'amount') {
+                const amount = parseFloat(depositAmountInput.value);
+                if (isNaN(amount) || amount < 1000) {
+                    showCustomAlert("Validation Error", "Please enter a valid deposit amount (Min: 1000 Birr).");
+                    return;
+                }
+                transactionAmount = amount;
+                orderReferenceId = generateOrderRef(); 
+
+                createUnpaidDatabaseRecord();
+                showScreen('guide');
+            } else if (currentStep === 'guide') {
+                if (!isMerchantOnline) {
+                    showCustomAlert("Offline", "BirrGo P2P gateway is currently offline. Redirecting you to the wallet page.");
+                    setTimeout(() => { window.location.href = "wallet.html"; }, 2000);
+                } else {
+                    setupPaymentTimer();
+                    showScreen('pay');
+                }
+            } else if (currentStep === 'pay') {
+                if (receiptFileInput.files.length === 0) {
+                    showCustomAlert("Receipt Missing", "Please upload your transfer receipt to complete the transaction.");
+                    return;
+                }
+                submitDepositReceipt();
+            }
+        });
+
+        function setupPaymentTimer() {
+            const currentGateway = paymentConfigs[selectedMethodId];
+            document.getElementById('disp-ref').innerText = orderReferenceId;
+            document.getElementById('disp-method').innerText = currentGateway.name;
+            document.getElementById('disp-merchant').innerText = currentGateway.holder_name || 'BirrGo Trading PLC';
+            document.getElementById('disp-account').innerText = currentGateway.account;
+            document.getElementById('disp-amount').innerText = `${transactionAmount.toLocaleString()} Birr`;
+
+            let timeLimit = 5 * 60; 
+            const timerDisplay = document.getElementById('p2p-timer');
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(() => {
+                let minutes = Math.floor(timeLimit / 60);
+                let seconds = timeLimit % 60;
+                timerDisplay.innerText = `Time Left: ${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                if (--timeLimit < 0) {
+                    clearInterval(countdownInterval);
+                    showCustomAlert("Expired", "Transaction window has expired.");
+                    setTimeout(cancelOrder, 2000);
+                }
+            }, 1000);
+        }
+
+        receiptFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const file = e.target.files[0];
+                receiptTitle.innerText = "Processing File...";
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const img = new Image();
+                    img.onload = function() {
+                        const max_width = 400;
+                        const scaleFactor = max_width / img.width;
+                        const canvas = document.createElement('canvas');
+                        canvas.width = max_width;
+                        canvas.height = img.height * scaleFactor;
+
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.6);
+                        
+                        imagePreview.src = compressedBase64;
+                        imagePreview.style.display = "block";
+                        receiptTitle.innerText = "File Selected";
+                        receiptSub.innerText = file.name;
+                    };
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function cancelOrder() {
+            clearInterval(countdownInterval);
+            if (dbStatusListenerRef) off(dbStatusListenerRef);
+
+            if (databaseOrderKey) {
+                const updates = {};
+                updates[`deposits/${databaseOrderKey}/status`] = 'Cancelled';
+                updates[`users/${userId}/transactions/${databaseOrderKey}/status`] = 'cancelled';
+                updates[`users/${userId}/transactions/${databaseOrderKey}/title`] = `❌ Deposit Cancelled [${paymentConfigs[selectedMethodId].name}]`;
+
+                update(ref(db), updates)
+                    .then(() => {
+                        window.location.href = "wallet.html";
+                    })
+                    .catch((err) => {
+                        console.error("Cancellation database log update failed:", err);
+                        window.location.href = "wallet.html";
+                    });
+            } else {
+                window.location.href = "wallet.html";
+            }
+        }
+
+        function submitDepositReceipt() {
+            clearInterval(countdownInterval);
+            const emailConfigRef = ref(db, 'settings/email_config');
+            
+            onValue(emailConfigRef, (snapshot) => {
+                const emailConfig = snapshot.val();
+                
+                if (emailConfig && emailConfig.emailjs_public_key) {
+                    window.emailjs.init(emailConfig.emailjs_public_key);
+                }
+
+                if (!databaseOrderKey) {
+                    const globalDepositsRef = ref(db, 'deposits');
+                    databaseOrderKey = push(globalDepositsRef).key;
+                }
+
+                const updates = {};
+                updates[`deposits/${databaseOrderKey}`] = {
+                    ref: orderReferenceId,
+                    method: paymentConfigs[selectedMethodId].name, 
+                    userId: userId,                                
+                    amount: transactionAmount,
+                    status: 'Pending',                             
+                    receiptUrl: imagePreview.src,                  
+                    timestamp: Date.now(),
+                    rejectReason: ''
+                };
+
+                updates[`users/${userId}/transactions/${databaseOrderKey}`] = {
+                    title: `📥 Deposit Pending [${paymentConfigs[selectedMethodId].name}]`,
+                    amount: transactionAmount,
+                    type: 'income',
+                    status: 'pending',
+                    orderRef: orderReferenceId,
+                    timestamp: new Date().toLocaleString()
+                };
+
+                update(ref(db), updates)
+                    .then(() => {
+                        if (emailConfig) {
+                            const templateParams = {
+                                name: userId, 
+                                email: emailConfig.alert_email_target || "firamob2541@gmail.com",
+                                amount: transactionAmount,
+                                user_os: navigator.platform,
+                                user_browser: navigator.userAgent
+                            };
+
+                            window.emailjs.send(
+                                emailConfig.emailjs_service_id, 
+                                emailConfig.emailjs_template_id, 
+                                templateParams
+                            )
+                            .then(() => {
+                                console.log("Success: Admin has been alerted.");
+                                window.location.href = "usera.html";
+                            })
+                            .catch((err) => {
+                                console.error("EmailJS sending failed:", err);
+                                window.location.href = "usera.html";
+                            });
+                        } else {
+                            window.location.href = "usera.html";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error("Submission failed: ", error);
+                        showCustomAlert("Submission Error", "There was an error updating database logs.");
+                    });
+            }, { onlyOnce: true }); 
+        }
+
+        function fetchUserTransactionsRealtime() {
+            const userHistoryRef = ref(db, `users/${userId}/transactions`);
+            onValue(userHistoryRef, (snapshot) => {
+                let hasPendingTransaction = false;
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const data = childSnapshot.val();
+                        if ((data.status || '').toLowerCase() === 'pending') {
+                            hasPendingTransaction = true;
+                        }
+                    });
+                }
+                
+                const pendingStatBox = document.getElementById('pending-stat-box');
+                if (hasPendingTransaction) {
+                    pendingStatBox.style.display = 'flex';
+                } else {
+                    pendingStatBox.style.display = 'none';
+                }
+            });
+        }
+
+        function initializeChatStatus() {
+            const topIndicator = document.getElementById('top-status-indicator');
+            const topText = document.getElementById('top-status-text');
+            const headerDot = document.getElementById('chat-header-dot');
+            const statusText = document.getElementById('chat-status-text');
+
+            if (isMerchantOnline) {
+                topIndicator.classList.remove('offline');
+                topText.innerText = "BirrGo Online";
+                headerDot.classList.remove('offline');
+                statusText.innerText = "Online";
+            } else {
+                topIndicator.classList.add('offline');
+                topText.innerText = "BirrGo Offline";
+                headerDot.classList.add('offline');
+                statusText.innerText = "Offline";
+            }
+        }
+
+        function appendChatMessage(text, sender) {
+            const chatMessages = document.getElementById('chatMessages');
+            const bubble = document.createElement('div');
+            bubble.classList.add('chat-bubble', sender);
+            bubble.innerText = text;
+            chatMessages.appendChild(bubble);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function runDatabaseIntegration() {
+            const globalStatusRef = ref(db, 'settings/gateway_online');
+            onValue(globalStatusRef, (snapshot) => {
+                isMerchantOnline = snapshot.exists() ? snapshot.val() : true;
+                const adminLabel = document.getElementById('admin-status-label');
+                const indicatorDot = document.getElementById('admin-status-indicator-dot');
+                if (isMerchantOnline) {
+                    adminLabel.innerText = "Online";
+                    adminLabel.style.color = "var(--online-color)";
+                    indicatorDot.style.backgroundColor = "var(--online-color)";
+                } else {
+                    adminLabel.innerText = "Offline";
+                    adminLabel.style.color = "var(--offline-color)";
+                    indicatorDot.style.backgroundColor = "var(--offline-color)";
+                }
+                initializeChatStatus();
+            });
+
+            const dynamicAccountsRef = ref(db, 'settings/accounts');
+            onValue(dynamicAccountsRef, (snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.keys(paymentConfigs).forEach(key => {
+                        if (data[key]) {
+                            const config = data[key];
+                            if (typeof config === 'object') {
+                                paymentConfigs[key].account = config.number || '';
+                                paymentConfigs[key].holder_name = config.holder_name || '';
+                            } else {
+                                paymentConfigs[key].account = config;
+                                paymentConfigs[key].holder_name = '';
+                            }
+                        }
+                    });
+
+                    const urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.get('step') === 'pay') {
+                        const methodParam = urlParams.get('method');
+                        const amountParam = parseFloat(urlParams.get('amount'));
+                        const refParam = urlParams.get('ref');
+                        const keyParam = urlParams.get('key'); 
+
+                        if (methodParam && !isNaN(amountParam) && refParam) {
+                            selectedMethodId = methodParam;
+                            transactionAmount = amountParam;
+                            orderReferenceId = refParam;
+                            if (keyParam) databaseOrderKey = keyParam;
+
+                            setupPaymentTimer();
+                            showScreen('pay');
+                        }
+                    }
+                }
+            });
+
+            fetchUserTransactionsRealtime();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            runDatabaseIntegration();
+        });
+    </script>
+</body>
+</html>

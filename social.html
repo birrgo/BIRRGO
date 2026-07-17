@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Social Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .bg-wave-top {
+            top: 0;
+            height: 12vh;
+            min-height: 80px;
+        }
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 10vh;
+            min-height: 70px;
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: calc(16px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom)) 20px;
+            scrollbar-width: none;
+            position: relative;
+            z-index: 1;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .brand-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 32px;
+            padding: 4px 2px;
+        }
+
+        .logo-image {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.85);
+            border: 1px solid var(--border-light);
+            padding: 8px 14px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+            box-shadow: var(--card-shadow);
+        }
+
+        .section-heading {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+        }
+
+        .task-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .task-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md);
+            padding: 16px;
+            box-shadow: var(--card-shadow);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .task-card.completed {
+            border-color: var(--success-green);
+            background: #f0fdf4;
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .task-icon-badge {
+            background: #fdf2f4;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .task-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .task-card.completed .task-icon-badge {
+            background: #dcfce7;
+        }
+
+        .task-details h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .task-details p {
+            font-size: 12px;
+            color: var(--success-green);
+            font-weight: 700;
+        }
+
+        .task-btn {
+            border: none;
+            border-radius: 100px;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.1s;
+        }
+        .task-btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-follow {
+            background: var(--primary-gradient);
+            color: #ffffff;
+        }
+
+        .btn-verify {
+            background: var(--warning-amber);
+            color: #ffffff;
+        }
+
+        .status-checking {
+            color: var(--warning-amber);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-verified {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 800;
+            background: #e2e8f0;
+            padding: 6px 14px;
+            border-radius: 100px;
+            display: inline-block;
+        }
+
+        .popup-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 6000;
+        }
+        .popup-card {
+            background-color: #ffffff;
+            border-radius: 32px;
+            padding: 32px 24px 24px 24px;
+            width: 88%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .popup-btn {
+            width: 100%;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 100px;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 700;
+            color: white;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        
+        <!-- Background Assets -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#9A0019"/>
+                    <stop offset="1" stop-color="#700010"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+        </svg>
+        
+        <div class="app-content">
+            
+            <!-- Identity Header -->
+            <div class="brand-header">
+                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
+                <button class="back-btn" id="backToGiveBtn">← Back</button>
+            </div>
+
+            <h2 class="section-heading">Social Media Verification</h2>
+            
+            <!-- Tasks Placement Node -->
+            <div class="task-container" id="socialTasksContainer">
+                <!-- Programmatically generated by JavaScript Configurations -->
+            </div>
+
+        </div>
+
+        <!-- Notification / Confirmation Feedback System -->
+        <div class="popup-backdrop" id="completionPopup">
+            <div class="popup-card">
+                <h3 style="font-size:22px; font-weight:800; color:#10b981; margin-bottom:12px;">Congratulations!</h3>
+                <p style="font-size:15px; color:#334155; font-weight:600; line-height:1.5;"><span id="popupRewardDisplay">20</span> Birr is added to your wallet.</p>
+                <button class="popup-btn" id="popupCloseBtn">Great!</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Security Gate
+            const activeUserPhone = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhone) {
+                window.location.replace("new2.html");
+                return;
+            }
+
+            // Firebase Integration Configs
+            const firebaseConfig = {
+                apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+                authDomain: "birrgo-fdf7e.firebaseapp.com",
+                databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+                projectId: "birrgo-fdf7e",
+                storageBucket: "birrgo-fdf7e.firebasestorage.app",
+                messagingSenderId: "2317445154",
+                appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+                measurementId: "G-24X13TZ43D"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+
+            // Default fallback configurations using HTTPS universal web links instead of custom deep schemes
+            let adminSocialChannels = [
+                { id: "tg", name: "Join Telegram Channel", logoPath: "te.jpg", link: "https://t.me/your_channel_username", prize: 20 },
+                { id: "fb", name: "Follow Facebook Channel", logoPath: "f.jpg", link: "https://facebook.com/your_page_username", prize: 20 },
+                { id: "ig", name: "Follow Instagram Page", logoPath: "i.jpg", link: "https://instagram.com/your_username", prize: 20 },
+                { id: "tt", name: "Follow TikTok Profile", logoPath: "t.jpg", link: "https://tiktok.com/@your_tiktok_id", prize: 20 },
+                { id: "yt", name: "Subscribe to YouTube", logoPath: "y.jpg", link: "https://youtube.com/user/your_channel_username", prize: 20 }
+            ];
+
+            let matrixVersion = "1";
+            try {
+                const snapshot = await get(ref(db, 'new/social_links'));
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    if (data.version) matrixVersion = String(data.version);
+                    
+                    // Safely parse deep schemes to reliable HTTPS formats if they match standard input protocols
+                    if (data.tg) adminSocialChannels[0].link = data.tg.startsWith('tg://') ? data.tg.replace('tg://resolve?domain=', 'https://t.me/') : data.tg;
+                    if (data.fb) adminSocialChannels[1].link = data.fb.startsWith('fb://') ? 'https://facebook.com/' : data.fb;
+                    if (data.ig) adminSocialChannels[2].link = data.ig.startsWith('instagram://') ? data.ig.replace('instagram://user?username=', 'https://instagram.com/') : data.ig;
+                    if (data.tt) adminSocialChannels[3].link = data.tt.startsWith('snssdk1128://') ? 'https://tiktok.com/' : data.tt;
+                    if (data.yt) adminSocialChannels[4].link = data.yt.startsWith('vnd.youtube://') ? 'https://youtube.com/' : data.yt;
+                }
+            } catch (err) {
+                console.error("Matrix configurations fallbacks triggered.", err);
+            }
+
+            const taskTracker = {}; 
+            const container = document.getElementById('socialTasksContainer');
+
+            // Construct Cards Dynamically
+            function initSocialCampaign() {
+                container.innerHTML = '';
+                adminSocialChannels.forEach(item => {
+                    
+                    const storageKey = `claimed_task_${activeUserPhone}_${item.id}_v${matrixVersion}`;
+                    const isAlreadyClaimed = localStorage.getItem(storageKey);
+
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.id = `card-${item.id}`;
+                    
+                    if (isAlreadyClaimed === 'true') {
+                        taskTracker[item.id] = 'cleared';
+                        card.classList.add('completed');
+                        card.innerHTML = `
+                            <div class="task-left">
+                                <div class="task-icon-badge" id="badge-${item.id}">
+                                    <img class="task-logo-img" src="${item.logoPath}" alt="${item.id}">
+                                </div>
+                                <div class="task-details">
+                                    <h4>${item.name}</h4>
+                                    <p style="color:#64748b;">Claimed</p>
+                                </div>
+                            </div>
+                            <div id="control-${item.id}">
+                                <span class="status-verified">Claimed</span>
+                            </div>
+                        `;
+                    } else {
+                        taskTracker[item.id] = 'unvisited';
+                        card.innerHTML = `
+                            <div class="task-left">
+                                <div class="task-icon-badge" id="badge-${item.id}">
+                                    <img class="task-logo-img" src="${item.logoPath}" alt="${item.id}">
+                                </div>
+                                <div class="task-details">
+                                    <h4>${item.name}</h4>
+                                    <p>+${item.prize} Birr</p>
+                                </div>
+                            </div>
+                            <div id="control-${item.id}">
+                                <a href="${item.link}" target="_blank" class="task-btn btn-follow" id="link-click-${item.id}">Follow</a>
+                            </div>
+                        `;
+                    }
+                    
+                    container.appendChild(card);
+
+                    if (isAlreadyClaimed !== 'true') {
+                        document.getElementById(`link-click-${item.id}`).addEventListener('click', () => {
+                            processFollowInitialization(item.id);
+                        });
+                    }
+                });
+            }
+
+            // Move to Verify state after user follows link
+            function processFollowInitialization(id) {
+                if (taskTracker[id] !== 'unvisited') return;
+                taskTracker[id] = 'followed';
+                setTimeout(() => {
+                    const actionableNode = document.getElementById('control-' + id);
+                    if (actionableNode) {
+                        actionableNode.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Verify</button>`;
+                        
+                        document.getElementById(`verify-action-${id}`).addEventListener('click', () => {
+                            executeLedgerConfirmation(id);
+                        });
+                    }
+                }, 1200);
+            }
+
+            // Server-simulation validation checkpoint with a live 3-minute checking sequence
+            function executeLedgerConfirmation(id) {
+                const node = document.getElementById('control-' + id);
+                const targetedChannel = adminSocialChannels.find(c => c.id === id);
+                const operationalPrize = targetedChannel ? targetedChannel.prize : 20;
+
+                let totalSecondsLeft = 180; 
+
+                const countdownLoop = setInterval(async () => {
+                    totalSecondsLeft--;
+                    
+                    if (totalSecondsLeft <= 0) {
+                        clearInterval(countdownLoop);
+                        
+                        node.innerHTML = `<span class="status-checking">Updating Wallet...</span>`;
+
+                        try {
+                            const walletBalanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                            await runTransaction(walletBalanceRef, (currentBalance) => {
+                                let balance = parseFloat(currentBalance) || 0;
+                                return balance + operationalPrize;
+                            });
+
+                            const now = new Date();
+                            const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                                            now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                            await set(push(ref(db, `users/${activeUserPhone}/transactions`)), {
+                                title: `Social Reward (${id.toUpperCase()})`,
+                                amount: operationalPrize,
+                                type: "income",
+                                timestamp: timeStr
+                            });
+
+                            const storageKey = `claimed_task_${activeUserPhone}_${id}_v${matrixVersion}`;
+                            localStorage.setItem(storageKey, 'true');
+
+                            taskTracker[id] = 'cleared';
+                            document.getElementById(`card-${id}`).classList.add('completed');
+                            
+                            const detailsPara = document.querySelector(`#card-${id} .task-details p`);
+                            if(detailsPara) {
+                                detailsPara.style.color = '#64748b';
+                                detailsPara.innerText = 'Claimed';
+                            }
+                            
+                            node.innerHTML = `<span class="status-verified">Claimed</span>`;
+
+                            document.getElementById('popupRewardDisplay').innerText = operationalPrize;
+                            document.getElementById('completionPopup').style.display = 'flex';
+
+                        } catch (err) {
+                            console.error("Pipeline Sync Error:", err);
+                            node.innerHTML = `<button class="task-btn btn-verify" id="verify-action-${id}">Retry Verify</button>`;
+                            document.getElementById(`verify-action-${id}`).addEventListener('click', () => {
+                                executeLedgerConfirmation(id);
+                            });
+                        }
+                    } else {
+                        const displayMinutes = Math.floor(totalSecondsLeft / 60);
+                        const displaySeconds = totalSecondsLeft % 60;
+                        const formattedSeconds = displaySeconds < 10 ? '0' + displaySeconds : displaySeconds;
+                        
+                        node.innerHTML = `<span class="status-checking">Checking (${displayMinutes}:${formattedSeconds})...</span>`;
+                    }
+                }, 1000);
+
+                node.innerHTML = `<span class="status-checking">Checking (3:00)...</span>`;
+            }
+
+            // UI Actions
+            document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
+            document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').style.display = 'none');
+
+            initSocialCampaign();
+        });
+    </script>
+</body>
+</html>

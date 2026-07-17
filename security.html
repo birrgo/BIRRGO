@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Security</title>
+    <link rel="stylesheet" href="new.css">
+    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+</head>
+<body>
+    <a href="new.html" class="back-link">← Back to Dashboard</a>
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Security Revocation Confirmation</h3>
+            <p id="modalDescriptionDisplay" style="font-size:14px; color:var(--text-muted); margin-top:-8px;"></p>
+            <div class="modal-content-details" id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 10px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Revoke Session</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 500px; display: block; opacity: 1; pointer-events: auto;">
+        <h3 class="section-title title-dark">Manage Extra Admins</h3>
+        <div class="table-scroll-container" style="max-height: 180px;"><table class="directory-table"><tbody id="subAdminsListBody"></tbody></table></div>
+        
+        <div style="margin-top:20px; border-top:1px dashed var(--border-light); padding-top:20px;">
+            <h3 class="section-title title-dark">Create Extra Admin User</h3>
+            <input type="text" id="newAdminUser" class="admin-input" placeholder="Username" style="margin-bottom:8px;">
+            <input type="text" id="newAdminPass" class="admin-input" placeholder="Passphrase Key">
+            <button class="btn-admin-action btn-save-gold" id="updateAdminCredsBtn" style="margin-top:10px; width:100%;">Register Auxiliary Account</button>
+        </div>
+
+        <div style="margin-top:20px; border-top:1px dashed var(--border-light); padding-top:20px;">
+            <h3 class="section-title title-dark">Change Main Admin Password</h3>
+            <input type="text" id="mainAdminUser" class="admin-input" placeholder="Root Username" style="margin-bottom:8px;">
+            <input type="password" id="mainAdminPass" class="admin-input" placeholder="New System Password">
+            <button class="btn-admin-action btn-broadcast" id="changeMainAdminBtn" style="margin-top:10px; width:100%;">Update Core Root Credentials</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue, set, remove } from "./db.js";
+        let res = null;
+
+        function openModal(t, d, m, c, tx) {
+            document.getElementById('modalTitleDisplay').innerText = t; document.getElementById('modalDescriptionDisplay').innerText = d;
+            document.getElementById('modalDynamicDetails').innerHTML = `<div class="modal-data-row"><span class="modal-data-label">${m[0].label}</span><span class="modal-data-value">${m[0].value}</span></div>`;
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + c; document.getElementById('modalConfirmBtn').innerText = tx;
+            document.getElementById('customConfirmModal').classList.add('active'); return new Promise(r => res = r);
+        }
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(res) res(true); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => { if(res) res(false); document.getElementById('customConfirmModal').classList.remove('active'); });
+
+        function triggerAlert(m, s=true) {
+            const t = document.getElementById('adminToast'); t.innerText = m;
+            t.style.background = s ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; setTimeout(() => t.style.display='none', 3500);
+        }
+
+        onValue(ref(db, 'new/sub_credentials'), s => {
+            const b = document.getElementById('subAdminsListBody'); b.innerHTML = '';
+            if(!s.exists()) { b.innerHTML = '<tr><td>No auxiliary administrators located.</td></tr>'; return; }
+            Object.keys(s.val()).forEach(u => {
+                b.innerHTML += `<tr><td><strong>${u}</strong></td><td style="text-align:right;"><button class="btn-admin-action btn-debit rev-btn" data-user="${u}">Revoke</button></td></tr>`;
+            });
+            b.querySelectorAll('.rev-btn').forEach(btn => btn.addEventListener('click', async () => {
+                const user = btn.getAttribute('data-user');
+                if(!await openModal("Revoke Privileges", "Terminating storage authorization parameters.", [{label:"User:", value:user}], "btn-delete", "Confirm Deletion")) return;
+                await remove(ref(db, `new/sub_credentials/${user}`)); triggerAlert("Access Keys Terminated!");
+            }));
+        });
+
+        document.getElementById('updateAdminCredsBtn').addEventListener('click', async () => {
+            const u = document.getElementById('newAdminUser').value.trim(), p = document.getElementById('newAdminPass').value.trim();
+            if(!u || !p) return triggerAlert("Values cannot remain unpopulated.", false);
+            await set(ref(db, `new/sub_credentials/${u}`), { username: u, password: p, role: "sub_admin", addedAt: Date.now() });
+            triggerAlert("Extra admin written safely!"); document.getElementById('newAdminUser').value=''; document.getElementById('newAdminPass').value='';
+        });
+
+        document.getElementById('changeMainAdminBtn').addEventListener('click', async () => {
+            const u = document.getElementById('mainAdminUser').value.trim(), p = document.getElementById('mainAdminPass').value.trim();
+            if(!u || !p) return triggerAlert("Populate core data requirements.", false);
+            if(!await openModal("Warning: Overwriting Root Data", "Modifying master framework entry keys.", [{label:"Root Node User:", value:u}], "btn-delete", "Authorize Overwrite")) return;
+            await set(ref(db, 'new/credentials'), { username: u, password: p }); triggerAlert("Main root credential layout rewritten!");
+            document.getElementById('mainAdminUser').value=''; document.getElementById('mainAdminPass').value='';
+        });
+    </script>
+</body>
+</html>
