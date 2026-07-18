@@ -3,47 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    
-    <!-- ADVANCED SEO BLOCK -->
     <title>BirrGo - Premium Dashboard Hub</title>
-    <meta name="description" content="Access your premium BirrGo mobile wallet dashboard. View your balance, track daily tasks, check lottery stats, and securely manage your digital payments in Ethiopia.">
-    <meta name="keywords" content="BirrGo dashboard, mobile wallet Ethiopia, digital payments hub, telebirr integration, track earnings">
-    <meta name="robots" content="noindex, nofollow">
-    <link rel="canonical" href="https://birrgo.online/dashboard.html">
-
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="BirrGo - Premium Dashboard Hub">
-    <meta property="og:description" content="Access your secure premium mobile wallet interface platform.">
-    <meta property="og:url" content="https://birrgo.online/dashboard.html">
-
-    <!-- Schema.org WebPage Data -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebPage",
-      "name": "BirrGo Account Dashboard",
-      "url": "https://birrgo.online/dashboard.html",
-      "description": "Secure account balance and metric tracking environment for BirrGo wallet system users."
-    }
-    </script>
-
-    <!-- PWA Root App Integration Linkage -->
-    <link rel="manifest" href="manifest.json">
-    
-    <!-- PWA / Mobile App Meta Tags (Configured for All-White Theme & iOS Support) -->
-    <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="icon-192.png">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Global app.css linked first to control layout bouncing, selection modes, and native app styling -->
-    <link rel="stylesheet" href="app.css">
-
     <style>
         :root {
             --primary-burgundy: #800020;
@@ -71,7 +35,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Adjusted canvas rules to overlay harmoniously with app.css system baselines */
+        /* Responsive Adaptive Canvas - Fills Viewport Natively */
         html, body {
             width: 100%;
             min-height: 100%;
@@ -79,9 +43,9 @@
             padding: 0;
             background-color: var(--bg-light);
             overflow-x: hidden;
-            position: relative;
         }
 
+        /* Main Container Framework - Adapts dynamic width up to standard responsive desktop limits */
         .app-view {
             width: 100%;
             min-height: 100vh;
@@ -91,6 +55,7 @@
             overflow: hidden;
         }
 
+        /* Background Waves pinned to page corners and stretch to fill width */
         .bg-wave {
             position: absolute;
             left: 0;
@@ -100,8 +65,8 @@
         }
         .bg-wave-top {
             top: 0;
-            height: 8vh; 
-            min-height: 65px; 
+            height: 8vh; /* Reduced height to make the top curve smaller */
+            min-height: 65px; /* Reduced min-height */
         }
         .bg-wave-bottom {
             bottom: 0;
@@ -109,10 +74,11 @@
             min-height: 90px;
         }
 
+        /* Centered dashboard layout grid for seamless scaling on tablets/desktops */
         .app-content {
             flex: 1;
             width: 100%;
-            max-width: 680px; 
+            max-width: 680px; /* Elegantly bounds content scaling on tablets and screens */
             margin: 0 auto;
             padding: calc(24px + env(safe-area-inset-top)) 20px calc(110px + env(safe-area-inset-bottom)) 20px;
             position: relative;
@@ -269,8 +235,7 @@
         }
 
         .status-pill {
-            background: rgba(239, 68, 68, 0.2); 
-            color: #fecaca;
+            background: rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             padding: 4px 10px;
@@ -370,6 +335,7 @@
             text-align: center;
         }
 
+        /* Global Bottom Navigation Bar anchored gracefully across views */
         .bottom-nav-bar {
             position: fixed;
             bottom: 0;
@@ -436,6 +402,7 @@
             stroke-width: 2.4;
         }
 
+        /* Centered Backdrop Dialog System */
         .custom-popup-backdrop {
             position: fixed;
             top: 0;
@@ -527,7 +494,7 @@
 
     <div class="app-view">
         
-        <svg aria-hidden="true" class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
             <defs>
                 <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
@@ -537,28 +504,29 @@
             </defs>
         </svg>
 
-        <svg aria-hidden="true" class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
         </svg>
         
-        <main class="app-content">
+        <div class="app-content">
             
-            <header class="brand-header">
+            <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
-                <div class="profile-badge" id="profileBadgeNode" role="button" aria-label="View Profile" title="Profile Badge">👤</div>
-            </header>
+                <div class="profile-badge" id="profileBadgeNode">👤</div>
+            </div>
 
             <div class="news-container">
-                <div class="news-pill" id="dashboardNewsPill" role="button" title="Latest News Feed">
-                    <span class="news-dot" aria-hidden="true"></span>
+                <div class="news-pill" id="dashboardNewsPill">
+                    <span class="news-dot"></span>
                     <span>What's new today?</span>
                 </div>
             </div>
 
-            <section class="balance-card">
+            <div class="balance-card">
                 <div class="balance-meta">
                     <span class="balance-label">Available Balance</span>
-                    <span class="status-pill">Not Verified</span>
+                    <!-- Status pill set to Not Verified with customized soft-red style -->
+                    <span class="status-pill" style="background: rgba(239, 68, 68, 0.2); color: #fecaca;">Not Verified</span>
                 </div>
                 <div class="balance-amount">
                     <span id="dashboard-balance">0.00</span>
@@ -568,53 +536,53 @@
                     <div class="wallet-id" id="displayWalletId">ID: •••• ••••</div>
                     <div class="wallet-id">••• Gold Premium</div>
                 </div>
-            </section>
-
-            <div class="metrics-matrix">
-                <article class="metric-tile">
-                    <span class="metric-header">Claimed Tasks</span>
-                    <span class="metric-value" id="completed-count">0 / 5</span>
-                </article>
-                <article class="metric-tile">
-                    <span class="metric-header">Invited Friends</span>
-                    <span class="metric-value" id="invited-count-metric">0 Members</span>
-                </article>
             </div>
 
-            <nav class="action-grid" aria-label="Quick Actions Grid">
-                <div class="action-item" id="action-send" role="button" tabindex="0" title="Send Money">
+            <div class="metrics-matrix">
+                <div class="metric-tile">
+                    <span class="metric-header">Claimed Tasks</span>
+                    <span class="metric-value" id="completed-count">0 / 5</span>
+                </div>
+                <div class="metric-tile">
+                    <span class="metric-header">Invited Friends</span>
+                    <span class="metric-value" id="invited-count-metric">0 Members</span>
+                </div>
+            </div>
+
+            <div class="action-grid">
+                <div class="action-item" id="action-send">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </div>
                     <div class="action-label">Send</div>
                 </div>
-                <div class="action-item" id="action-receive" role="button" tabindex="0" title="Receive Money">
+                <div class="action-item" id="action-receive">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
                     </div>
                     <div class="action-label">Receive</div>
                 </div>
-                <div class="action-item" id="action-deposit" role="button" tabindex="0" title="Deposit Money">
+                <div class="action-item" id="action-deposit">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
                     </div>
                     <div class="action-label">Deposit</div>
                 </div>
-                <div class="action-item" id="action-withdraw" role="button" tabindex="0" title="Withdraw Money">
+                <div class="action-item" id="action-withdraw">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
                     </div>
                     <div class="action-label">Withdraw</div>
                 </div>
-            </nav>
+            </div>
 
-        </main>
+        </div>
 
-        <nav class="bottom-nav-bar" aria-label="Primary Application Navigation">
+        <nav class="bottom-nav-bar">
             <div class="bottom-nav-container">
-                <a href="#" class="nav-item active-tab" aria-current="page">
+                <a href="#" class="nav-item active-tab">
                     <div class="tab-icon-wrapper">
-                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
                         </svg>
@@ -622,26 +590,26 @@
                     Home
                 </a>
                 <a href="task.html" class="nav-item">
-                    <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                     Tasks
                 </a>
                 <a href="lottery.html" class="nav-item">
-                    <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                     Lottery
                 </a>
                 <a href="wallet.html" class="nav-item">
-                    <svg viewBox="0 0 24 24" stroke-width="2" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                    <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
                     Wallet
                 </a>
             </div>
         </nav>
 
-        <div class="custom-popup-backdrop" id="customPopup" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="custom-popup-backdrop" id="customPopup">
             <div class="custom-popup-card">
                 <div class="popup-status-badge bg-lock">
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 </div>
-                <h3 class="custom-popup-title" id="modalTitle">Feature Locked</h3>
+                <h3 class="custom-popup-title">Feature Locked</h3>
                 <p class="custom-popup-msg" id="popupMessage">This action framework module is coming soon.</p>
                 <button class="btn-popup-confirm" id="popupConfirmBtn">OK</button>
             </div>
@@ -767,3 +735,5 @@
     </script>
 </body>
 </html>
+
+
