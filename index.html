@@ -18,7 +18,7 @@
 
     <link rel="manifest" href="manifest.json">
     
-    <!-- PWA / Mobile App Meta Tags -->
+    <!-- PWA / Mobile App Meta Tags (Added for All-White Theme & iOS Support) -->
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -214,22 +214,19 @@
 
     </div>
 
-    <!-- UPDATED JAVASCRIPT -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
-            // Save last page visited
             localStorage.setItem('birrgo_last_page', 'index.html');
 
-            // Handle referral tracking
             const urlParams = new URLSearchParams(window.location.search);
             const refParam = urlParams.get('ref');
+
             if (refParam) {
                 const createBtn = document.getElementById('createAccountBtn');
                 if (createBtn) createBtn.href = `register.html?ref=${encodeURIComponent(refParam.trim())}`;
             }
 
-            let deferredPrompt = null;
-            const pwaBanner = document.getElementById('pwaInstallBanner');
+            let deferredPrompt;
             const pwaBtn = document.getElementById('pwaInstallBtn');
             const installedModal = document.getElementById('alreadyInstalledModal');
             const closeModalBtn = document.getElementById('closeInstalledModalBtn');
@@ -239,44 +236,47 @@
             const modalIconSvg = document.getElementById('modalIconSvg');
             const modalIconWrapper = document.getElementById('modalIconWrapper');
 
-            // Check if the page is currently running INSIDE the installed PWA app
+            // 1. Check if the app is ALREADY running as an installed PWA
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-
-            // IF ALREADY INSIDE APP: Hide the installation banner completely
-            if (isStandalone && pwaBanner) {
-                pwaBanner.style.display = 'none';
+            if (isStandalone) {
+                localStorage.setItem('birrgo_app_installed', 'true');
             }
 
-            // Capture the native Android/Chrome install prompt
+            // 2. Android specifically fires this when the app is ready to install but NOT installed yet
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
+                localStorage.removeItem('birrgo_app_installed'); // Ensure it registers as uninstalled
             });
 
             if (pwaBtn) {
                 pwaBtn.addEventListener('click', async () => {
+                    // Check true install status
+                    const isAlreadyInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || localStorage.getItem('birrgo_app_installed') === 'true';
+                    
+                    // Check if user is on iOS (iPhone/iPad)
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
-                    if (isStandalone) {
-                        // SCENARIO 1: Clicking download from inside the actual standalone app window
+                    if (isAlreadyInstalled) {
+                        // SCENARIO 1: Truly Already Installed -> Show Green Checkmark Modal
                         modalIconWrapper.style.background = "#e8f5e9";
                         modalIconSvg.setAttribute('stroke', '#22c55e');
                         modalIconSvg.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`;
                         modalTitleText.innerText = "Already Installed!";
-                        modalDescText.innerText = "You are currently running the official BirrGo Mobile Wallet application directly from your device.";
+                        modalDescText.innerText = "BirrGo Mobile Wallet is already set up on your device. Look for the application shortcut icon directly on your home screen or app launcher to open it instantly.";
                         installedModal.style.display = 'flex';
                     
                     } else if (deferredPrompt) {
-                        // SCENARIO 2: Android/Chrome is ready with the official native prompt
+                        // SCENARIO 2: Android Ready to Install -> Trigger Native Google Prompt
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
                         if (outcome === 'accepted') {
-                            if (pwaBanner) pwaBanner.style.display = 'none';
+                            localStorage.setItem('birrgo_app_installed', 'true');
                         }
                         deferredPrompt = null;
                     
                     } else if (isIOS) {
-                        // SCENARIO 3: Apple iOS device (Safari doesn't support beforeinstallprompt)
+                        // SCENARIO 3: iOS User -> Show specific Apple instructions
                         modalIconWrapper.style.background = "#e3f2fd";
                         modalIconSvg.setAttribute('stroke', '#1976d2');
                         modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
@@ -285,7 +285,7 @@
                         installedModal.style.display = 'flex';
                     
                     } else {
-                        // SCENARIO 4: Android Browser fallback (Prompt not fired yet, or already installed via browser)
+                        // SCENARIO 4: Fallback for uninstalled Android without prompt (e.g. not HTTPS or bad manifest)
                         modalIconWrapper.style.background = "#fff3e0";
                         modalIconSvg.setAttribute('stroke', '#f57c00');
                         modalIconSvg.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
@@ -296,7 +296,6 @@
                 });
             }
 
-            // Modal close controls
             if (closeModalBtn && installedModal) {
                 closeModalBtn.addEventListener('click', () => installedModal.style.display = 'none');
                 installedModal.addEventListener('click', (e) => {
@@ -304,14 +303,12 @@
                 });
             }
 
-            // Clear prompt if successfully installed mid-session
             window.addEventListener('appinstalled', () => {
+                localStorage.setItem('birrgo_app_installed', 'true');
                 deferredPrompt = null;
-                if (pwaBanner) pwaBanner.style.display = 'none';
             });
         });
 
-        // Register Service Worker
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./of.js')
@@ -322,3 +319,5 @@
     </script>
 </body>
 </html>
+
+
