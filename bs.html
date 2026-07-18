@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo Premium — Electric Bajaj Analytics Matrix</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #77051c;
+            --primary-gradient: linear-gradient(135deg, #77051c 0%, #3f010b 100%);
+            --text-dark: #111827;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #f1f5f9;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 16px -6px rgba(0, 0, 0, 0.02);
+            --success-green: #10b981;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            position: relative;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn-back {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            width: 36px; height: 36px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-back:active { transform: scale(0.95); }
+
+        .birrgo-logo-container {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .brand-main-title {
+            font-size: 15px; font-weight: 800;
+            color: var(--primary-burgundy); line-height: 1.1;
+        }
+        .brand-sub-motto {
+            font-size: 9px; font-weight: 600;
+            color: var(--text-muted); letter-spacing: 0.5px;
+        }
+        .birrgo-badge-icon {
+            width: 32px; height: 32px;
+            background: var(--primary-gradient);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            color: #ffffff; font-weight: 800; font-size: 15px;
+        }
+
+        .app-content {
+            flex: 1; overflow-y: auto;
+            background-color: #fafbfc; padding: 14px;
+            display: flex; flex-direction: column; gap: 14px;
+            scrollbar-width: none; min-height: 0;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .metrics-summary-card {
+            background: var(--primary-gradient);
+            color: #ffffff; padding: 20px 16px;
+            border-radius: var(--border-radius-md);
+            box-shadow: 0 12px 24px -6px rgba(119, 5, 28, 0.25);
+            flex-shrink: 0;
+        }
+        .metrics-summary-card p {
+            font-size: 11px; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.8px;
+            opacity: 0.8; margin-bottom: 4px;
+        }
+        .metrics-summary-card h2 {
+            font-size: 28px; font-weight: 800; letter-spacing: -0.5px;
+        }
+
+        .dashboard-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .data-box {
+            background: #ffffff; border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md); padding: 14px 12px;
+            box-shadow: var(--card-shadow);
+        }
+        .data-box p {
+            font-size: 9px; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+        }
+        .data-box h4 {
+            font-size: 20px; font-weight: 800; color: var(--text-dark);
+        }
+
+        .log-panel-box {
+            background: #ffffff; border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-md); padding: 14px;
+            flex: 1; min-height: 150px;
+            display: flex; flex-direction: column; overflow: hidden;
+            box-shadow: var(--card-shadow);
+        }
+        .log-title-bar {
+            font-size: 13px; font-weight: 700; color: var(--text-dark);
+            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+        }
+        .live-badge {
+            font-size: 9px; background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green); padding: 2px 6px; border-radius: 6px; font-weight: 700;
+        }
+
+        .ledger-scroll-container {
+            flex: 1; overflow-y: auto; scrollbar-width: none;
+        }
+        .ledger-scroll-container::-webkit-scrollbar { display: none; }
+
+        .ledger-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 2px; border-bottom: 1px solid #f8fafc;
+        }
+        .ledger-row:last-child { border-bottom: none; }
+
+        .ledger-meta {
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .ledger-card-id {
+            font-size: 13px; font-weight: 700; color: var(--text-dark);
+        }
+        .ledger-timestamp {
+            font-size: 10px; font-weight: 500; color: var(--text-muted);
+        }
+        .ledger-value-badge {
+            font-size: 11px; font-weight: 800; background: #f1f5f9;
+            color: var(--text-dark); padding: 4px 8px; border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        
+        <div class="app-header">
+            <div class="header-left">
+                <button class="btn-back" onclick="window.location.href='b.html'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                </button>
+                <div class="header-title">
+                    <h2 style="font-size: 15px; font-weight: 700; color: var(--text-dark);">Metrics Matrix</h2>
+                </div>
+            </div>
+            
+            <div class="birrgo-logo-container">
+                <div class="birrgo-brand-text" style="text-align: right;">
+                    <span class="brand-main-title">BirrGo</span>
+                    <span class="brand-sub-motto">PREMIUM</span>
+                </div>
+                <div class="birrgo-badge-icon">B</div>
+            </div>
+        </div>
+
+        <div class="app-content">
+
+            <div class="metrics-summary-card">
+                <p>Gross Campaign Revenue</p>
+                <h2 id="grossRevenueDisplay">0.00 Br</h2>
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="data-box">
+                    <p>Total Positions Taken</p>
+                    <h4 id="totalSoldDisplay">0</h4>
+                </div>
+                <div class="data-box">
+                    <p>Pool Coverage</p>
+                    <h4 id="coveragePercentDisplay">0.00%</h4>
+                </div>
+            </div>
+
+            <div class="log-panel-box">
+                <div class="log-title-bar">
+                    <span>Audit Allocation Trail</span>
+                    <span class="live-badge">REAL-TIME</span>
+                </div>
+                <div class="ledger-scroll-container" id="ledgerScrollFeed"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const totalPoolCapacity = 5000;
+        const pricePerTicket = 1500;
+
+        const ticketsRef = ref(db, 'lottery/electricbajaj/tickets');
+        onValue(ticketsRef, (snapshot) => {
+            const dataMap = snapshot.val() || {};
+            const items = Object.values(dataMap);
+            const soldCount = items.length;
+
+            const dynamicRevenue = soldCount * pricePerTicket;
+            const absoluteCoverage = (soldCount / totalPoolCapacity) * 100;
+
+            document.getElementById('grossRevenueDisplay').innerText = `${dynamicRevenue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})} Br`;
+            document.getElementById('totalSoldDisplay').innerText = soldCount;
+            document.getElementById('coveragePercentDisplay').innerText = `${absoluteCoverage.toFixed(2)}%`;
+
+            renderAuditTrail(items);
+        });
+
+        function renderAuditTrail(records) {
+            const container = document.getElementById('ledgerScrollFeed');
+            container.innerHTML = '';
+
+            if(records.length === 0) {
+                container.innerHTML = `<div style="text-align:center;font-size:12px;font-weight:600;color:var(--text-muted);padding:30px 10px;">AWAITING TRANSACTIONS INPUT PIPELINE...</div>`;
+                return;
+            }
+
+            records.reverse().forEach(record => {
+                if(parseInt(record.ticketNum) > totalPoolCapacity) return;
+
+                const row = document.createElement('div');
+                row.className = 'ledger-row';
+
+                const rawCard = record.cardSequence || record.phone || "0000000000000000";
+                const hiddenCard = rawCard.substring(0, 4) + "••••" + rawCard.slice(-4);
+                const visualTime = record.timestamp ? record.timestamp.split(',')[1] || record.timestamp : "Just Now";
+
+                row.innerHTML = `
+                    <div class="ledger-meta">
+                        <span class="ledger-card-id">CARD ID ${hiddenCard}</span>
+                        <span class="ledger-timestamp">Registered at ${visualTime.trim()}</span>
+                    </div>
+                    <span class="ledger-value-badge">POS #${record.ticketNum}</span>
+                `;
+                container.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

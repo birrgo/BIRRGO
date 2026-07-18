@@ -42,7 +42,6 @@
             background-color: var(--bg-light); 
         }
 
-        /* Fully Responsive Fluid Viewport Wrapper */
         .app-view {
             width: 100%;
             height: 100%;
@@ -81,7 +80,6 @@
             display: flex;
             flex-direction: column;
             background-color: transparent;
-            /* Padding bottom calibrated to prevent navigation bar overlapping any content */
             padding: calc(16px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom)) 16px;
             overflow-y: auto;
             scrollbar-width: none;
@@ -166,15 +164,22 @@
             min-height: 115px; 
             border-radius: var(--border-radius-lg);
             overflow: hidden;
-            background: var(--primary-gradient);
-            color: #ffffff;
+            background: #ffffff;
+            color: var(--text-dark);
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-light);
             box-shadow: var(--card-shadow);
             cursor: pointer;
             transition: transform 0.2s ease;
             display: flex;
             align-items: stretch; 
+        }
+
+        /* Dark background style specifically for gradient themed cards if necessary */
+        .featured-card.premium-theme {
+            background: var(--primary-gradient);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .featured-card:active {
@@ -183,7 +188,7 @@
 
         .card-img-wrapper {
             width: 32%; 
-            background-color: #0f172a;
+            background-color: #f1f5f9;
             position: relative;
             display: flex;
             align-items: center;
@@ -232,20 +237,22 @@
             overflow: hidden;
             text-overflow: ellipsis;
             padding-right: 75px; 
-            color: #ffffff;
         }
+        .premium-theme .featured-title { color: #ffffff; }
 
         .featured-meta {
             font-size: 11px; 
-            color: rgba(255, 255, 255, 0.88);
+            color: var(--text-muted);
             line-height: 1.3;
             font-weight: 500;
         }
+        .premium-theme .featured-meta { color: rgba(255, 255, 255, 0.88); }
 
         .featured-meta span {
-            color: #ffd700;
+            color: var(--primary-burgundy);
             font-weight: 800;
         }
+        .premium-theme .featured-meta span { color: #ffd700; }
 
         .card-footer-row {
             display: flex;
@@ -253,20 +260,21 @@
         }
 
         .countdown-pill {
-            background: rgba(16, 185, 129, 0.25);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-green);
             padding: 3px 9px;
             border-radius: 20px;
             font-size: 10px;
             font-weight: 700;
-            border: 1px solid rgba(255, 255, 255, 0.08);
             display: inline-flex;
             align-items: center;
             gap: 4px;
         }
+        .premium-theme .countdown-pill {
+            background: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+        }
 
-        /* Fixed Navigation Bar Dynamic Positioning */
         .bottom-nav-bar {
             position: fixed;
             bottom: 0;
@@ -325,7 +333,6 @@
             stroke-width: 2.4;
         }
 
-        /* Fixed Viewport Backdrops for Popups */
         .custom-popup-backdrop {
             position: fixed;
             top: 0;
@@ -377,7 +384,6 @@
             align-items: center;
             margin-bottom: 16px;
         }
-        .bg-success { background-color: #ecfdf5; color: #10b981; }
         .bg-lock { background-color: #fffbeb; color: var(--warning-amber); }
         .bg-error { background-color: #fef2f2; color: #ef4444; }
 
@@ -447,21 +453,10 @@
 
         .ui-sheet-backdrop {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 24px;
-            z-index: 5000;
-            opacity: 0;
-            transition: opacity 0.25s ease;
+            top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            display: none; justify-content: center; align-items: center; padding: 24px; z-index: 5000;
+            opacity: 0; transition: opacity 0.25s ease;
         }
 
         .ui-sheet-backdrop.active {
@@ -470,15 +465,9 @@
         }
 
         .ui-bottom-sheet {
-            background: #ffffff;
-            width: 100%;
-            max-width: 360px;
-            border-radius: var(--border-radius-lg);
-            padding: 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            text-align: center;
-            transform: scale(0.9);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            background: #ffffff; width: 100%; max-width: 360px; border-radius: var(--border-radius-lg);
+            padding: 24px; box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); text-align: center;
+            transform: scale(0.9); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .ui-sheet-backdrop.active .ui-bottom-sheet {
@@ -486,57 +475,19 @@
         }
 
         .sheet-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 14px auto;
-            background: #fef2f2;
-            color: var(--danger-red);
+            width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; margin: 0 auto 14px auto; background: #fef2f2; color: var(--danger-red);
         }
 
-        .sheet-icon svg {
-            width: 24px;
-            height: 24px;
-            fill: none;
-            stroke: currentColor;
-            stroke-width: 2.5;
-        }
-
-        .sheet-title {
-            font-size: 17px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 8px;
-            letter-spacing: -0.3px;
-        }
-
-        .sheet-message {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            line-height: 1.4;
-            margin-bottom: 20px;
-        }
-
+        .sheet-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+        .sheet-title { font-size: 17px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.3px; }
+        .sheet-message { font-size: 13px; font-weight: 500; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; }
         .btn-sheet-close {
-            width: 100%;
-            height: 44px;
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border: none;
-            border-radius: var(--border-radius-md);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
+            width: 100%; height: 44px; background: var(--primary-gradient); color: #ffffff; border: none;
+            border-radius: var(--border-radius-md); font-size: 13px; font-weight: 700; cursor: pointer;
             box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
         }
-        
-        .btn-sheet-close:active {
-            transform: scale(0.98);
-        }
+        .btn-sheet-close:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
@@ -571,35 +522,37 @@
 
             <div class="page-view-section active-view" id="sectionPagePreview">
                 
-                <div class="featured-card" id="premiumLottoCard">
+                <!-- Card 1: BYD Song Plus (3,000 Birr - Password Entry prompts gate to real.html) -->
+                <div class="featured-card premium-theme" id="bydSongPlusCard">
+                    <span class="badge-premium">Grand Raffle</span>
+                    <div class="card-img-wrapper">
+                        <img src="by.jpg" alt="BYD Song Plus Car">
+                    </div>
+                    <div class="featured-card-body">
+                        <h3 class="featured-title">BYD Song Plus</h3>
+                        <p class="featured-meta">Price: <span>3,000 Birr</span><br>Prize: Luxury BYD SUV</p>
+                        <div class="card-footer-row">
+                            <span class="countdown-pill" style="background: rgba(127, 0, 255, 0.25); color: #fff;">🔒 Password Locked</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Premium Grand Wheel / Jetour (5,000 Birr - Free Open targeting jetour.html) -->
+                <div class="featured-card premium-theme" id="premiumLottoCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff007f, #7f00ff); color: #ffffff;">Premium Lotto</span>
                     <div class="card-img-wrapper">
                         <img src="33111.jpg" alt="Premium Lotto Grand Wheel">
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Premium Grand Wheel</h3>
-                        <p class="featured-meta">Price: <span>3,000 Birr</span><br>Prize: Dynamic Mega Jackpot</p>
-                        <div class="card-footer-row">
-                            <span class="countdown-pill" style="background: rgba(127, 0, 255, 0.25); color: #fff;">🔒 Password Locked</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="featured-card" id="jetourRaffleCard">
-                    <span class="badge-premium">Grand Raffle</span>
-                    <div class="card-img-wrapper">
-                        <img src="33111.jpg" alt="Jetour Dashing Car">
-                    </div>
-                    <div class="featured-card-body">
-                        <h3 class="featured-title">Jetour Dashing</h3>
-                        <p class="featured-meta">Price: <span>5,000 Birr</span><br>Prize: Luxury Jetour SUV</p>
+                        <p class="featured-meta">Price: <span>5,000 Birr</span><br>Prize: Dynamic Mega Jackpot</p>
                         <div class="card-footer-row">
                             <span class="countdown-pill">⚡ Always Open</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="featured-card" id="monthlyRaffleCard">
+                <div class="featured-card premium-theme" id="monthlyRaffleCard">
                     <span class="badge-premium" style="background: var(--success-green); color: #fff;">Monthly</span>
                     <div class="card-img-wrapper">
                         <img src="33440.png" alt="Monthly BirrDraw">
@@ -613,7 +566,7 @@
                     </div>
                 </div>
 
-                <div class="featured-card" id="bingoScratchCard">
+                <div class="featured-card premium-theme" id="bingoScratchCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff4e50, #f9d423); color: #ffffff;">Instant Win</span>
                     <div class="card-img-wrapper">
                         <img src="33274.jpg" alt="Win 100,000 Birr Box">
@@ -630,58 +583,62 @@
 
             <div class="page-view-section" id="sectionPageYoung">
                 
+                <!-- Card 1: iPhone 17 Pro Max -->
                 <div class="featured-card" id="youngIphoneCard">
                     <span class="badge-premium" style="background: #00d2ff; color: #000;">New tech</span>
                     <div class="card-img-wrapper">
-                        <img src="33274.jpg" alt="iPhone 17 Pro Max">
+                        <img src="i2.jpg" alt="iPhone 17 Pro Max">
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">iPhone 17 Pro Max</h3>
-                        <p class="featured-meta">Price: <span>100 Birr</span><br>Target: Ultra Premium Mobile</p>
+                        <p class="featured-meta">Price: <span>200 Birr</span><br>Target: Ultra Premium Mobile</p>
                         <div class="card-footer-row">
-                            <span class="countdown-pill" style="background: rgba(0, 210, 255, 0.25); color: #000;">⚡ Active Draw</span>
+                            <span class="countdown-pill">⚡ Active Draw</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="featured-card" id="youngBajajCard">
-                    <span class="badge-premium" style="background: var(--warning-amber); color: #000;">Popular</span>
+                <!-- Card 2: Samsung S26 Ultra -->
+                <div class="featured-card" id="youngSamsungCard">
+                    <span class="badge-premium" style="background: #a855f7; color: #fff;">Flagship</span>
                     <div class="card-img-wrapper">
-                        <img src="33440.png" alt="RE Bajaj">
+                        <img src="s2.jpg" alt="Samsung S26 Ultra">
                     </div>
                     <div class="featured-card-body">
-                        <h3 class="featured-title">Brand New Bajaj</h3>
-                        <p class="featured-meta">Price: <span>150 Birr</span><br>Prize: Business-Ready Bajaj</p>
+                        <h3 class="featured-title">Samsung S26 Ultra</h3>
+                        <p class="featured-meta">Price: <span>200 Birr</span><br>Prize: Next-Gen Smartphone</p>
                         <div class="card-footer-row">
-                            <span class="countdown-pill">⚡ Local Dream</span>
+                            <span class="countdown-pill">⚡ Active Draw</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="featured-card" id="youngCarCard">
-                    <span class="badge-premium" style="background: #ff4e50; color: #fff;">Luxury</span>
-                    <div class="card-img-wrapper">
-                        <img src="33111.jpg" alt="Compact Ride">
-                    </div>
-                    <div class="featured-card-body">
-                        <h3 class="featured-title">Premium Compact Car</h3>
-                        <p class="featured-meta">Price: <span>350 Birr</span><br>Prize: Personal City Car</p>
-                        <div class="card-footer-row">
-                            <span class="countdown-pill">⚡ Always Active</span>
-                        </div>
-                    </div>
-                </div>
-
+                <!-- Card 3: Sport Motorcycle Apache -->
                 <div class="featured-card" id="youngMotoCard">
                     <span class="badge-premium" style="background: #10b981; color: #fff;">Speed</span>
                     <div class="card-img-wrapper">
-                        <img src="33111.jpg" alt="Motorcycle">
+                        <img src="m2.jpg" alt="Motorcycle Apache">
                     </div>
                     <div class="featured-card-body">
-                        <h3 class="featured-title">Sport Motorcycle</h3>
-                        <p class="featured-meta">Price: <span>80 Birr</span><br>Prize: Fast Speed Bike</p>
+                        <h3 class="featured-title">Motorcycle Apache</h3>
+                        <p class="featured-meta">Price: <span>1,000 Birr</span><br>Prize: High-Performance Bike</p>
                         <div class="card-footer-row">
                             <span class="countdown-pill">⚡ Instant Open</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Electric Bajaj -->
+                <div class="featured-card" id="youngBajajCard">
+                    <span class="badge-premium" style="background: var(--warning-amber); color: #000;">Eco-Drive</span>
+                    <div class="card-img-wrapper">
+                        <img src="b2.jpg" alt="Electric Bajaj">
+                    </div>
+                    <div class="featured-card-body">
+                        <h3 class="featured-title">Electric Bajaj</h3>
+                        <p class="featured-meta">Price: <span>1,500 Birr</span><br>Prize: Clean-Energy Ride</p>
+                        <div class="card-footer-row">
+                            <span class="countdown-pill">⚡ Local Dream</span>
                         </div>
                     </div>
                 </div>
@@ -866,7 +823,6 @@
             }
         }
 
-        // Integrated Navigation System
         function setupNavigationHandlers() {
             document.getElementById('navHome').addEventListener('click', () => goToPage('dashboard.html'));
             document.getElementById('navTasks').addEventListener('click', () => goToPage('task.html'));
@@ -874,16 +830,18 @@
         }
 
         function setupGates() {
-            const premiumCard = document.getElementById('premiumLottoCard');
-            if (premiumCard) {
-                premiumCard.addEventListener('click', () => {
+            // First Card: BYD Song Plus passes verification target parameters directly to real.html
+            const bydCard = document.getElementById('bydSongPlusCard');
+            if (bydCard) {
+                bydCard.addEventListener('click', () => {
                     triggerLockGate(`real.html?card=${completeRawCardSequence}`);
                 });
             }
 
-            const jetourCard = document.getElementById('jetourRaffleCard');
-            if (jetourCard) {
-                jetourCard.addEventListener('click', () => {
+            // Second Card: Premium Lotto (realour) skips auth gates routing immediately to jetour.html
+            const premiumCard = document.getElementById('premiumLottoCard');
+            if (premiumCard) {
+                premiumCard.addEventListener('click', () => {
                     window.location.href = `jetour.html?card=${completeRawCardSequence}`;
                 });
             }
@@ -902,17 +860,18 @@
                 });
             }
 
+            // Young Gifts Section Click Handlers Map
             document.getElementById('youngIphoneCard').addEventListener('click', () => {
-                window.location.href = `iphone.html?card=${completeRawCardSequence}`;
+                window.location.href = `i.html?card=${completeRawCardSequence}`;
             });
-            document.getElementById('youngBajajCard').addEventListener('click', () => {
-                window.location.href = `bajaj.html?card=${completeRawCardSequence}`;
-            });
-            document.getElementById('youngCarCard').addEventListener('click', () => {
-                window.location.href = `car.html?card=${completeRawCardSequence}`;
+            document.getElementById('youngSamsungCard').addEventListener('click', () => {
+                window.location.href = `s.html?card=${completeRawCardSequence}`;
             });
             document.getElementById('youngMotoCard').addEventListener('click', () => {
-                window.location.href = `motorcycle.html?card=${completeRawCardSequence}`;
+                window.location.href = `m.html?card=${completeRawCardSequence}`;
+            });
+            document.getElementById('youngBajajCard').addEventListener('click', () => {
+                window.location.href = `b.html?card=${completeRawCardSequence}`;
             });
         }
 

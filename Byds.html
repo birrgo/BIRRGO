@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>BirrGo - BYD Allocated Tickets Registry</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --gold-gradient: linear-gradient(135deg, #ffe07d 0%, #f5af19 45%, #e65c00 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --border-radius-lg: 24px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #f1f5f9;
+            color: var(--text-dark);
+        }
+
+        .app-view {
+            width: 100%;
+            min-height: 100vh;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: calc(20px + env(safe-area-inset-top)) 24px 16px 24px;
+            border-bottom: 1px solid var(--border-light);
+            background: #ffffff;
+        }
+
+        .btn-back {
+            background: #f1f5f9;
+            border: 1px solid var(--border-light);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
+        .header-title h2 {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .app-content {
+            flex: 1;
+            background-color: var(--bg-light);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Premium Centerpiece Winner Showcase Sample */
+        .winner-spotlight-card {
+            background: var(--primary-gradient);
+            border-radius: var(--border-radius-md);
+            padding: 20px;
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(128, 0, 32, 0.25);
+            border: 2px solid #ffe07d;
+        }
+
+        .winner-spotlight-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -30%;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,224,125,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .winner-badge-title {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--gold-gradient);
+            color: #4a0000;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 4px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.5px;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .winner-main-flex {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .winner-info-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .winner-phone-masked {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .winner-meta-location {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.75);
+            font-weight: 600;
+        }
+
+        .winner-ticket-prize {
+            text-align: right;
+        }
+
+        .winner-lucky-badge {
+            background: #ffffff;
+            color: var(--primary-burgundy);
+            font-size: 16px;
+            font-weight: 900;
+            padding: 6px 16px;
+            border-radius: 10px;
+            display: inline-block;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .winner-prize-tag {
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffe07d;
+            text-transform: uppercase;
+            margin-top: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Standard List Container */
+        .search-box-container {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 52px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border-light);
+            padding: 0 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+            outline: none;
+            background: #ffffff;
+            box-shadow: var(--card-shadow);
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-burgundy);
+        }
+
+        .section-label-header {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            border-left: 3px solid var(--primary-burgundy);
+            padding-left: 8px;
+            margin-top: 4px;
+        }
+
+        .dashboard-list-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dashboard-row-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            padding: 16px 20px;
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--card-shadow);
+        }
+
+        .number-badge {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            font-weight: 800;
+            font-size: 14px;
+            padding: 6px 14px;
+            border-radius: 10px;
+            min-width: 80px;
+            text-align: center;
+            border: 1.5px solid var(--border-light);
+        }
+
+        .owner-details {
+            text-align: right;
+        }
+
+        .owner-phone {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .owner-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+        
+        .loading-text {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            padding: 40px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-view">
+        
+        <div class="app-header">
+            <button class="btn-back" onclick="window.location.href='real.html'">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <div class="header-title">
+                <h2>BYD Allocation Matrix Logs</h2>
+            </div>
+        </div>
+
+        <div class="app-content">
+            
+            <!-- Sample Interactive First Round Winner Badge Box -->
+            <div class="winner-spotlight-card">
+                <div class="winner-badge-title">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" style="margin-bottom:-1px;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                    First Round Winner Live Sample
+                </div>
+                <div class="winner-main-flex">
+                    <div class="winner-info-block">
+                        <span class="winner-phone-masked">Terminal 0912••••34</span>
+                        <span class="winner-meta-location">📍 Bole, Addis Ababa</span>
+                    </div>
+                    <div class="winner-ticket-prize">
+                        <div class="winner-lucky-badge">Pos #0742</div>
+                        <div class="winner-prize-tag">BYD Song Plus Luxury SUV</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Panel -->
+            <div class="search-box-container">
+                <input type="text" id="dashboardSearch" class="search-input" placeholder="🔍 Filter by positional metric indexes...">
+            </div>
+
+            <div class="section-label-header">Live Registry Matrix</div>
+
+            <div id="loadingIndicator" class="loading-text">Synchronizing allocation registry matrix...</div>
+
+            <div class="dashboard-list-stack" id="dashboardStack"></div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        let masterTicketsArray = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            if(!localStorage.getItem('auth_session_phone')) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            fetchAllocatedRegistry();
+            document.getElementById('dashboardSearch').addEventListener('input', filterDashboardRegistry);
+        });
+
+        function fetchAllocatedRegistry() {
+            // Updated isolated endpoint layout targeting new BYD structural tree branch
+            const ticketsRef = ref(db, 'lottery/byd/tickets');
+            onValue(ticketsRef, (snapshot) => {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                const data = snapshot.val() || {};
+                
+                // Convert to array and sort numerically by Ticket Number
+                masterTicketsArray = Object.values(data).sort((a, b) => parseInt(a.ticketNum) - parseInt(b.ticketNum));
+                renderDashboardRegistry(masterTicketsArray);
+            });
+        }
+
+        function renderDashboardRegistry(items) {
+            const container = document.getElementById('dashboardStack');
+            container.innerHTML = '';
+
+            if(items.length === 0) {
+                container.innerHTML = `<div style="text-align:center;font-size:13px;color:var(--text-muted);padding:30px;">No records match the current query filter elements.</div>`;
+                return;
+            }
+
+            items.forEach(ticket => {
+                const card = document.createElement('div');
+                card.className = 'dashboard-row-card';
+
+                const rawPhone = ticket.phone || "0900000000";
+                const hiddenPhone = rawPhone.substring(0, 5) + "••••" + rawPhone.slice(-2);
+                const location = ticket.location || "Addis Ababa";
+
+                card.innerHTML = `
+                    <div class="number-badge">#${ticket.ticketNum}</div>
+                    <div class="owner-details">
+                        <div class="owner-phone">👤 ${hiddenPhone}</div>
+                        <div class="owner-meta">📍 ${location}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function filterDashboardRegistry() {
+            const query = document.getElementById('dashboardSearch').value.toLowerCase().trim();
+            
+            const filtered = masterTicketsArray.filter(t => {
+                const phoneMatch = (t.phone || "").toLowerCase().includes(query);
+                const numberMatch = (t.ticketNum || "").toString().includes(query);
+                const locationMatch = (t.location || "").toLowerCase().includes(query);
+                return phoneMatch || numberMatch || locationMatch;
+            });
+
+            renderDashboardRegistry(filtered);
+        }
+    </script>
+</body>
+</html>
