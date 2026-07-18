@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirrGo Admin — Real Ticket Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-md mx-auto">
+        <!-- Top Navigation Bar with Back Button -->
+        <div class="flex items-center justify-between mb-6">
+            <a href="new.html" class="bg-white hover:bg-gray-50 active:bg-gray-200 border border-gray-200 px-4 py-2 rounded-xl text-sm font-bold text-gray-700 shadow-sm flex items-center gap-1 transition">
+                <span>←</span> Back
+            </a>
+            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">BirrGo Panel</span>
+        </div>
+
+        <h1 class="text-2xl font-bold mb-6 text-red-900">Admin Real Ticket Control</h1>
+        
+        <!-- Lottery List -->
+        <div id="lotteryList" class="space-y-4">
+            <!-- Items injected here -->
+        </div>
+
+        <!-- Detail View (Hidden by default) -->
+        <div id="detailView" class="hidden mt-4 bg-white p-4 rounded-xl shadow-lg">
+            <button onclick="hideDetail()" class="mb-4 text-sm text-blue-600 font-bold flex items-center gap-1">
+                <span>←</span> Back to List
+            </button>
+            <h2 id="currentLotteryTitle" class="text-lg font-bold mb-4 text-gray-800">Entries</h2>
+            <div id="entryList" class="space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Details & Action Popup Modal (Hidden by default) -->
+    <div id="ticketModal" class="fixed inset-0 bg-black/50 hidden flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl transform transition-all">
+            <h3 class="text-xl font-bold text-gray-900 mb-4">Ticket Actions</h3>
+            
+            <div class="bg-gray-50 p-4 rounded-xl mb-6 space-y-2 text-sm text-gray-700">
+                <p><strong>Ticket Number:</strong> <span id="modalTicketNum" class="text-blue-600 font-mono"></span></p>
+                <p><strong>Info/Phone:</strong> <span id="modalTicketInfo" class="break-all"></span></p>
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <button id="modalDeleteBtn" class="w-full bg-red-600 active:bg-red-700 text-white font-bold py-3 rounded-xl transition shadow-md">
+                    Delete Ticket
+                </button>
+                <button onclick="closeModal()" class="w-full bg-gray-200 active:bg-gray-300 text-gray-800 font-medium py-3 rounded-xl transition">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e"
+        };
+        const db = getDatabase(initializeApp(firebaseConfig));
+
+        const lotteries = [
+            { id: 'byd', name: 'BYD Campaign' },
+            { id: 'jetour', name: 'Jetour Campaign' },
+            { id: 'iphone17', name: 'iPhone 17 Pro Max' },
+            { id: 'samsungs26', name: 'Samsung S26 Ultra' },
+            { id: 'motorcycle', name: 'Motorcycle Apache' },
+            { id: 'electricbajaj', name: 'Electric Bajaj' },
+            { id: 'monthly', name: '1 Million Birr Draw' }
+        ];
+
+        const listDiv = document.getElementById('lotteryList');
+        const detailView = document.getElementById('detailView');
+        const entryList = document.getElementById('entryList');
+        
+        const ticketModal = document.getElementById('ticketModal');
+        const modalTicketNum = document.getElementById('modalTicketNum');
+        const modalTicketInfo = document.getElementById('modalTicketInfo');
+        const modalDeleteBtn = document.getElementById('modalDeleteBtn');
+
+        lotteries.forEach(lotto => {
+            const btn = document.createElement('button');
+            btn.className = "w-full p-4 bg-white rounded-xl shadow border border-gray-200 text-left font-bold text-gray-800 active:bg-gray-50 transition";
+            btn.innerText = lotto.name;
+            btn.onclick = () => viewEntries(lotto);
+            listDiv.appendChild(btn);
+        });
+
+        window.viewEntries = (lotto) => {
+            detailView.classList.remove('hidden');
+            listDiv.classList.add('hidden');
+            document.getElementById('currentLotteryTitle').innerText = lotto.name;
+            
+            onValue(ref(db, `lottery/${lotto.id}/tickets`), (snapshot) => {
+                entryList.innerHTML = '';
+                const data = snapshot.val() || {};
+                
+                if (Object.keys(data).length === 0) {
+                    entryList.innerHTML = '<p class="text-sm text-gray-500 text-center py-4">No tickets found.</p>';
+                    return;
+                }
+
+                Object.keys(data).forEach(key => {
+                    const item = data[key];
+                    const infoText = item.cardSequence || item.phone || 'No detail';
+                    
+                    const div = document.createElement('div');
+                    div.className = "flex justify-between items-center p-3 bg-gray-50 rounded-xl border border-gray-100 active:bg-gray-100 transition cursor-pointer";
+                    div.onclick = () => openModal(lotto.id, key, item.ticketNum, infoText);
+                    
+                    div.innerHTML = `
+                        <div>
+                            <p class="text-sm font-bold text-gray-800">POS #${item.ticketNum}</p>
+                            <p class="text-xs text-gray-500">${infoText}</p>
+                        </div>
+                        <span class="text-xs bg-blue-50 text-blue-600 font-bold px-2 py-1 rounded-lg">Manage</span>
+                    `;
+                    entryList.appendChild(div);
+                });
+            });
+        };
+
+        window.openModal = (lottoId, entryKey, ticketNum, infoText) => {
+            modalTicketNum.innerText = ticketNum;
+            modalTicketInfo.innerText = infoText;
+            
+            modalDeleteBtn.onclick = () => {
+                if(confirm(`Confirm deletion of ticket #${ticketNum}?`)) {
+                    remove(ref(db, `lottery/${lottoId}/tickets/${entryKey}`))
+                        .then(() => closeModal());
+                }
+            };
+            
+            ticketModal.classList.remove('hidden');
+        };
+
+        window.closeModal = () => {
+            ticketModal.classList.add('hidden');
+        };
+
+        window.hideDetail = () => {
+            detailView.classList.add('hidden');
+            listDiv.classList.remove('hidden');
+        };
+    </script>
+</body>
+</html>

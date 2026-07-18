@@ -6,7 +6,7 @@
     <title>BirrGo - Admin Control Center</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
@@ -69,10 +69,36 @@
             max-width: 450px; 
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            padding: calc(10vh + env(safe-area-inset-top)) 24px calc(8vh + env(safe-area-inset-bottom)) 24px;
+            justify-content: flex-start;
+            padding: calc(4vh + env(safe-area-inset-top)) 24px calc(4vh + env(safe-area-inset-bottom)) 24px;
             position: relative;
             z-index: 1;
+        }
+
+        /* Nav Header styling for the Back Button */
+        .top-nav-header {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            margin-bottom: 2vh;
+        }
+
+        .btn-back {
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            text-decoration: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .btn-back:active {
+            background: #e5e7eb;
+            transform: scale(0.97);
         }
 
         .brand-section {
@@ -82,21 +108,21 @@
         }
 
         .logo-image {
-            width: 140px;
+            width: 130px;
             height: auto;
             object-fit: contain;
         }
 
         .header-content {
             text-align: center;
-            margin-bottom: 3vh;
+            margin-bottom: 2.5vh;
         }
 
         .header-content h1 {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 700;
             color: var(--text-dark);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             letter-spacing: -0.03em;
         }
 
@@ -247,6 +273,11 @@
 
     <div class="app-view">
         
+        <!-- Premium Back Navigation Row -->
+        <div class="top-nav-header">
+            <a href="new.html" class="btn-back">← Dashboard</a>
+        </div>
+        
         <div class="brand-section">
             <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
@@ -276,9 +307,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, get, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Firebase configuration synchronized with your login database configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
             authDomain: "birrgo-fdf7e.firebaseapp.com",
@@ -304,25 +334,21 @@
             setTimeout(() => { toast.style.display = 'none'; }, 3500);
         }
 
-        // Restrict password field inputs to digits only
         newPassInput.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/[^0-9]/g, '');
         });
 
-        // 1. Fetch and listen to Realtime changes on the Global Premium Gate Pin 
         const systemPinRef = ref(db, 'settings/premium_gate_password');
         
         onValue(systemPinRef, (snapshot) => {
             if (snapshot.exists()) {
                 currentActivePassEl.innerText = snapshot.val();
-                // Store password locally on admin change as reference backup
                 localStorage.setItem('auth_session_password', snapshot.val());
             } else {
                 currentActivePassEl.innerText = "Not Configured";
             }
         });
 
-        // 2. Write updating values back to Firebase node when admin submits form
         document.getElementById('adminControlForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -337,10 +363,7 @@
                 updateBtn.disabled = true;
                 updateBtn.innerText = "Publishing Changes...";
 
-                // Set database value
                 await set(systemPinRef, passwordAttempt);
-                
-                // Keep locally updated sync for local verification tests
                 localStorage.setItem('auth_session_password', passwordAttempt);
 
                 showNotification("Success! Premium gate password changed.");
