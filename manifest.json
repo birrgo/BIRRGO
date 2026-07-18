@@ -3,24 +3,31 @@
   "name": "Birr Go - Mobile Wallet",
   "short_name": "Birr Go",
   "description": "Secure and premium mobile wallet and payment app.",
-  "start_url": "./index.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "background_color": "#ffffff",
-  "theme_color": "#9A0019",
+  "theme_color": "#ffffff", /* CHANGED TO WHITE */
   "orientation": "portrait-primary",
+  "categories": ["finance", "utilities"],
   "icons": [
     {
-      "src": "icon.png",
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "icon.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     }
   ],
   "shortcuts": [
@@ -28,11 +35,12 @@
       "name": "Send Money",
       "short_name": "Send",
       "description": "Quickly send funds",
-      "url": "./index.html?action=send",
+      "url": "/index.html?action=send",
       "icons": [
         {
-          "src": "icon.png",
-          "sizes": "192x192"
+          "src": "shortcut-send-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
         }
       ]
     }
