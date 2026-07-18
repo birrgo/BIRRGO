@@ -182,8 +182,8 @@
       statusDiv.innerText = 'Broadcasting message via backend server...';
 
       try {
-          // FIXED: Now accurately routing requests to your deployed live Render backend
-          const response = await fetch("https://birrgo-otp-backend.onrender.com/api/send-push", {
+          // FIX 1: Corrected the endpoint route to match what you stated earlier (/api/broadcast)
+          const response = await fetch("https://birrgo-otp-backend.onrender.com/api/broadcast", {
               method: "POST",
               headers: {
                   "Content-Type": "application/json; charset=utf-8"
@@ -202,13 +202,22 @@
               document.getElementById('title').value = '';
               document.getElementById('message').value = '';
           } else {
-              const errData = await response.json();
+              // FIX 2: Prevent a crash if the backend returns an HTML error page (like a 404)
+              let errorMsg = 'Failed to dispatch notification.';
+              try {
+                  const errData = await response.json();
+                  errorMsg = errData.error || errorMsg;
+              } catch (e) {
+                  errorMsg = `Server Error: Status ${response.status} (${response.statusText})`;
+              }
               statusDiv.style.color = 'red';
-              statusDiv.innerText = 'Backend Error: ' + (errData.error || 'Failed to dispatch notification.');
+              statusDiv.innerText = 'Backend Error: ' + errorMsg;
           }
       } catch (error) {
+          // FIX 3: Log the actual error to the console and display it
+          console.error("🔥 THE TRUE ERROR IS:", error);
           statusDiv.style.color = 'red';
-          statusDiv.innerText = 'Network error. Make sure backend is awake.';
+          statusDiv.innerText = 'Network error: ' + error.message + '. (Check browser console)';
       }
   }
 </script>
