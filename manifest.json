@@ -1,13 +1,13 @@
 {
-  "id": "/birr-go-app",
+  "id": "/",
   "name": "Birr Go - Mobile Wallet",
   "short_name": "Birr Go",
   "description": "Secure and premium mobile wallet and payment app.",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
-  "display_override": ["fullscreen", "standalone"],
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "background_color": "#ffffff",
-  "theme_color": "#212121",
+  "theme_color": "#9A0019",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -28,7 +28,7 @@
       "name": "Send Money",
       "short_name": "Send",
       "description": "Quickly send funds",
-      "url": "/index.html?action=send",
+      "url": "./index.html?action=send",
       "icons": [
         {
           "src": "icon.png",
