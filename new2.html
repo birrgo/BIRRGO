@@ -10,7 +10,6 @@
     <meta name="keywords" content="BirrGo login, mobile wallet Ethiopia, digital payments login, secure wallet access, send money online">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://birrgo.online/new2.html">
-    <meta name="theme-color" content="#8b0015">
 
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
@@ -29,10 +28,22 @@
     }
     </script>
 
+    <!-- PWA Root App Integration Linkage -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA / Mobile App Meta Tags (Configured for All-White Theme & iOS Support) -->
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Global app.css linked first to control layout bouncing, selection modes, and native app styling -->
+    <link rel="stylesheet" href="app.css">
+
     <style>
         :root {
             --primary-burgundy: #8b0015;
@@ -55,12 +66,12 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
+        /* Adjusted background-color structure to stack clean under app.css properties */
         html, body {
             width: 100%;
             min-height: 100vh; 
             background-color: #f8f9fa;
             position: relative;
-            overflow-x: hidden; 
             margin: 0;
             padding: 0;
         }
@@ -75,8 +86,8 @@
         
         .bg-wave-top {
             top: 0;
-            height: 8vh; /* Reduced size */
-            min-height: 55px; /* Reduced minimum size */
+            height: 8vh; 
+            min-height: 55px; 
         }
         
         .bg-wave-bottom {
@@ -114,7 +125,6 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center; 
-            /* Reduced top padding to match smaller curve */
             padding: calc(11vh + env(safe-area-inset-top)) 6% calc(12vh + env(safe-area-inset-bottom)) 6%;
             position: relative;
             z-index: 1;

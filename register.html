@@ -10,7 +10,6 @@
     <meta name="keywords" content="BirrGo registration, create mobile wallet, sign up BirrGo, digital wallet Ethiopia, mobile money account, secure payment">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://birrgo.online/register.html">
-    <meta name="theme-color" content="#8b0015">
 
     <!-- Open Graph Meta Tags for Social Sharing -->
     <meta property="og:type" content="website">
@@ -34,10 +33,21 @@
     }
     </script>
 
+    <!-- PWA Root App Integration Linkage -->
+    <link rel="manifest" href="manifest.json">
+    
+    <!-- PWA / Mobile App Meta Tags (Configured for All-White Theme & iOS Support) -->
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Link the powerful global app.css BEFORE your unique local styling override sheets -->
+    <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="register.css">
 </head>
 <body>
@@ -73,6 +83,7 @@
         </svg>
     </button>
 
+    <!-- App View Wrapper uses app.css logic -->
     <div class="app-view">
         <div class="header-content">
             <h1 id="screen-title">Create Your Account</h1>
