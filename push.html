@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BirrGo - Firebase Secure Dashboard</title>
+    <style>
+        body { font-family: -apple-system, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        .top-nav { width: 100%; max-width: 400px; display: flex; justify-content: flex-start; margin-bottom: 15px; box-sizing: border-box; }
+        .back-btn { background: #555; color: white; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; transition: background 0.2s; }
+        .back-btn:hover { background: #333; }
+        .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 400px; border-top: 5px solid #8B0000; margin-bottom: 20px; box-sizing: border-box; }
+        h2 { color: #8B0000; margin-top: 0; font-size: 22px; }
+        h3 { color: #333; margin-top: 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
+        label { font-weight: bold; display: block; margin: 12px 0 5px; color: #333; font-size: 14px; }
+        input, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; margin-bottom: 5px;}
+        button { background: #8B0000; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
+        button:hover { background: #660000; }
+        .btn-secondary { background: #555; }
+        .btn-secondary:hover { background: #333; }
+        .btn-danger { background: #d9534f; }
+        .btn-danger:hover { background: #c9302c; }
+        #status, #config-status { margin-top: 12px; font-weight: bold; text-align: center; font-size: 14px; }
+        .loading { color: orange; font-style: italic; text-align: center; }
+    </style>
+</head>
+<body>
+
+<!-- TOP NAVIGATION BAR -->
+<div class="top-nav">
+    <a href="new.html" class="back-btn">← Back to Dashboard</a>
+</div>
+
+<!-- CARD 1: SENDER PANEL -->
+<div class="card">
+    <h2>BirrGo Notification Panel</h2>
+    <div id="setup-status" class="loading">Connecting to secure storage...</div>
+    
+    <div id="admin-form" style="display:none;">
+        <p style="font-size: 14px; color: #555;">Broadcast a live message to your active subscribers:</p>
+        <label for="title">Notification Title</label>
+        <input type="text" id="title" placeholder="e.g., Cash Received! 💰">
+
+        <label for="message">Message Body</label>
+        <textarea id="message" rows="3" placeholder="e.g., You received 500 Birr."></textarea>
+
+        <button onclick="sendPush()">Broadcast Notification</button>
+        <div id="status"></div>
+    </div>
+</div>
+
+<!-- CARD 2: DYNAMIC ONESIGNAL CONFIGURATION MANAGER -->
+<div class="card" id="settings-card" style="display: none;">
+    <h3>OneSignal Credentials Manager</h3>
+    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Update or clear your keys directly in your Firebase cloud config node anytime:</p>
+
+    <label for="db-app-id">OneSignal App ID</label>
+    <input type="text" id="db-app-id" placeholder="Paste App ID">
+
+    <label for="db-rest-key">REST API Key (Secret)</label>
+    <input type="password" id="db-rest-key" placeholder="Paste REST API Key">
+
+    <button onclick="updateFirebaseConfig()">Save / Update Keys</button>
+    <button onclick="deleteFirebaseConfig()" class="btn-danger">Delete Current Configuration</button>
+    <div id="config-status"></div>
+</div>
+
+<!-- Firebase App SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+  // Successfully integrated live dashboard credentials
+  const firebaseConfig = {
+    apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+    authDomain: "birrgo-fdf7e.firebaseapp.com",
+    databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+    projectId: "birrgo-fdf7e",
+    storageBucket: "birrgo-fdf7e.firebasestorage.app",
+    messagingSenderId: "2317445154",
+    appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+    measurementId: "G-24X13TZ43D"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+  const configRef = ref(database, 'onesignal');
+
+  let secureAppId = "";
+  let secureRestKey = "";
+
+  // 1. Fetch data on load
+  function loadConfig() {
+      get(configRef).then((snapshot) => {
+          document.getElementById('setup-status').style.display = 'none';
+          document.getElementById('settings-card').style.display = 'block';
+          
+          if (snapshot.exists()) {
+              const keys = snapshot.val();
+              secureAppId = keys.appId || "";
+              secureRestKey = keys.restApiKey || "";
+              
+              // Fill input boxes so you can see current configuration
+              document.getElementById('db-app-id').value = secureAppId;
+              document.getElementById('db-rest-key').value = secureRestKey;
+              
+              if(secureAppId && secureRestKey) {
+                  document.getElementById('admin-form').style.display = 'block';
+              } else {
+                  document.getElementById('admin-form').style.display = 'none';
+              }
+          } else {
+              // Empty database state
+              document.getElementById('db-app-id').value = "";
+              document.getElementById('db-rest-key').value = "";
+              document.getElementById('admin-form').style.display = 'none';
+              document.getElementById('status').innerText = '';
+          }
+      }).catch((error) => {
+          document.getElementById('setup-status').style.color = 'red';
+          document.getElementById('setup-status').innerText = 'Database Link Error: ' + error.message;
+      });
+  }
+
+  // Initial loading trigger
+  loadConfig();
+
+  // 2. SAVE / UPDATE FUNCTION
+  window.updateFirebaseConfig = function() {
+      const appIdInput = document.getElementById('db-app-id').value.trim();
+      const restKeyInput = document.getElementById('db-rest-key').value.trim();
+      const configStatus = document.getElementById('config-status');
+
+      if(!appIdInput || !restKeyInput) {
+          configStatus.style.color = 'red';
+          configStatus.innerText = 'Both key fields are required!';
+          return;
+      }
+
+      configStatus.style.color = 'orange';
+      configStatus.innerText = 'Saving to Firebase...';
+
+      set(configRef, {
+          appId: appIdInput,
+          restApiKey: restKeyInput
+      }).then(() => {
+          configStatus.style.color = 'green';
+          configStatus.innerText = '✔️ Credentials saved successfully!';
+          loadConfig(); // Refresh fields and forms
+      }).catch((err) => {
+          configStatus.style.color = 'red';
+          configStatus.innerText = 'Save failed: ' + err.message;
+      });
+  }
+
+  // 3. DELETE / RESET FUNCTION
+  window.deleteFirebaseConfig = function() {
+      if(!confirm("Are you sure you want to completely delete your active OneSignal credentials?")) return;
+      
+      const configStatus = document.getElementById('config-status');
+      
+      remove(configRef).then(() => {
+          configStatus.style.color = 'red';
+          configStatus.innerText = '🗑️ Configuration deleted from database.';
+          loadConfig(); // Hide sender card and wipe input texts
+      }).catch((err) => {
+          configStatus.style.color = 'red';
+          configStatus.innerText = 'Delete failed: ' + err.message;
+      });
+  }
+
+  // 4. PUSH DISPATCH HANDLER
+  window.sendPush = async function() {
+      const title = document.getElementById('title').value;
+      const message = document.getElementById('message').value;
+      const statusDiv = document.getElementById('status');
+
+      if(!title || !message) {
+          statusDiv.style.color = 'red';
+          statusDiv.innerText = 'Fields cannot be blank!';
+          return;
+      }
+
+      statusDiv.style.color = 'orange';
+      statusDiv.innerText = 'Broadcasting message...';
+
+      try {
+          const response = await fetch("https://onesignal.com/api/v1/notifications", {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json; charset=utf-8",
+                  "Authorization": `Basic ${secureRestKey}`
+              },
+              body: JSON.stringify({
+                  app_id: secureAppId,
+                  included_segments: ["Total Subscriptions"],
+                  headings: { "en": title },
+                  contents: { "en": message },
+                  chrome_web_icon: "https://birrgo.online/icon.png",
+                  firefox_icon: "https://birrgo.online/icon.png"
+              })
+          });
+
+          if (response.ok) {
+              statusDiv.style.color = 'green';
+              statusDiv.innerText = '🚀 Notification deployed successfully!';
+              document.getElementById('title').value = '';
+              document.getElementById('message').value = '';
+          } else {
+              const errData = await response.json();
+              statusDiv.style.color = 'red';
+              statusDiv.innerText = 'OneSignal Error: ' + (errData.errors ? errData.errors[0] : 'Failed');
+          }
+      } catch (error) {
+          statusDiv.style.color = 'red';
+          statusDiv.innerText = 'Network request error.';
+      }
+  }
+</script>
+
+</body>
+</html>

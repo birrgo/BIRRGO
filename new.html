@@ -8,6 +8,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Space+Grotesk:wght=500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="new.css">
+    
+    <style>
+        /* Hide the body initially to prevent unauthorized layout flashing */
+        body { display: none; }
+    </style>
+
+    <script>
+        // --- SECURE AUTHENTICATION GUARD ---
+        // Instantly check if the secure token exists in localStorage or sessionStorage
+        const sessionToken = localStorage.getItem('birrgo_admin_session') || sessionStorage.getItem('birrgo_admin_session');
+        
+        if (sessionToken !== "active_secure_admin") {
+            // Kick them out immediately to the login screen
+            window.location.replace("new1.html");
+        } else {
+            // Authorized! Allow the body elements to render once DOM is ready
+            document.documentElement.style.visibility = "visible";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+            });
+        }
+    </script>
 </head>
 <body>
 
@@ -22,6 +44,13 @@
             <a href="deposits.html" style="text-decoration: none;">
                 <button class="role-nav-btn" style="background: linear-gradient(135deg, #8b0015 0%, #3a0006 100%); color: white; width: 100%;">
                     <span class="icon">💳</span> Payment Admin
+                </button>
+            </a>
+
+            <!-- NEW PUSH NOTIFICATIONS GATEWAY -->
+            <a href="push.html" style="text-decoration: none;">
+                <button class="role-nav-btn" style="background: linear-gradient(135deg, #70000a 0%, #240003 100%); color: white; width: 100%;">
+                    <span class="icon">🔔</span> Push Notification
                 </button>
             </a>
 
@@ -125,9 +154,11 @@
             document.getElementById('metric-lottery-vault').innerText = foundAdminBalance.toFixed(2);
         });
 
+        // --- SECURE LOGOUT ---
         document.getElementById('exitAdminBtn').addEventListener('click', () => {
+            localStorage.removeItem('birrgo_admin_session');
             sessionStorage.removeItem('birrgo_admin_session');
-            window.location.href = "new1.html";
+            window.location.replace("new1.html");
         });
     </script>
 </body>
