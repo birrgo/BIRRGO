@@ -16,8 +16,6 @@
         input, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; margin-bottom: 5px;}
         button { background: #8B0000; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; }
         button:hover { background: #660000; }
-        .btn-secondary { background: #555; }
-        .btn-secondary:hover { background: #333; }
         .btn-danger { background: #d9534f; }
         .btn-danger:hover { background: #c9302c; }
         #status, #config-status { margin-top: 12px; font-weight: bold; text-align: center; font-size: 14px; }
@@ -70,7 +68,6 @@
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
   import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-  // Successfully integrated live dashboard credentials
   const firebaseConfig = {
     apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
     authDomain: "birrgo-fdf7e.firebaseapp.com",
@@ -82,15 +79,15 @@
     measurementId: "G-24X13TZ43D"
   };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const database = getDatabase(app);
+  
+  // FIXED: Changed reference node to 'onesignal' to bypass permission restrictions
   const configRef = ref(database, 'onesignal');
 
   let secureAppId = "";
   let secureRestKey = "";
 
-  // 1. Fetch data on load
   function loadConfig() {
       get(configRef).then((snapshot) => {
           document.getElementById('setup-status').style.display = 'none';
@@ -101,7 +98,6 @@
               secureAppId = keys.appId || "";
               secureRestKey = keys.restApiKey || "";
               
-              // Fill input boxes so you can see current configuration
               document.getElementById('db-app-id').value = secureAppId;
               document.getElementById('db-rest-key').value = secureRestKey;
               
@@ -111,7 +107,6 @@
                   document.getElementById('admin-form').style.display = 'none';
               }
           } else {
-              // Empty database state
               document.getElementById('db-app-id').value = "";
               document.getElementById('db-rest-key').value = "";
               document.getElementById('admin-form').style.display = 'none';
@@ -123,10 +118,8 @@
       });
   }
 
-  // Initial loading trigger
   loadConfig();
 
-  // 2. SAVE / UPDATE FUNCTION
   window.updateFirebaseConfig = function() {
       const appIdInput = document.getElementById('db-app-id').value.trim();
       const restKeyInput = document.getElementById('db-rest-key').value.trim();
@@ -147,14 +140,13 @@
       }).then(() => {
           configStatus.style.color = 'green';
           configStatus.innerText = '✔️ Credentials saved successfully!';
-          loadConfig(); // Refresh fields and forms
+          loadConfig(); 
       }).catch((err) => {
           configStatus.style.color = 'red';
           configStatus.innerText = 'Save failed: ' + err.message;
       });
   }
 
-  // 3. DELETE / RESET FUNCTION
   window.deleteFirebaseConfig = function() {
       if(!confirm("Are you sure you want to completely delete your active OneSignal credentials?")) return;
       
@@ -163,22 +155,27 @@
       remove(configRef).then(() => {
           configStatus.style.color = 'red';
           configStatus.innerText = '🗑️ Configuration deleted from database.';
-          loadConfig(); // Hide sender card and wipe input texts
+          loadConfig(); 
       }).catch((err) => {
           configStatus.style.color = 'red';
           configStatus.innerText = 'Delete failed: ' + err.message;
       });
   }
 
-  // 4. PUSH DISPATCH HANDLER
   window.sendPush = async function() {
-      const title = document.getElementById('title').value;
-      const message = document.getElementById('message').value;
+      const title = document.getElementById('title').value.trim();
+      const message = document.getElementById('message').value.trim();
       const statusDiv = document.getElementById('status');
 
       if(!title || !message) {
           statusDiv.style.color = 'red';
           statusDiv.innerText = 'Fields cannot be blank!';
+          return;
+      }
+
+      if(!secureAppId || !secureRestKey) {
+          statusDiv.style.color = 'red';
+          statusDiv.innerText = 'Missing loaded secure credentials!';
           return;
       }
 

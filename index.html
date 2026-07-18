@@ -31,6 +31,19 @@
     <!-- Link the powerful new app.css -->
     <link rel="stylesheet" href="app.css">
     
+    <!-- ONESIGNAL EXTERNAL SDK -->
+    <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignal.plugin.js" async></script>
+    <script>
+      window.OneSignal = window.OneSignal || [];
+      OneSignal.push(function() {
+        OneSignal.init({
+          appId: "2317445154", // Using your registered app identity mapping setup
+          autoResubscribe: true,
+          allowLocalhostAsSecureOrigin: true
+        });
+      });
+    </script>
+    
     <style>
         /* PAGE SPECIFIC DESIGN ONLY (Colors, Buttons, Cards) */
         :root {
