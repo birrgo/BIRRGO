@@ -2,14 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Biometric Scan</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary-burgundy: #8b0015;
+            --success-green: #10b981;
             --text-dark: #111827;
             --text-muted: #6b7280;
+            --bg-overlay: rgba(0, 0, 0, 0.45);
         }
 
         * {
@@ -21,181 +23,186 @@
         }
 
         body {
-            background-color: transparent;
+            /* Simulates the dark background of the app behind the modal */
+            background-color: var(--bg-overlay);
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 280px;
-            overflow: hidden;
+            min-height: 100vh;
+            margin: 0;
         }
 
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 280px;
+        .modal-card {
+            background: #ffffff;
+            width: 90%;
+            max-width: 360px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding-bottom: 40px;
+        }
+
+        .modal-header {
+            padding: 18px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        .modal-close-btn {
+            border: none;
+            background: none;
+            font-size: 22px;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 5px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .biometric-body {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 16px;
-            padding: 10px;
+            justify-content: center;
+            margin-top: 50px;
         }
 
-        .instruction-text {
-            font-size: 13px;
-            color: var(--text-muted);
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .sensor-wrapper {
+        .fingerprint-ring {
             position: relative;
-            width: 90px;
-            height: 90px;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            border: 3px dashed var(--primary-burgundy);
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            transition: all 0.3s ease;
             cursor: pointer;
         }
 
-        .ripple {
+        .fingerprint-icon {
+            width: 85px;
+            height: 85px;
+            object-fit: contain;
+            mix-blend-mode: multiply; /* Removes white bg from jpg */
+            opacity: 0.9;
+            transition: all 0.3s ease;
+        }
+
+        .scan-beam {
             position: absolute;
+            top: -100%;
+            left: 0;
             width: 100%;
             height: 100%;
-            border-radius: 50%;
-            background: rgba(139, 0, 21, 0.08);
-            animation: pulse 2s infinite ease-in-out;
-            z-index: 1;
+            background: linear-gradient(to bottom, rgba(139,0,21,0) 0%, rgba(139,0,21,0.2) 80%, rgba(139,0,21,0.6) 100%);
+            animation: scanAnim 1.8s infinite linear;
+            pointer-events: none;
         }
 
-        .ripple-outer {
-            position: absolute;
-            width: 110px;
-            height: 110px;
-            border-radius: 50%;
-            background: rgba(139, 0, 21, 0.03);
-            animation: pulse-outer 2s infinite ease-in-out;
-            z-index: 0;
-        }
-
-        .sensor-btn {
-            position: relative;
-            z-index: 2;
-            width: 68px;
-            height: 68px;
-            border-radius: 50%;
-            background: #ffffff;
-            border: 2px solid #f3f4f6;
-            box-shadow: 0 8px 20px rgba(139, 0, 21, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary-burgundy);
-            transition: transform 0.1s ease, background 0.2s ease;
-        }
-
-        .sensor-btn:active {
-            transform: scale(0.94);
-            background: #fafafa;
+        @keyframes scanAnim {
+            0% { top: -100%; }
+            100% { top: 100%; }
         }
 
         .status-text {
-            font-size: 13px;
-            font-weight: 700;
+            margin-top: 24px;
+            font-size: 15px;
+            font-weight: 600;
             color: var(--text-dark);
-            min-height: 18px;
             transition: color 0.3s ease;
+            text-align: center;
         }
 
-        .status-text.error {
-            color: #df2222;
+        /* --- Success State Styles --- */
+        .fingerprint-ring.success {
+            border: 3px solid var(--success-green);
+            background: rgba(16, 185, 129, 0.05);
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.15);
+        }
+
+        .fingerprint-ring.success .scan-beam {
+            display: none; /* Hide red beam on success */
+        }
+
+        .fingerprint-ring.success .fingerprint-icon {
+            /* Converts the burgundy/black jpg to green */
+            filter: sepia(1) hue-rotate(90deg) saturate(3) drop-shadow(0 0 6px rgba(16, 185, 129, 0.3));
+            opacity: 1;
         }
 
         .status-text.success {
-            color: #10b981;
+            color: var(--success-green);
         }
 
-        .fallback-btn {
-            background: none;
-            border: none;
-            color: var(--primary-burgundy);
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            text-decoration: underline;
-            margin-top: 5px;
-            display: inline-block;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: background 0.2s ease;
-        }
-
-        .fallback-btn:hover {
-            background: rgba(139, 0, 21, 0.05);
-        }
-
-        .fallback-btn:active {
-            background: rgba(139, 0, 21, 0.1);
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.85); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(0.85); opacity: 0.5; }
-        }
-
-        @keyframes pulse-outer {
-            0% { transform: scale(0.9); opacity: 0.3; }
-            50% { transform: scale(1.15); opacity: 0.8; }
-            100% { transform: scale(0.9); opacity: 0.3; }
+        /* --- Error State Styles --- */
+        .status-text.error {
+            color: #df2222;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <p class="instruction-text" id="instructionText">Touch the sensor below to scan your fingerprint.</p>
-        
-        <div class="sensor-wrapper" id="sensorTouchArea">
-            <div class="ripple-outer"></div>
-            <div class="ripple"></div>
-            <button class="sensor-btn" aria-label="Biometric Verification">
-                <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a10 10 0 0 0-10 10c0 5.523 4.477 10 10 10s10-4.477 10-10A10 10 0 0 0 12 2z"></path>
-                    <path d="M12 6a6 6 0 0 0-6 6c0 3.314 2.686 6 6 6s6-2.686 6-6a6 6 0 0 0-6-6z"></path>
-                    <path d="M12 10a2 2 0 0 0-2 2c0 1.103.897 2 2 2s2-.897 2-2a2 2 0 0 0-2-2z"></path>
-                </svg>
-            </button>
+    <div class="modal-card">
+        <div class="modal-header">
+            <span class="modal-title">Biometric Login</span>
+            <button class="modal-close-btn" aria-label="Close" onclick="handleFallback()">✕</button>
         </div>
+        
+        <div class="biometric-body">
+            <!-- Clickable ring area to re-trigger scan if needed -->
+            <div class="fingerprint-ring" id="sensorTouchArea">
+                <img src="fi.jpg" alt="Fingerprint" class="fingerprint-icon" id="fingerprintImage">
+                <div class="scan-beam" id="scanBeam"></div>
+            </div>
 
-        <div class="status-text" id="statusMessage">Tap to scan...</div>
-        <button class="fallback-btn" id="fallbackBtn" onclick="handleFallback()">Use App PIN instead</button>
+            <p class="status-text" id="statusMessage">Scanning fingerprint...</p>
+        </div>
     </div>
 
     <script>
         const statusMsg = document.getElementById('statusMessage');
-        const instructionText = document.getElementById('instructionText');
         const touchArea = document.getElementById('sensorTouchArea');
         
-        // Use a decoupled baseline wildcard reference to guarantee message transport delivery out of sandboxed wrappers
         const targetOrigin = "*";
-        
-        // Runtime simulation override for development/local file previews
         const SIMULATE_SUCCESS_ON_HTTP = true; 
         let incomingToggleStateOverride = null;
 
         function onFingerprintSuccess(verificationToken) {
-            statusMsg.innerText = "Verified!";
+            // Apply success UI states matching the screenshot
+            statusMsg.innerText = "Authentication Successful!";
             statusMsg.className = "status-text success";
+            touchArea.className = "fingerprint-ring success";
             
+            // Post message back to parent or redirect
             window.parent.postMessage({ 
                 status: 'SUCCESS', 
                 token: verificationToken 
             }, targetOrigin); 
+
+            // Auto-redirect to dashboard after showing success state for 1 second
+            setTimeout(() => {
+                window.location.href = "dashboard.html";
+            }, 1200);
         }
 
         function onFingerprintFailure(err) {
             statusMsg.innerText = err || "Failed";
             statusMsg.className = "status-text error";
+            touchArea.className = "fingerprint-ring"; // Revert to default
             
             window.parent.postMessage({ 
                 status: 'FAILED', 
@@ -213,7 +220,11 @@
         }
 
         async function startBiometricScan() {
-            // Check cross-origin frame context state overrides
+            // Reset UI to scanning state
+            statusMsg.innerText = "Scanning fingerprint...";
+            statusMsg.className = "status-text";
+            touchArea.className = "fingerprint-ring";
+
             let isConfiguredOn = true;
             if (incomingToggleStateOverride !== null) {
                 isConfiguredOn = incomingToggleStateOverride;
@@ -224,9 +235,6 @@
                     isConfiguredOn = true; 
                 }
             }
-
-            statusMsg.innerText = "Connecting to sensor...";
-            statusMsg.className = "status-text";
 
             // 1. Android Native Interface Hook
             if (window.AndroidInterface && typeof window.AndroidInterface.requestFingerprint === 'function') {
@@ -243,9 +251,10 @@
 
             // 2. HTTP Sandbox / Local Server Bypass Simulation Connect
             if (!isSecureContext && SIMULATE_SUCCESS_ON_HTTP) {
+                // Simulate a 2.5 second scan before succeeding (to show off the animation)
                 setTimeout(() => {
                     onFingerprintSuccess("simulated-http-token");
-                }, 1000);
+                }, 2500);
                 return;
             }
 
@@ -264,7 +273,7 @@
                         } catch(e) {}
 
                         if (!savedCredId) {
-                            instructionText.innerText = "Registering biometric profile...";
+                            statusMsg.innerText = "Registering biometric profile...";
                             const challenge = new Uint8Array(32);
                             window.crypto.getRandomValues(challenge);
                             const userId = new Uint8Array(16);
@@ -347,29 +356,33 @@
             window.parent.postMessage({ status: 'FALLBACK_REQUESTED' }, targetOrigin);
             try {
                 if (window.parent && window.parent !== window) {
-                    window.parent.location.href = "new2.html?fallback=pin";
+                    window.parent.location.href = "new2.html";
                 } else {
-                    window.location.href = "new2.html?fallback=pin";
+                    window.location.href = "new2.html";
                 }
             } catch (e) {
-                window.location.href = "new2.html?fallback=pin";
+                window.location.href = "new2.html";
             }
         }
 
-        // Catch explicitly dispatched lifecycle events sent from the profile wrapper
         window.addEventListener('message', (event) => {
             if (event.data && event.data.type === 'UPDATE_BIOMETRIC_STATUS') {
                 incomingToggleStateOverride = event.data.enabled;
-                // Auto start verification loop on incoming dynamic validation pass
                 startBiometricScan();
             }
         });
 
+        // Initialize scan shortly after page load
         window.addEventListener('DOMContentLoaded', () => {
             setTimeout(startBiometricScan, 400); 
         });
 
-        touchArea.addEventListener('click', startBiometricScan);
+        // Allow user to tap the fingerprint circle to restart the scan if it fails
+        touchArea.addEventListener('click', () => {
+            if (!touchArea.classList.contains('success')) {
+                startBiometricScan();
+            }
+        });
     </script>
 </body>
 </html>

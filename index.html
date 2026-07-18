@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <title>BirrGo Mobile Wallet | Fast & Secure Payments</title>
-    <meta name="description" content="Welcome to BirrGo Mobile Wallet. Send and receive money instantly, secure your funds with bank-level protection, and grow your future safely.">
+    <!-- ADVANCED SEO BLOCK: Title & Meta Optimization (Hidden from users, visible to Google) -->
+    <title>BirrGo Mobile Wallet | Fast & Secure Digital Payments in Ethiopia</title>
+    <meta name="description" content="Download the official BirrGo Mobile Wallet app. Send and receive money instantly, secure your funds with bank-level protection, and grow your future safely in Ethiopia.">
+    <meta name="keywords" content="BirrGo, BirrGo app, BirrGo login, mobile wallet Ethiopia, digital payments, send money online, birr transfer app, secure wallet">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://birrgo.online/">
+
+    <!-- Open Graph Meta Tags for Social Media SEO (Telegram, Facebook, etc.) -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="BirrGo Mobile Wallet | Fast & Secure Payments">
+    <meta property="og:description" content="Send and receive money instantly. Secure your funds with bank-level protection using BirrGo.">
+    <meta property="og:url" content="https://birrgo.online/">
+    <meta property="og:image" content="https://birrgo.online/birrgo-logo.png">
+
+    <!-- Schema.org Google Structured Data (Tells Google exactly what your app is) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "BirrGo Mobile Wallet",
+      "url": "https://birrgo.online/",
+      "operatingSystem": "All",
+      "applicationCategory": "FinanceApplication",
+      "description": "A secure mobile wallet platform for instant payments, money transfers, and savings in Ethiopia.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0.00",
+        "priceCurrency": "ETB"
+      }
+    }
+    </script>
     
     <!-- Link PWA Web Manifest -->
     <link rel="manifest" href="manifest.json">
@@ -177,9 +206,12 @@
         /* Brand & Logo */
         .brand-section {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             margin-top: 10px; 
+            margin-bottom: 20px;
+            gap: 16px;
         }
 
         .logo-image {
@@ -188,30 +220,26 @@
             object-fit: contain;
         }
 
-        /* Middle Content Layout containing Logo, Welcomes, Features, and main Action Buttons */
+        .welcome-title {
+            font-size: 32px; /* Set exactly to 32px per instructions */
+            font-weight: 800;
+            color: var(--text-dark);
+            text-align: center;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+
+        .welcome-title .brand-name {
+            color: var(--primary-burgundy);
+        }
+
+        /* Middle Content Layout */
         .main-body-content {
             display: flex;
             flex-direction: column;
             justify-content: flex-start; 
             flex-grow: 1;
             margin: 5px 0 0 0; 
-        }
-
-        /* Welcome Text */
-        .welcome-content {
-            text-align: center;
-            margin-bottom: 12px; 
-        }
-
-        .welcome-content h1 {
-            font-size: 24px; 
-            font-weight: 700; 
-            color: var(--text-dark);
-            letter-spacing: -0.03em; 
-        }
-
-        .welcome-content h1 span {
-            color: var(--primary-burgundy);
         }
 
         /* Responsive Feature Cards Grid */
@@ -301,7 +329,7 @@
             }
         }
 
-        /* Action buttons container shifted directly under features */
+        /* Action buttons container */
         .action-area {
             display: flex;
             flex-direction: column;
@@ -370,7 +398,7 @@
             margin-left: -8px; 
         }
 
-        /* Footer links container stays locked at the very bottom over red wave */
+        /* Footer links */
         .footer-area {
             margin-top: auto;
             width: 100%;
@@ -429,9 +457,8 @@
         /* Smart Responsiveness for Short Mobile Viewports */
         @media (max-height: 660px) {
             .logo-image { width: 110px; } 
-            .brand-section { margin-top: 10px; }
-            .welcome-content { margin-bottom: 10px; }
-            .welcome-content h1 { font-size: 20px; }
+            .brand-section { margin-top: 10px; margin-bottom: 10px; gap: 10px; }
+            .welcome-title { font-size: 26px; } /* Increased proportionally for smaller mobile screens */
             .feature-card { padding: 10px 4px; }
             .icon-circle { width: 32px; height: 32px; margin-bottom: 6px; }
             .feature-title { font-size: 10px; }
@@ -488,8 +515,8 @@
 
     <div class="app-view">
         
-        <!-- Header -->
-        <div class="header-top-area">
+        <!-- Header - Changed to <header> for Semantic SEO -->
+        <header class="header-top-area">
             <!-- Custom PWA Download Banner (Visible by default) -->
             <div class="download-banner" id="pwaInstallBanner">
                 <div class="download-info">
@@ -509,15 +536,14 @@
             </div>
 
             <div class="brand-section">
-                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Mobile Wallet Logo">
+                <!-- SEO STRATEGY: Alt description updated with clean keywords -->
+                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Mobile Wallet App Logo - Fast Online Payments">
+                <h1 class="welcome-title">Welcome to <span class="brand-name">BirrGo!</span></h1>
             </div>
-        </div>
+        </header>
 
-        <!-- Body Content -->
-        <div class="main-body-content">
-            <div class="welcome-content">
-                <h1>Welcome to <span>BirrGo!</span></h1>
-            </div>
+        <!-- Body Content - Changed to <main> for Semantic SEO -->
+        <main class="main-body-content">
 
             <div class="features-container">
                 <div class="feature-card">
@@ -528,8 +554,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="feature-title">Send & Receive</div>
-                        <div class="feature-desc">Send and receive money instantly, anytime.</div>
+                        <h3 class="feature-title">Send & Receive</h3>
+                        <p class="feature-desc">Send and receive money instantly, anytime.</p>
                     </div>
                     <div class="indicator-dash dash-1"></div>
                 </div>
@@ -543,8 +569,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="feature-title">Secure & Safe</div>
-                        <div class="feature-desc">Bank-level security to protect your money.</div>
+                        <h3 class="feature-title">Secure & Safe</h3>
+                        <p class="feature-desc">Bank-level security to protect your money.</p>
                     </div>
                     <div class="indicator-dash dash-2"></div>
                 </div>
@@ -562,8 +588,8 @@
                         </svg>
                     </div>
                     <div>
-                        <div class="feature-title">Save & Grow</div>
-                        <div class="feature-desc">Save your money and grow your future.</div>
+                        <h3 class="feature-title">Save & Grow</h3>
+                        <p class="feature-desc">Save your money and grow your future.</p>
                     </div>
                     <div class="indicator-dash dash-3"></div>
                 </div>
@@ -571,7 +597,8 @@
 
             <!-- Call To Actions -->
             <div class="action-area">
-                <a href="new2.html" class="btn btn-primary">
+                <!-- SEO STRATEGY: Dynamic title attributes added for link crawl transparency -->
+                <a href="new2.html" class="btn btn-primary" title="Log in to your BirrGo Mobile Wallet Account">
                     <div class="btn-left">
                         <div class="btn-icon-wrapper">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -584,7 +611,7 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </a>
 
-                <a href="register.html" id="createAccountBtn" class="btn btn-secondary">
+                <a href="register.html" id="createAccountBtn" class="btn btn-secondary" title="Create a new BirrGo App Account">
                     <div class="btn-left">
                         <div class="btn-icon-wrapper">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -599,10 +626,10 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </a>
             </div>
-        </div>
+        </main>
 
-        <!-- Footer Area -->
-        <div class="footer-area">
+        <!-- Footer Area - Changed to <footer> for Semantic SEO -->
+        <footer class="footer-area">
             <div class="footer-links">
                 <div class="footer-icon">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -610,9 +637,9 @@
                         <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
                     </svg>
                 </div>
-                <span>Need help?</span> <a href="support.html" class="highlight">Contact support</a> <span class="divider">|</span> <a href="about.html">About</a> <span class="divider">|</span> <a href="term.html">Terms</a> <span class="divider">|</span> <a href="privacy.html">Privacy</a>
+                <span>Need help?</span> <a href="support.html" class="highlight">Contact support</a> <span class="divider">|</span> <a href="term.html">Terms</a> <span class="divider">|</span> <a href="privacy.html">Privacy</a>
             </div>
-        </div>
+        </footer>
 
     </div>
 
