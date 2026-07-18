@@ -1,24 +1,40 @@
 {
-  "name": "Birr Go",
+  "id": "/birr-go-app",
+  "name": "Birr Go - Mobile Wallet",
   "short_name": "Birr Go",
-  "description": "My Custom GitHub Pages Web App",
-  "start_url": "index.html",
+  "description": "Secure and premium mobile wallet and payment app.",
+  "start_url": "/index.html",
   "display": "standalone",
+  "display_override": ["fullscreen", "standalone"],
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
-  "orientation": "portrait",
+  "theme_color": "#212121",
+  "orientation": "portrait-primary",
   "icons": [
     {
       "src": "icon.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     },
     {
       "src": "icon.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Send Money",
+      "short_name": "Send",
+      "description": "Quickly send funds",
+      "url": "/index.html?action=send",
+      "icons": [
+        {
+          "src": "icon.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }
