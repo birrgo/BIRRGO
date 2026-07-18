@@ -126,7 +126,7 @@
         <path d="M0 40C125 28 250 28 375 40V100H0V40Z" fill="#9A0019"/>
     </svg>
 
-    <!-- Custom Popup Modal (Now dynamically changes text based on device) -->
+    <!-- Custom Popup Modal (Maintained strictly for uninstalled dynamic guidance contexts) -->
     <div id="alreadyInstalledModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: flex-end; justify-content: center;">
         <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 28px 24px 24px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); animation: slideUp 0.3s cubic-bezier(0.1, 0.8, 0.3, 1); box-sizing: border-box; text-align: center;">
             <div id="modalIconWrapper" style="width: 64px; height: 64px; background: #e8f5e9; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
@@ -236,62 +236,59 @@
             const modalIconSvg = document.getElementById('modalIconSvg');
             const modalIconWrapper = document.getElementById('modalIconWrapper');
 
-            // 1. Check if the app is ALREADY running as an installed PWA
+            // Check if the app is currently running as an installed standalone PWA
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
             if (isStandalone) {
                 localStorage.setItem('birrgo_app_installed', 'true');
             }
 
-            // 2. Android specifically fires this when the app is ready to install but NOT installed yet
+            // Android fires this when the app is ready to install but NOT installed yet
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 deferredPrompt = e;
-                localStorage.removeItem('birrgo_app_installed'); // Ensure it registers as uninstalled
+                localStorage.removeItem('birrgo_app_installed'); 
             });
 
             if (pwaBtn) {
                 pwaBtn.addEventListener('click', async () => {
-                    // Check true install status
                     const isAlreadyInstalled = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true || localStorage.getItem('birrgo_app_installed') === 'true';
-                    
-                    // Check if user is on iOS (iPhone/iPad)
                     const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 
+                    // SCENARIO 1: Truly Already Installed -> Redirect to the app experience immediately
                     if (isAlreadyInstalled) {
-                        // SCENARIO 1: Truly Already Installed -> Show Green Checkmark Modal
-                        modalIconWrapper.style.background = "#e8f5e9";
-                        modalIconSvg.setAttribute('stroke', '#22c55e');
-                        modalIconSvg.innerHTML = `<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>`;
-                        modalTitleText.innerText = "Already Installed!";
-                        modalDescText.innerText = "BirrGo Mobile Wallet is already set up on your device. Look for the application shortcut icon directly on your home screen or app launcher to open it instantly.";
-                        installedModal.style.display = 'flex';
+                        window.location.href = "new2.html"; 
+                        return;
+                    }
                     
-                    } else if (deferredPrompt) {
-                        // SCENARIO 2: Android Ready to Install -> Trigger Native Google Prompt
+                    // SCENARIO 2: Android Ready to Install -> Trigger Native Install Prompt
+                    if (deferredPrompt) {
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
                         if (outcome === 'accepted') {
                             localStorage.setItem('birrgo_app_installed', 'true');
+                            // Instantly forward them once installation is approved
+                            window.location.href = "new2.html";
                         }
                         deferredPrompt = null;
-                    
-                    } else if (isIOS) {
-                        // SCENARIO 3: iOS User -> Show specific Apple instructions
+                        return;
+                    }
+
+                    // SCENARIO 3: iOS User -> Show manual installation guide modal
+                    if (isIOS) {
                         modalIconWrapper.style.background = "#e3f2fd";
                         modalIconSvg.setAttribute('stroke', '#1976d2');
                         modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
                         modalTitleText.innerText = "Install on iOS";
                         modalDescText.innerText = "To install BirrGo on your iPhone or iPad, tap the 'Share' icon at the bottom of Safari, then scroll down and select 'Add to Home Screen'.";
-                        installedModal.style.display = 'flex';
-                    
+                        if (installedModal) installedModal.style.display = 'flex';
                     } else {
-                        // SCENARIO 4: Fallback for uninstalled Android without prompt (e.g. not HTTPS or bad manifest)
+                        // SCENARIO 4: Fallback instructions for unsupported/unprompted devices
                         modalIconWrapper.style.background = "#fff3e0";
                         modalIconSvg.setAttribute('stroke', '#f57c00');
                         modalIconSvg.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
                         modalTitleText.innerText = "Install App";
                         modalDescText.innerText = "To install BirrGo, tap your browser's menu icon (⋮) and select 'Add to Home screen' or 'Install App'.";
-                        installedModal.style.display = 'flex';
+                        if (installedModal) installedModal.style.display = 'flex';
                     }
                 });
             }
@@ -306,6 +303,8 @@
             window.addEventListener('appinstalled', () => {
                 localStorage.setItem('birrgo_app_installed', 'true');
                 deferredPrompt = null;
+                // Immediate redirect if the installation finishes seamlessly
+                window.location.href = "new2.html";
             });
         });
 
@@ -319,5 +318,3 @@
     </script>
 </body>
 </html>
-
-
