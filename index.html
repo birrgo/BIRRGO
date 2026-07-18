@@ -4,46 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     
-    <!-- ADVANCED SEO BLOCK: Title & Meta Optimization (Hidden from users, visible to Google) -->
     <title>BirrGo Mobile Wallet | Fast & Secure Digital Payments in Ethiopia</title>
     <meta name="description" content="Download the official BirrGo Mobile Wallet app. Send and receive money instantly, secure your funds with bank-level protection, and grow your future safely in Ethiopia.">
     <meta name="keywords" content="BirrGo, BirrGo app, BirrGo login, mobile wallet Ethiopia, digital payments, send money online, birr transfer app, secure wallet">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://birrgo.online/">
 
-    <!-- Open Graph Meta Tags for Social Media SEO (Telegram, Facebook, etc.) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="BirrGo Mobile Wallet | Fast & Secure Payments">
     <meta property="og:description" content="Send and receive money instantly. Secure your funds with bank-level protection using BirrGo.">
     <meta property="og:url" content="https://birrgo.online/">
     <meta property="og:image" content="https://birrgo.online/birrgo-logo.png">
 
-    <!-- Schema.org Google Structured Data (Tells Google exactly what your app is) -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "BirrGo Mobile Wallet",
-      "url": "https://birrgo.online/",
-      "operatingSystem": "All",
-      "applicationCategory": "FinanceApplication",
-      "description": "A secure mobile wallet platform for instant payments, money transfers, and savings in Ethiopia.",
-      "offers": {
-        "@type": "Offer",
-        "price": "0.00",
-        "priceCurrency": "ETB"
-      }
-    }
-    </script>
-    
-    <!-- Link PWA Web Manifest -->
     <link rel="manifest" href="manifest.json">
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     
+    <!-- Link the powerful new app.css -->
+    <link rel="stylesheet" href="app.css">
+    
     <style>
+        /* PAGE SPECIFIC DESIGN ONLY (Colors, Buttons, Cards) */
         :root {
             --primary-burgundy: #8b0015;
             --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
@@ -54,426 +36,69 @@
             --btn-shadow: 0 10px 20px rgba(139, 0, 21, 0.15);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Full viewport natively */
-        html {
-            background-color: var(--bg-light); 
-            width: 100%;
-            height: 100%;
-        }
-
-        /* App Frame Structure - 100% scaling */
-        body {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            margin: 0; 
+        html, body {
             background-color: var(--bg-light);
-            position: relative;
-            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
         }
 
-        /* Decorative Background Waves */
-        .bg-wave {
-            position: absolute;
-            left: 0;
-            width: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        .bg-wave { position: absolute; left: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 10vh; min-height: 75px; }
+        .bg-wave-bottom { bottom: 0; height: 75px; }
+
+        .header-top-area { width: 100%; display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 10px; flex-shrink: 0; }
+        .download-banner { width: 100%; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 12px; padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); }
+        .download-info { display: flex; align-items: center; gap: 8px; }
+        .apk-icon-box { width: 28px; height: 28px; background: #ffffff; color: var(--primary-burgundy); border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .apk-icon-box svg { width: 14px; height: 14px; }
+        .download-text-main { font-size: 11.5px; font-weight: 700; color: #ffffff; letter-spacing: -0.01em; }
+        .download-text-sub { font-size: 9px; color: rgba(255, 255, 255, 0.85); margin-top: 1px; }
+        .download-action-btn { background: #ffffff; color: var(--primary-burgundy); text-decoration: none; font-size: 11px; font-weight: 700; padding: 5px 11px; border-radius: 6px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); cursor: pointer; border: none; }
+        .download-action-btn:active { transform: scale(0.95); }
         
-        .bg-wave-top {
-            top: 0;
-            height: 10vh;
-            min-height: 75px;
-        }
+        .brand-section { display: flex; flex-direction: column; align-items: center; margin-top: 10px; margin-bottom: 20px; gap: 16px; }
+        .logo-image { width: 140px; height: auto; object-fit: contain; }
+        .welcome-title { font-size: 32px; font-weight: 800; color: var(--text-dark); text-align: center; letter-spacing: -0.02em; margin: 0; }
+        .welcome-title .brand-name { color: var(--primary-burgundy); }
         
-        /* Frame for the bottom footer */
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 75px; 
-        }
-
-        /* Main Scrollable Viewport Wrapper */
-        .app-view {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            padding: calc(15px + env(safe-area-inset-top)) 20px 0 20px;
-            position: relative;
-            z-index: 1;
-            overflow-y: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .app-view::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Top Header Area - Compacted */
-        .header-top-area {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center; 
-            gap: 12px;
-            margin-bottom: 10px; 
-            flex-shrink: 0;
-        }
-
-        /* Premium Top Download Banner - Compacted sizing */
-        .download-banner {
-            width: 100%; 
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 6px 12px;
-            display: flex; /* Always display flex to show the banner */
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-        }
-
-        .download-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .apk-icon-box {
-            width: 28px;
-            height: 28px;
-            background: #ffffff;
-            color: var(--primary-burgundy);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .apk-icon-box svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        .download-text-main {
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: -0.01em;
-        }
-
-        .download-text-sub {
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.85);
-            margin-top: 1px;
-        }
-
-        .download-action-btn {
-            background: #ffffff;
-            color: var(--primary-burgundy);
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 700;
-            padding: 5px 11px;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.1s ease;
-            cursor: pointer;
-            border: none;
-            outline: none;
-            flex-shrink: 0;
-        }
-
-        .download-action-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Brand & Logo */
-        .brand-section {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin-top: 10px; 
-            margin-bottom: 20px;
-            gap: 16px;
-        }
-
-        .logo-image {
-            width: 140px; 
-            height: auto;
-            object-fit: contain;
-        }
-
-        .welcome-title {
-            font-size: 32px; /* Set exactly to 32px per instructions */
-            font-weight: 800;
-            color: var(--text-dark);
-            text-align: center;
-            letter-spacing: -0.02em;
-            margin: 0;
-        }
-
-        .welcome-title .brand-name {
-            color: var(--primary-burgundy);
-        }
-
-        /* Middle Content Layout */
-        .main-body-content {
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start; 
-            flex-grow: 1;
-            margin: 5px 0 0 0; 
-        }
-
-        /* Responsive Feature Cards Grid */
-        .features-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            width: 100%;
-            margin-bottom: 15px; 
-        }
-
-        .feature-card {
-            background: #ffffff;
-            border-radius: 16px;
-            box-shadow: var(--card-shadow);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 14px 8px; 
-            text-align: center;
-            border: 1px solid rgba(0,0,0,0.02);
-        }
-
-        .icon-circle {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 10px;
-            flex-shrink: 0;
-        }
-
+        .main-body-content { display: flex; flex-direction: column; flex-grow: 1; margin: 5px 0 0 0; }
+        .features-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: 100%; margin-bottom: 15px; }
+        .feature-card { background: #ffffff; border-radius: 16px; box-shadow: var(--card-shadow); display: flex; flex-direction: column; align-items: center; padding: 14px 8px; text-align: center; border: 1px solid rgba(0,0,0,0.02); }
+        .icon-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; flex-shrink: 0; }
         .card-1-icon { background-color: #fceceb; color: #d32f2f; }
         .card-2-icon { background-color: #e8f0fe; color: #1976d2; }
         .card-3-icon { background-color: #fdf4e7; color: #f57c00; }
-
-        .feature-title {
-            font-size: 11px;
-            font-weight: 700; 
-            color: var(--text-dark);
-            margin-bottom: 4px;
-            letter-spacing: -0.01em;
-        }
-
-        .feature-desc {
-            font-size: 10px;
-            color: var(--text-muted);
-            line-height: 1.35;
-            margin-bottom: 10px;
-            flex-grow: 1;
-            font-weight: 400;
-        }
-
-        .indicator-dash {
-            width: 14px;
-            height: 3px;
-            border-radius: 2px;
-            margin-top: auto;
-        }
-
+        .feature-title { font-size: 11px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; }
+        .feature-desc { font-size: 10px; color: var(--text-muted); line-height: 1.35; margin-bottom: 10px; flex-grow: 1; }
+        .indicator-dash { width: 14px; height: 3px; border-radius: 2px; margin-top: auto; }
         .dash-1 { background-color: #d32f2f; }
         .dash-2 { background-color: #1976d2; }
         .dash-3 { background-color: #f57c00; }
+        
+        .action-area { display: flex; flex-direction: column; gap: 12px; width: 100%; margin-bottom: 15px; }
+        .btn { width: 100%; height: 54px; border-radius: 16px; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; text-decoration: none; cursor: pointer; }
+        .btn:active { transform: scale(0.98); }
+        .btn-left { display: flex; align-items: center; gap: 12px; }
+        .btn-icon-wrapper { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #ffffff; flex-shrink: 0; }
+        .btn-primary { background: var(--primary-gradient); color: #ffffff; box-shadow: var(--btn-shadow); }
+        .btn-primary .btn-icon-wrapper { color: var(--primary-burgundy); }
+        .btn-secondary { background: #ffffff; color: var(--text-dark); border: 1px solid #e5e7eb; box-shadow: var(--card-shadow); }
+        .btn-secondary .btn-icon-wrapper { background: transparent; color: var(--text-dark); margin-left: -8px; }
+        
+        .footer-area { margin-top: auto; width: 100%; flex-shrink: 0; position: relative; z-index: 2; }
+        .footer-links { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 6px; font-size: 11px; color: #ffffff; font-weight: 700; padding-top: 22px; padding-bottom: calc(12px + env(safe-area-inset-bottom)); text-align: center; }
+        .footer-links a { color: #ffffff; text-decoration: none; font-weight: 700; }
+        .footer-links a.highlight { text-decoration: underline; font-weight: 800; }
+        .footer-icon { color: var(--primary-burgundy); background: #ffffff; padding: 3px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+        .divider { color: rgba(255, 255, 255, 0.5); }
 
-        /* Tablet/Mobile Layout shift when space is too tight */
         @media (max-width: 375px) {
-            .features-container {
-                grid-template-columns: 1fr;
-                gap: 10px;
-            }
-            .feature-card {
-                flex-direction: row;
-                text-align: left;
-                padding: 12px 16px;
-                gap: 14px;
-            }
-            .icon-circle {
-                margin-bottom: 0;
-            }
-            .feature-desc {
-                margin-bottom: 0;
-            }
-            .indicator-dash {
-                display: none;
-            }
+            .features-container { grid-template-columns: 1fr; gap: 10px; }
+            .feature-card { flex-direction: row; text-align: left; padding: 12px 16px; gap: 14px; }
+            .icon-circle, .indicator-dash { margin-bottom: 0; }
+            .indicator-dash { display: none; }
         }
 
-        /* Action buttons container */
-        .action-area {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            width: 100%;
-            margin-bottom: 15px;
-        }
-
-        .btn {
-            width: 100%;
-            height: 54px; 
-            border-radius: 16px;
-            font-size: 15px;
-            font-weight: 600; 
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            cursor: pointer;
-            transition: transform 0.1s ease;
-            text-decoration: none;
-            letter-spacing: -0.01em;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-left {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .btn-icon-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: #ffffff;
-            flex-shrink: 0;
-        }
-
-        .btn-primary {
-            background: var(--primary-gradient);
-            color: #ffffff;
-            box-shadow: var(--btn-shadow);
-        }
-        
-        .btn-primary .btn-icon-wrapper {
-            color: var(--primary-burgundy);
-        }
-
-        .btn-secondary {
-            background: #ffffff;
-            color: var(--text-dark);
-            border: 1px solid #e5e7eb; 
-            box-shadow: var(--card-shadow);
-        }
-
-        .btn-secondary .btn-icon-wrapper {
-            background: transparent;
-            color: var(--text-dark);
-            margin-left: -8px; 
-        }
-
-        /* Footer links */
-        .footer-area {
-            margin-top: auto;
-            width: 100%;
-            flex-shrink: 0;
-            position: relative;
-            z-index: 2;
-        }
-
-        .footer-links {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 6px;
-            font-size: 11px; 
-            color: #ffffff; 
-            font-weight: 700; 
-            padding-top: 22px; 
-            padding-bottom: calc(12px + env(safe-area-inset-bottom)); 
-            text-align: center;
-        }
-
-        .footer-links span {
-            font-weight: 700; 
-        }
-
-        .footer-links a {
-            color: #ffffff;
-            text-decoration: none;
-            transition: opacity 0.2s;
-            font-weight: 700; 
-        }
-
-        .footer-links a.highlight {
-            color: #ffffff;
-            text-decoration: underline;
-            font-weight: 800; 
-        }
-        
-        .footer-icon {
-            color: var(--primary-burgundy);
-            background: #ffffff; 
-            padding: 3px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        
-        .divider {
-            color: rgba(255, 255, 255, 0.5); 
-            font-weight: 700;
-        }
-
-        /* Smart Responsiveness for Short Mobile Viewports */
-        @media (max-height: 660px) {
-            .logo-image { width: 110px; } 
-            .brand-section { margin-top: 10px; margin-bottom: 10px; gap: 10px; }
-            .welcome-title { font-size: 26px; } /* Increased proportionally for smaller mobile screens */
-            .feature-card { padding: 10px 4px; }
-            .icon-circle { width: 32px; height: 32px; margin-bottom: 6px; }
-            .feature-title { font-size: 10px; }
-            .feature-desc { font-size: 9px; margin-bottom: 4px; }
-            .btn { height: 46px; font-size: 14px; }
-            .download-banner { padding: 5px 10px; }
-            .download-text-main { font-size: 10.5px; }
-            .download-text-sub { font-size: 8.5px; }
-        }
-
-        /* Animation for custom popup sheet */
-        @keyframes slideUp {
-            from { transform: translateY(100%); }
-            to { transform: translateY(0); }
-        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -497,27 +122,22 @@
     <!-- Custom Premium UI Already Installed Popup Modal -->
     <div id="alreadyInstalledModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: flex-end; justify-content: center;">
         <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 28px 24px 24px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); animation: slideUp 0.3s cubic-bezier(0.1, 0.8, 0.3, 1); box-sizing: border-box; text-align: center;">
-            
-            <!-- Success/App Icon container -->
             <div style="width: 64px; height: 64px; background: #e8f5e9; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
                 <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
             </div>
-
             <h3 style="font-size: 19px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.02em;">Already Installed!</h3>
             <p style="font-size: 13.5px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; font-weight: 400;">BirrGo Mobile Wallet is already set up on your device. Look for the application shortcut icon directly on your home screen or app launcher to open it instantly.</p>
-            
             <button id="closeInstalledModalBtn" style="width: 100%; height: 50px; background: var(--primary-gradient); color: #ffffff; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: var(--btn-shadow); outline: none;">Got It</button>
         </div>
     </div>
 
+    <!-- App View Wrapper uses app.css logic -->
     <div class="app-view">
         
-        <!-- Header - Changed to <header> for Semantic SEO -->
         <header class="header-top-area">
-            <!-- Custom PWA Download Banner (Visible by default) -->
             <div class="download-banner" id="pwaInstallBanner">
                 <div class="download-info">
                     <div class="apk-icon-box">
@@ -536,91 +156,41 @@
             </div>
 
             <div class="brand-section">
-                <!-- SEO STRATEGY: Alt description updated with clean keywords -->
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Mobile Wallet App Logo - Fast Online Payments">
                 <h1 class="welcome-title">Welcome to <span class="brand-name">BirrGo!</span></h1>
             </div>
         </header>
 
-        <!-- Body Content - Changed to <main> for Semantic SEO -->
         <main class="main-body-content">
-
             <div class="features-container">
                 <div class="feature-card">
-                    <div class="icon-circle card-1-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="feature-title">Send & Receive</h3>
-                        <p class="feature-desc">Send and receive money instantly, anytime.</p>
-                    </div>
+                    <div class="icon-circle card-1-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg></div>
+                    <div><h3 class="feature-title">Send & Receive</h3><p class="feature-desc">Send and receive money instantly, anytime.</p></div>
                     <div class="indicator-dash dash-1"></div>
                 </div>
-
                 <div class="feature-card">
-                    <div class="icon-circle card-2-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            <rect x="9" y="11" width="6" height="6" rx="1"></rect>
-                            <path d="M12 11V9a2 2 0 1 1 4 0"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="feature-title">Secure & Safe</h3>
-                        <p class="feature-desc">Bank-level security to protect your money.</p>
-                    </div>
+                    <div class="icon-circle card-2-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><rect x="9" y="11" width="6" height="6" rx="1"></rect><path d="M12 11V9a2 2 0 1 1 4 0"></path></svg></div>
+                    <div><h3 class="feature-title">Secure & Safe</h3><p class="feature-desc">Bank-level security to protect your money.</p></div>
                     <div class="indicator-dash dash-2"></div>
                 </div>
-
                 <div class="feature-card">
-                    <div class="icon-circle card-3-icon">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polygon points="12 2 2 7 22 7 12 2"></polygon>
-                            <polyline points="2 17 22 17"></polyline>
-                            <polyline points="2 22 22 22"></polyline>
-                            <line x1="6" y1="17" x2="6" y2="7"></line>
-                            <line x1="10" y1="17" x2="10" y2="7"></line>
-                            <line x1="14" y1="17" x2="14" y2="7"></line>
-                            <line x1="18" y1="17" x2="18" y2="7"></line>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="feature-title">Save & Grow</h3>
-                        <p class="feature-desc">Save your money and grow your future.</p>
-                    </div>
+                    <div class="icon-circle card-3-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 22 7 12 2"></polygon><polyline points="2 17 22 17"></polyline><polyline points="2 22 22 22"></polyline><line x1="6" y1="17" x2="6" y2="7"></line><line x1="10" y1="17" x2="10" y2="7"></line><line x1="14" y1="17" x2="14" y2="7"></line><line x1="18" y1="17" x2="18" y2="7"></line></svg></div>
+                    <div><h3 class="feature-title">Save & Grow</h3><p class="feature-desc">Save your money and grow your future.</p></div>
                     <div class="indicator-dash dash-3"></div>
                 </div>
             </div>
 
-            <!-- Call To Actions -->
             <div class="action-area">
-                <!-- SEO STRATEGY: Dynamic title attributes added for link crawl transparency -->
                 <a href="new2.html" class="btn btn-primary" title="Log in to your BirrGo Mobile Wallet Account">
                     <div class="btn-left">
-                        <div class="btn-icon-wrapper">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                            </svg>
-                        </div>
+                        <div class="btn-icon-wrapper"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
                         <span>Log In</span>
                     </div>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </a>
-
                 <a href="register.html" id="createAccountBtn" class="btn btn-secondary" title="Create a new BirrGo App Account">
                     <div class="btn-left">
-                        <div class="btn-icon-wrapper">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                <circle cx="8.5" cy="7" r="4"></circle>
-                                <line x1="20" y1="8" x2="20" y2="14"></line>
-                                <line x1="23" y1="11" x2="17" y2="11"></line>
-                            </svg>
-                        </div>
+                        <div class="btn-icon-wrapper"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg></div>
                         <span>Create Account</span>
                     </div>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -628,15 +198,9 @@
             </div>
         </main>
 
-        <!-- Footer Area - Changed to <footer> for Semantic SEO -->
         <footer class="footer-area">
             <div class="footer-links">
-                <div class="footer-icon">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                        <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path>
-                    </svg>
-                </div>
+                <div class="footer-icon"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0 1 18 0v6"></path><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"></path></svg></div>
                 <span>Need help?</span> <a href="support.html" class="highlight">Contact support</a> <span class="divider">|</span> <a href="term.html">Terms</a> <span class="divider">|</span> <a href="privacy.html">Privacy</a>
             </div>
         </footer>
@@ -652,30 +216,20 @@
 
             if (refParam) {
                 const createBtn = document.getElementById('createAccountBtn');
-                if (createBtn) {
-                    createBtn.href = `register.html?ref=${encodeURIComponent(refParam.trim())}`;
-                }
+                if (createBtn) createBtn.href = `register.html?ref=${encodeURIComponent(refParam.trim())}`;
             }
 
-            // PWA Logic Setup Variables
             let deferredPrompt;
-            const pwaBanner = document.getElementById('pwaInstallBanner');
             const pwaBtn = document.getElementById('pwaInstallBtn');
             const installedModal = document.getElementById('alreadyInstalledModal');
             const closeModalBtn = document.getElementById('closeInstalledModalBtn');
 
-            // Hybrid environment check
             const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-            if (isStandalone) {
-                localStorage.setItem('birrgo_app_installed', 'true');
-            }
+            if (isStandalone) localStorage.setItem('birrgo_app_installed', 'true');
 
             window.addEventListener('beforeinstallprompt', (e) => {
-                // Prevent standard automated mini-infobar popups
                 e.preventDefault();
-                // Save prompt event state
                 deferredPrompt = e;
-                // Since prompt fired, clear the flag to allow installation workflow
                 localStorage.removeItem('birrgo_app_installed');
             });
 
@@ -683,42 +237,27 @@
                 pwaBtn.addEventListener('click', async () => {
                     const isAlreadyInstalled = localStorage.getItem('birrgo_app_installed') === 'true' || isStandalone;
 
-                    // CHECK CONDITION: If already installed or browser blocks prompt because it exists
                     if (isAlreadyInstalled || !deferredPrompt) {
                         if (installedModal) installedModal.style.display = 'flex';
-                    } 
-                    // CHECK CONDITION: If not installed, trigger system prompt logic
-                    else {
+                    } else {
                         deferredPrompt.prompt();
                         const { outcome } = await deferredPrompt.userChoice;
-                        console.log(`PWA Installation Selection Outcome: ${outcome}`);
-                        
-                        if (outcome === 'accepted') {
-                            localStorage.setItem('birrgo_app_installed', 'true');
-                        }
+                        if (outcome === 'accepted') localStorage.setItem('birrgo_app_installed', 'true');
                         deferredPrompt = null;
                     }
                 });
             }
 
-            // Close Premium Modal Element Controls
             if (closeModalBtn && installedModal) {
-                closeModalBtn.addEventListener('click', () => {
-                    installedModal.style.display = 'none';
-                });
-                
-                // Close window frame safely if background wrapper shadow gets tapped
+                closeModalBtn.addEventListener('click', () => installedModal.style.display = 'none');
                 installedModal.addEventListener('click', (e) => {
                     if (e.target === installedModal) installedModal.style.display = 'none';
                 });
             }
 
-            // Handle successful installations
             window.addEventListener('appinstalled', () => {
-                console.log('BirrGo app successfully attached to system dashboard.');
                 localStorage.setItem('birrgo_app_installed', 'true');
                 deferredPrompt = null;
-                // Instantly pop up confirmation without layout shifting
                 if (installedModal) installedModal.style.display = 'flex';
             });
         });
@@ -726,8 +265,8 @@
         if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./of.js')
-                    .then(reg => console.log('BirrGo Service Worker connected successfully!', reg.scope))
-                    .catch(err => console.log('Service Worker registration failed:', err));
+                    .then(reg => console.log('SW connected', reg.scope))
+                    .catch(err => console.log('SW failed', err));
             });
         }
     </script>

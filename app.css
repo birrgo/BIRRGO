@@ -1,0 +1,86 @@
+/* ==========================================================================
+   GLOBAL RESET
+   ========================================================================== */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ==========================================================================
+   REGULAR WEB STYLES (Behaves like a normal scrolling website)
+   ========================================================================== */
+html {
+    width: 100%;
+    min-height: 100vh;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* The main wrapper for all your page content */
+.app-view {
+    width: 100%;
+    flex: 1; /* Stretches to fill space naturally on web */
+    display: flex;
+    flex-direction: column;
+    padding: calc(15px + env(safe-area-inset-top)) 20px 0 20px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Utility class for things users NEED to copy (wallet addresses, Tx IDs) */
+.selectable-text {
+    -webkit-user-select: text !important;
+    user-select: text !important;
+}
+
+/* ==========================================================================
+   PWA / NATIVE APK STYLES (Activates ONLY when installed on device)
+   ========================================================================== */
+@media (display-mode: standalone), (display-mode: fullscreen) {
+    /* 1. Freeze the background to stop webpage bouncing or dragging */
+    html, body {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        height: 100dvh;
+        overflow: hidden; 
+    }
+
+    /* 2. Strip out browser-like touch behaviors (blue flash, long-press) */
+    * {
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    /* 3. Make ONLY the main content area scroll natively */
+    .app-view {
+        height: 100%;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; 
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: env(safe-area-inset-bottom, 24px);
+    }
+    
+    .app-view::-webkit-scrollbar {
+        display: none;
+    }
+
+    /* 4. Hide the PWA install banner since it is already installed */
+    .download-banner {
+        display: none !important;
+    }
+}
