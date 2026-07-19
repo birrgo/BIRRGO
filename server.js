@@ -158,7 +158,7 @@ app.post('/verify-otp', async (req, res) => {
 // ==========================================
 
 app.post('/send-push', async (req, res) => {
-  // FIX 1: Log incoming request body to Render to confirm connection
+  // Log incoming request body to Render to confirm connection
   console.log("Received push notification request:", req.body); 
 
   const { title, message } = req.body;
@@ -193,14 +193,15 @@ app.post('/send-push', async (req, res) => {
         app_id: appId,
         headings: { en: title },
         contents: { en: message },
-        included_segments: ['Subscribed Users'] // Broadcasts to all active subscribers
+        // UPDATED: Target both possible default segment names
+        included_segments: ['Subscribed Users', 'Total Subscriptions'] 
       })
     });
 
     const responseData = await response.json();
 
     if (response.ok) {
-      // FIX 2: Log the successful OneSignal dispatch ID
+      // Log the successful OneSignal dispatch ID
       console.log("OneSignal successfully accepted notification. ID:", responseData.id); 
       return res.status(200).json({ success: true, data: responseData });
     } else {
