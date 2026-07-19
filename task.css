@@ -1,16 +1,16 @@
 :root {
     --primary-burgundy: #800020;
-    --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+    --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
     --accent-glow: rgba(128, 0, 32, 0.15);
     --text-dark: #0f172a;
     --text-muted: #64748b;
     --bg-light: transparent;
     --border-light: #e2e8f0;
-    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.04), 0 3px 8px -2px rgba(0, 0, 0, 0.02);
     --success-green: #10b981;
     --warning-amber: #f59e0b;
-    --border-radius-lg: 24px;
-    --border-radius-md: 16px;
+    --border-radius-lg: 20px;
+    --border-radius-md: 14px;
 }
 
 * {
@@ -22,119 +22,127 @@
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Responsive Fluid Canvas */
 html, body {
     width: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
     margin: 0;
     padding: 0;
     background-color: #f8fafc;
 }
 
-/* Main Container Framework - Exploded to fill 100% screen layout across all devices */
 .app-view {
     width: 100%;
     min-height: 100vh;
+    min-height: 100dvh;
     background-color: #f8fafc;
     display: flex;
     flex-direction: column;
     position: relative;
+    overflow-x: hidden;
 }
 
-/* --- Global Background Waves --- */
+/* --- Core Background Waves Updated to Wallet Flow Layout Vectors --- */
 .bg-wave {
     position: absolute;
     left: 0;
     width: 100%;
-    height: 78px;        
-    z-index: 1;
+    z-index: 0;
     pointer-events: none;
-    object-fit: fill;    
-    opacity: 0.95;       
 }
 
 .bg-wave-top {
     top: 0;
+    height: 12vh;
+    min-height: 80px;
 }
 
 .bg-wave-bottom {
     bottom: 0;
+    height: 10vh;
+    min-height: 70px;
 }
 
-/* --- Unifying Header Line --- */
+/* --- Brand Header Layout Alignment --- */
 .brand-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: calc(14px + env(safe-area-inset-top)) 24px 0 24px;
+    padding: calc(12px + env(safe-area-inset-top)) 16px 0 16px;
     position: relative;
     z-index: 10;
 }
 
 .brand-logo {
-    height: 38px;
+    height: 32px;
     width: auto;
     object-fit: contain;
 }
 
 .profile-btn {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    background-color: rgba(255, 255, 255, 0.85);
+    border: 1.5px solid #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: #4b5563;
     cursor: pointer;
-    transition: all 0.2s ease;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    transition: all 0.1s ease;
 }
 
 .profile-btn:active {
-    transform: scale(0.94);
+    transform: scale(0.95);
 }
 
 .profile-btn svg {
     width: 20px;
     height: 20px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
+    fill: #4b5563;
+    stroke: none;
 }
 
-/* --- Content Wrapper Area --- */
+/* --- Content Wrapper Area Padding Normalization --- */
 .app-content {
     flex: 1;
-    padding: 0 24px calc(100px + env(safe-area-inset-bottom)) 24px;
+    padding: 0 16px calc(90px + env(safe-area-inset-bottom)) 16px;
     position: relative;
     z-index: 5;
-    max-width: 1200px; /* Optional wide display safety track alignment */
-    margin: 0 auto;
     width: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
 }
 
-/* --- Tasks Toggle Element Alignment --- */
+.app-content::-webkit-scrollbar {
+    display: none;
+}
+
+/* --- Navigation & Interaction Tab Component Layout --- */
 .task-view-toggle-bar {
     display: flex;
     background: #e2e8f0;
-    padding: 4px;
-    border-radius: var(--border-radius-md);
-    margin-top: 24px;    
-    margin-bottom: 24px;
+    padding: 3px;
+    border-radius: 30px;
+    margin-top: 14px;    
+    margin-bottom: 14px;
     gap: 4px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
 .toggle-tab-btn {
     flex: 1;
-    height: 44px;
+    height: 38px;
     border: none;
     background: transparent;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--text-muted);
-    border-radius: 12px;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -142,7 +150,7 @@ html, body {
 .toggle-tab-btn.active-view-tab {
     background: #ffffff;
     color: var(--primary-burgundy);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
 }
 
 .sub-view-panel {
@@ -153,18 +161,18 @@ html, body {
 }
 
 .section-heading {
-    font-size: 24px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 18px;
-    letter-spacing: -0.5px;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
 }
 
 .active-list-stack {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 28px;
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
 .list-item-card {
@@ -173,61 +181,57 @@ html, body {
     justify-content: space-between;
     background: #ffffff;
     border: 1px solid var(--border-light);
-    padding: 16px;
+    padding: 12px;
     border-radius: var(--border-radius-md);
     box-shadow: var(--card-shadow);
-    transition: transform 0.15s ease;
+    transition: transform 0.1s ease;
 }
 
 .list-item-card:active {
-    transform: scale(0.99);
+    transform: scale(0.98);
 }
 
 .list-item-left {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
 }
 
 .list-icon-box {
-    width: 48px;
-    height: 48px;
-    border-radius: 14px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     background-color: #fcf6f0;
-    overflow: hidden; /* Important for containing the blur effect */
+    overflow: hidden;
 }
 
 .list-icon-box img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 14px;
-    transition: filter 0.3s ease;
-    color: transparent; /* Hides the broken image default text */
+    border-radius: 10px;
 }
 
-/* Applied dynamically when loading/low connection or on image error */
 .img-blur-fallback {
-    filter: blur(8px);
+    filter: blur(6px);
     background-color: #e2e8f0;
-    transform: scale(1.1); /* Prevents blur bleed on the container edges */
 }
 
 .list-item-info h4 {
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 3px;
+    margin-bottom: 2px;
 }
 
 .list-item-info p {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--text-muted);
-    line-height: 1.4;
+    line-height: 1.3;
 }
 
 .reward-highlight {
@@ -236,22 +240,22 @@ html, body {
 }
 
 .btn-task {
-    background: var(--primary-burgundy);
+    background: var(--primary-burgundy-gradient);
     color: #ffffff;
     border: none;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 13px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 12px;
     font-weight: 700;
     cursor: pointer;
-    min-width: 115px;
+    min-width: 95px;
     text-align: center;
-    box-shadow: 0 4px 10px var(--accent-glow);
+    box-shadow: 0 4px 12px rgba(128, 0, 32, 0.15);
     transition: all 0.2s ease;
 }
 
-.btn-task:disabled {
-    cursor: not-allowed;
+.btn-task:active {
+    transform: scale(0.96);
 }
 
 .btn-task.cooldown {
@@ -259,66 +263,58 @@ html, body {
     color: var(--text-muted);
     box-shadow: none;
     font-size: 11px;
-    padding: 8px 12px;
 }
 
 .btn-task.watching {
     background: var(--warning-amber);
     color: #ffffff;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.2);
     font-size: 11px;
 }
 
 .invite-card {
     background: #ffffff;
     border: 1px dashed var(--primary-burgundy);
-    padding: 24px 20px;
+    padding: 16px;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--card-shadow);
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     position: relative;
     overflow: hidden;
-    text-align: left;
 }
 
 .invite-title {
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 6px;
+    margin-bottom: 4px;
     letter-spacing: -0.3px;
 }
 
 .invite-desc {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
     color: var(--text-muted);
-    line-height: 1.5;
-    margin-bottom: 18px;
-}
-
-.invite-desc b {
-    color: var(--primary-burgundy);
-    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 12px;
 }
 
 .global-action-area {
     display: flex;
-    gap: 14px;
-    margin-top: 5px;
+    margin-top: 4px;
 }
 
 .btn-action-filled {
     width: 100%;
-    height: 52px;
-    background: var(--primary-gradient);
+    height: 44px;
+    background: var(--primary-burgundy-gradient);
     color: #ffffff;
     border: none;
     border-radius: var(--border-radius-md);
     font-weight: 700;
-    font-size: 15px;
+    font-size: 13px;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(128, 0, 32, 0.2);
+    box-shadow: 0 4px 14px rgba(128, 0, 32, 0.2);
     transition: all 0.2s ease;
 }
 
@@ -327,20 +323,16 @@ html, body {
     cursor: not-allowed;
 }
 
-.btn-action-filled:active {
-    transform: scale(0.97);
-}
-
 .sub-header-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     padding: 0 2px;
 }
 
 .sub-title-text {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 800;
     color: var(--text-dark);
 }
@@ -348,9 +340,9 @@ html, body {
 .counter-badge {
     background: #ffffff;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
-    padding: 4px 10px;
+    padding: 2px 8px;
     border-radius: 20px;
     border: 1px solid var(--border-light);
 }
@@ -358,17 +350,17 @@ html, body {
 .referred-history-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
 }
 
 .empty-history-notice {
     background: #ffffff;
     border: 1px solid var(--border-light);
     border-radius: var(--border-radius-md);
-    padding: 30px 20px;
+    padding: 24px 16px;
     text-align: center;
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 500;
 }
 
@@ -378,14 +370,14 @@ html, body {
     justify-content: space-between;
     background: #ffffff;
     border: 1px solid var(--border-light);
-    padding: 14px 16px;
+    padding: 10px 12px;
     border-radius: var(--border-radius-md);
     box-shadow: var(--card-shadow);
 }
 
 .friend-avatar-circle {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: #f8fafc;
     border: 1px solid var(--border-light);
@@ -394,47 +386,47 @@ html, body {
     justify-content: center;
     color: var(--primary-burgundy);
     font-weight: 700;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .friend-meta h5 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 2px;
+    margin-bottom: 1px;
 }
 
 .friend-meta p {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 500;
     color: var(--text-muted);
 }
 
 .bonus-amount-pill {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     color: #10b981;
     background: #ecfdf5;
-    padding: 4px 10px;
-    border-radius: 12px;
+    padding: 2px 8px;
+    border-radius: 10px;
 }
 
 .toast-container {
     position: fixed;
-    top: calc(20px + env(safe-area-inset-top));
+    top: calc(16px + env(safe-area-inset-top));
     left: 50%;
     transform: translateX(-50%);
     background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     color: #ffffff;
-    padding: 10px 22px;
+    padding: 8px 18px;
     border-radius: 30px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     z-index: 999;
     display: none;
-    box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     border: 1px solid rgba(255,255,255,0.1);
 }
 
@@ -444,10 +436,10 @@ html, body {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: calc(64px + env(safe-area-inset-bottom));
+    height: calc(62px + env(safe-area-inset-bottom));
     background: rgba(255, 255, 255, 0.94);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--border-light);
     display: flex;
     justify-content: space-around;
@@ -464,17 +456,18 @@ html, body {
     color: #94a3b8;
     font-size: 10px;
     font-weight: 700;
-    gap: 3px;
+    gap: 2px;
     flex: 1;
     height: 100%;
     cursor: pointer;
 }
 
 .nav-item svg {
-    width: 21px;
-    height: 21px;
+    width: 20px;
+    height: 20px;
     stroke: currentColor;
     fill: none;
+    stroke-width: 2;
     transition: all 0.2s ease;
 }
 
@@ -485,7 +478,7 @@ html, body {
 .nav-item.active-tab .tab-icon-wrapper {
     background-color: #fdf2f4;
     padding: 4px 14px;
-    border-radius: 20px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -493,7 +486,7 @@ html, body {
 }
 .nav-item.active-tab svg {
     stroke: var(--primary-burgundy);
-    stroke-width: 2.5;
+    stroke-width: 2.4;
 }
 
 /* --- Immersive View Overlays --- */
@@ -549,75 +542,58 @@ html, body {
 }
 
 .overlay-navbar {
-    height: calc(76px + env(safe-area-inset-bottom));
+    height: calc(68px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     background: #ffffff;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-left: 24px;
-    padding-right: 24px;
+    padding-left: 16px;
+    padding-right: 16px;
     border-top: 1px solid var(--border-light);
     z-index: 2010;
     box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.2);
-    border-radius: 24px 24px 0 0;
+    border-radius: 20px 20px 0 0;
 }
 
 .overlay-countdown-label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 800;
     color: var(--primary-burgundy);
     background: #fdf2f4;
-    padding: 8px 18px;
+    padding: 6px 14px;
     border-radius: 30px;
     border: 1px solid rgba(128, 0, 32, 0.1);
-    box-shadow: 0 2px 8px rgba(128, 0, 32, 0.05);
 }
 
 .btn-close-overlay {
-    background: var(--primary-gradient);
+    background: var(--primary-burgundy-gradient);
     border: none;
     color: #ffffff;
-    font-size: 15px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    padding: 8px 20px;
+    padding: 6px 16px;
     border-radius: 30px;
     box-shadow: 0 4px 12px rgba(128, 0, 32, 0.2);
     display: none;
     transition: all 0.2s ease;
 }
 
-.btn-close-overlay:active {
-    transform: scale(0.96);
-}
-
-.force-ad-center {
-    position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
-    bottom: auto !important;
-    right: auto !important;
-    margin: 0 auto !important;
-    z-index: 99999 !important;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.3) !important;
-}
-
-/* Modals global window display positioning */
+/* --- Dialog Modals --- */
 .custom-popup-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%; 
-    background: rgba(15, 23, 42, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: none;
     justify-content: center;
     align-items: center;
-    padding: 24px;
+    padding: 16px;
     z-index: 2147483647 !important;
     opacity: 0;
     transition: opacity 0.25s ease;
@@ -631,12 +607,12 @@ html, body {
 .custom-popup-card {
     background: #ffffff;
     width: 100%;
-    max-width: 360px;
-    border-radius: var(--border-radius-lg);
-    padding: 28px 24px 24px 24px;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+    max-width: 300px;
+    border-radius: 24px;
+    padding: 20px 16px;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
     text-align: center;
-    transform: scale(0.9);
+    transform: scale(0.88);
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
@@ -645,68 +621,62 @@ html, body {
 }
 
 .popup-status-badge {
-    width: 56px;
-    height: 56px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 18px auto;
+    margin: 0 auto 12px auto;
 }
 
 .popup-status-badge.bg-success {
-    background: #ecfdf5;
+    background: #e6f7ed;
     color: var(--success-green);
 }
 
 .popup-status-badge.bg-lock {
-    background: #fffbeb;
-    color: var(--warning-amber);
+    background: #fdf2f4;
+    color: var(--primary-burgundy);
 }
 
 .popup-status-badge.bg-error {
-    background: #fef2f2;
+    background: #fee2e2;
     color: #ef4444;
 }
 
 .popup-status-badge svg {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: currentColor;
     stroke-width: 2.5;
 }
 
 .custom-popup-title {
-    font-size: 19px;
+    font-size: 16px;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 10px;
-    letter-spacing: -0.3px;
+    margin-bottom: 6px;
 }
 
 .custom-popup-msg {
-    font-size: 14px;
-    font-weight: 500;
+    font-size: 12.5px;
     color: var(--text-muted);
-    line-height: 1.5;
-    margin-bottom: 24px;
+    line-height: 1.45;
+    margin-bottom: 16px;
+    font-weight: 500;
 }
 
 .btn-popup-confirm {
     width: 100%;
-    height: 48px;
-    background: var(--primary-gradient);
+    height: 40px;
+    background: var(--primary-burgundy-gradient);
     color: #ffffff;
     border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 14px;
+    border-radius: 100px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
-    transition: background 0.2s ease;
-}
-
-.btn-popup-confirm:active {
-    transform: scale(0.98);
+    box-shadow: 0 8px 16px rgba(128, 0, 32, 0.15);
 }

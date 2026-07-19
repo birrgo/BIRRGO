@@ -11,19 +11,18 @@
     <style>
         :root {
             --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
+            --primary-blue-gradient: linear-gradient(135deg, #0b0f19 0%, #111827 50%, #030712 100%);
             --accent-glow: rgba(128, 0, 32, 0.15);
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
             --border-light: #e2e8f0;
-            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.04), 0 3px 8px -2px rgba(0, 0, 0, 0.02);
             --success-green: #10b981;
-            --success-bg: #ecfdf5;
             --warning-amber: #f59e0b;
-            --danger-red: #ef4444;
-            --border-radius-lg: 24px;
-            --border-radius-md: 16px;
+            --border-radius-lg: 20px;
+            --border-radius-md: 14px;
         }
 
         * {
@@ -35,27 +34,32 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Responsive Adaptive Canvas - Fills Viewport Natively */
         html, body {
             width: 100%;
-            min-height: 100%;
-            margin: 0;
-            padding: 0;
+            height: 100%;
+            min-height: 100vh;
+            min-height: 100dvh;
             background-color: var(--bg-light);
-            overflow-x: hidden;
         }
 
-        /* Main Container Framework - Adapts dynamic width up to standard responsive desktop limits */
+        body {
+            display: flex;
+            flex-direction: column;
+            font-size: 13px;
+        }
+
         .app-view {
             width: 100%;
+            height: 100%;
             min-height: 100vh;
+            min-height: 100dvh;
+            background-color: var(--bg-light);
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
-        /* Background Waves pinned to page corners and stretch to fill width */
         .bg-wave {
             position: absolute;
             left: 0;
@@ -65,215 +69,275 @@
         }
         .bg-wave-top {
             top: 0;
-            height: 8vh; /* Reduced height to make the top curve smaller */
-            min-height: 65px; /* Reduced min-height */
+            height: 12vh;
+            min-height: 80px;
         }
         .bg-wave-bottom {
             bottom: 0;
-            height: 12vh;
-            min-height: 90px;
+            height: 10vh;
+            min-height: 70px;
         }
 
-        /* Centered dashboard layout grid for seamless scaling on tablets/desktops */
         .app-content {
             flex: 1;
-            width: 100%;
-            max-width: 680px; /* Elegantly bounds content scaling on tablets and screens */
-            margin: 0 auto;
-            padding: calc(24px + env(safe-area-inset-top)) 20px calc(110px + env(safe-area-inset-bottom)) 20px;
+            overflow-y: auto;
+            background-color: transparent;
+            padding: calc(12px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom)) 16px;
+            scrollbar-width: none;
             position: relative;
             z-index: 1;
-            box-sizing: border-box;
+        }
+
+        .app-content::-webkit-scrollbar { 
+            display: none; 
         }
 
         .brand-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
-            padding: 4px 2px;
+            margin-bottom: 10px;
+            padding: 2px 2px;
+            background: transparent;
         }
 
         .logo-image {
-            height: 36px;
+            height: 32px;
             width: auto;
             object-fit: contain;
         }
 
-        .profile-badge {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.85);
-            border: 2px solid #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
+        .profile-btn {
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            background-color: rgba(255, 255, 255, 0.85); 
+            border: 1.5px solid #ffffff; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04); 
+            backdrop-filter: blur(4px); 
             -webkit-backdrop-filter: blur(4px);
+        }
+
+        .profile-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: #4b5563;
         }
 
         .news-container {
+            margin-bottom: 12px;
             display: flex;
-            margin-top: -4px;
-            margin-bottom: 22px; 
+            justify-content: flex-start;
         }
 
         .news-pill {
-            display: inline-flex;
+            display: flex;
             align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.9);
-            color: var(--primary-burgundy);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            border: 1px solid rgba(128, 0, 32, 0.08);
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            gap: 0.4rem;
+            background-color: rgba(255, 255, 255, 0.9);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+            padding: 0.3rem 0.75rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(254, 226, 226, 0.5);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+            outline: none;
+            transition: transform 0.1s ease;
         }
 
-        .news-pill:active {
-            transform: scale(0.95);
-            background: rgba(255, 255, 255, 1);
+        .news-pill:active { 
+            transform: scale(0.95); 
         }
 
         .news-dot {
-            width: 7px;
-            height: 7px;
-            background-color: var(--danger-red);
+            width: 0.45rem;
+            height: 0.45rem;
+            background-color: #dc2626;
             border-radius: 50%;
-            display: inline-block;
-            animation: pulse-notification 1.5s infinite;
+            animation: pulse-animation 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        @keyframes pulse-notification {
-            0% { transform: scale(0.9); opacity: 1; }
-            50% { transform: scale(1.3); opacity: 0.4; }
-            100% { transform: scale(0.9); opacity: 1; }
+        .news-text {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary-burgundy);
         }
 
-        .balance-card {
-            background: var(--primary-gradient);
+        @keyframes pulse-animation {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+
+        .digital-card {
+            background: var(--primary-blue-gradient);
             border-radius: var(--border-radius-lg);
-            padding: 30px;
+            padding: 18px;
             color: #ffffff;
-            box-shadow: 0 20px 35px -8px rgba(128, 0, 32, 0.3);
-            margin-bottom: 24px;
+            box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.45);
+            margin-bottom: 14px;
             position: relative;
             overflow: hidden;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            min-height: 175px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            z-index: 2;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        .balance-card::before {
+        .digital-card::before {
             content: '';
             position: absolute;
-            top: -30%;
-            right: -10%;
-            width: 250px;
-            height: 250px;
-            background: rgba(255, 255, 255, 0.06);
+            bottom: -20px;
+            right: -20px;
+            width: 130px;
+            height: 130px;
+            background: rgba(255, 255, 255, 0.02);
             border-radius: 50%;
             pointer-events: none;
         }
 
-        .balance-meta {
+        .card-top {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
         }
 
-        .balance-label {
-            font-size: 13px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        .balance-amount {
-            font-size: clamp(36px, 6vw, 48px);
-            font-weight: 800;
-            letter-spacing: -1.2px;
-            margin-bottom: 24px;
+        .card-identity-box {
             display: flex;
-            align-items: baseline;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .balance-currency {
-            font-size: 24px;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        .wallet-footer {
-            display: flex;
-            justify-content: space-between;
             align-items: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            padding-top: 18px;
-            flex-wrap: wrap;
             gap: 6px;
+            margin-left: auto;
         }
 
-        .wallet-id {
-            font-size: 13px;
-            font-weight: 500;
-            color: rgba(255, 255, 255, 0.7);
+        .btn-card-action {
+            background: rgba(255, 255, 255, 0.08);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-card-action:active { 
+            background: rgba(255, 255, 255, 0.2); 
+        }
+
+        .btn-card-action svg { 
+            width: 14px; 
+            height: 14px; 
+            fill: none; 
+            stroke: currentColor; 
+            stroke-width: 2.2; 
+        }
+
+        .card-center-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .card-number {
+            font-size: 15px;
+            font-weight: 700;
             font-family: monospace;
+            letter-spacing: 1.2px;
+            color: rgba(255, 255, 255, 0.85);
+            line-height: 1.2;
+        }
+
+        .asset-embedded-row {
+            display: flex;
+            flex-direction: column;
+            gap: 0px;
+            margin-top: 4px;
+        }
+
+        .asset-mini-label {
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: rgba(255, 255, 255, 0.45);
+        }
+
+        /* CHANGED: Maximized font size and weight variables for the prominent balance display */
+        .asset-mini-amount {
+            font-size: 32px; 
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+        }
+
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 12px;
+        }
+
+        .card-col-left { 
+            flex: 1; 
+            min-width: 0; 
+            text-align: left; 
+        }
+
+        .card-holder-label {
+            font-size: 8px;
+            text-transform: uppercase;
             letter-spacing: 0.5px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-bottom: 2px;
         }
 
         .status-pill {
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.15);
+            color: #34d399;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .metrics-matrix {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 30px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
         .metric-tile {
             background: #ffffff;
             border: 1px solid var(--border-light);
             border-radius: var(--border-radius-md);
-            padding: 16px 18px;
+            padding: 12px;
             box-shadow: var(--card-shadow);
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 2px;
         }
 
         .metric-header {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 600;
             color: var(--text-muted);
             text-transform: uppercase;
-            letter-spacing: 0.3px;
         }
 
         .metric-value {
-            font-size: 20px;
+            font-size: 14px;
             font-weight: 800;
             color: var(--text-dark);
         }
@@ -281,8 +345,8 @@
         .action-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 10px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
         .action-item {
@@ -294,16 +358,16 @@
 
         .action-icon-box {
             width: 100%;
-            max-width: 64px;
+            max-width: 54px;
             aspect-ratio: 1 / 1;
             background-color: #ffffff;
             border: 1px solid var(--border-light);
-            border-radius: 18px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary-burgundy);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             box-shadow: var(--card-shadow);
             transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -313,110 +377,96 @@
             height: 45%;
             fill: none;
             stroke: currentColor;
+            stroke-width: 2.2;
         }
 
-        .action-item:hover .action-icon-box,
         .action-item:active .action-icon-box {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             background-color: var(--primary-burgundy);
             color: #ffffff;
             border-color: var(--primary-burgundy);
-            box-shadow: 0 10px 20px var(--accent-glow);
-        }
-
-        .action-item:active {
-            transform: scale(0.95);
         }
 
         .action-label {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text-dark);
             text-align: center;
         }
 
-        /* Global Bottom Navigation Bar anchored gracefully across views */
         .bottom-nav-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: calc(68px + env(safe-area-inset-bottom));
-            background: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            height: calc(62px + env(safe-area-inset-bottom));
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border-top: 1px solid var(--border-light);
             display: flex;
-            justify-content: center;
+            justify-content: space-around;
             align-items: center;
             padding-bottom: env(safe-area-inset-bottom);
-            z-index: 1000;
+            z-index: 999;
         }
 
-        .bottom-nav-container {
-            width: 100%;
-            max-width: 680px;
-            display: flex;
-            justify-content: space-around;
-            height: 100%;
-            align-items: center;
-        }
-
-        .nav-item {
+        .nav-item-bottom {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             color: #94a3b8;
             text-decoration: none;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
-            gap: 4px;
+            gap: 2px;
             flex: 1;
             height: 100%;
+            cursor: pointer;
         }
 
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
+        .nav-item-bottom svg {
+            width: 20px;
+            height: 20px;
             stroke: currentColor;
             fill: none;
             transition: all 0.2s ease;
         }
 
-        .nav-item.active-tab {
+        .nav-item-bottom.active-tab {
             color: var(--primary-burgundy);
         }
         
-        .nav-item.active-tab .tab-icon-wrapper {
+        .nav-item-bottom.active-tab .tab-icon-wrapper {
             background-color: #fdf2f4;
-            padding: 6px 16px;
-            border-radius: 20px;
+            padding: 4px 14px;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: -2px;
+            margin-bottom: -1px;
         }
-        .nav-item.active-tab svg {
+
+        .nav-item-bottom.active-tab svg {
             stroke: var(--primary-burgundy);
             stroke-width: 2.4;
         }
 
-        /* Centered Backdrop Dialog System */
         .custom-popup-backdrop {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(15, 23, 42, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
             display: none;
             justify-content: center;
             align-items: center;
-            padding: 24px;
-            z-index: 5000;
+            padding: 16px;
+            z-index: 6000;
             opacity: 0;
             transition: opacity 0.25s ease;
         }
@@ -426,67 +476,194 @@
         }
         .custom-popup-card {
             background: #ffffff;
-            width: 100%;
-            max-width: 340px;
-            border-radius: var(--border-radius-lg);
-            padding: 28px 24px 24px 24px;
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+            width: 86%;
+            max-width: 300px;
+            border-radius: 24px;
+            padding: 20px 16px;
+            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
             text-align: center;
-            transform: scale(0.9);
+            transform: scale(0.88);
             transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .custom-popup-backdrop.show-modal .custom-popup-card {
             transform: scale(1);
         }
         .popup-status-badge {
-            width: 56px;
-            height: 56px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 18px auto;
+            margin: 0 auto 12px auto;
         }
         .popup-status-badge.bg-lock {
-            background: #fffbeb;
-            color: var(--warning-amber);
+            background: #fdf2f4;
+            color: var(--primary-burgundy);
+        }
+        .popup-status-badge.bg-error {
+            background: #fee2e2;
+            color: #ef4444;
         }
         .popup-status-badge svg {
-            width: 28px;
-            height: 28px;
+            width: 20px;
+            height: 20px;
             fill: none;
             stroke: currentColor;
             stroke-width: 2.5;
         }
         .custom-popup-title {
-            font-size: 19px;
+            font-size: 16px;
             font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            letter-spacing: -0.3px;
+            color: #111827;
+            margin-bottom: 6px;
         }
         .custom-popup-msg {
-            font-size: 14px;
+            font-size: 12.5px;
+            color: #6b7280;
+            line-height: 1.45;
+            margin-bottom: 16px;
             font-weight: 500;
-            color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 24px;
         }
         .btn-popup-confirm {
             width: 100%;
-            height: 48px;
-            background: var(--primary-gradient);
+            height: 40px;
+            background: var(--primary-burgundy-gradient);
             color: #ffffff;
             border: none;
-            border-radius: var(--border-radius-md);
-            font-size: 14px;
+            border-radius: 100px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
-            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
-            transition: background 0.2s ease;
+            box-shadow: 0 8px 16px rgba(128, 0, 32, 0.15);
         }
-        .btn-popup-confirm:active {
-            transform: scale(0.98);
+
+        .security-modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.35);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 5000;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .security-modal-backdrop.show-modal { 
+            display: flex; 
+            opacity: 1; 
+        }
+        .security-modal-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 310px;
+            border-radius: var(--border-radius-lg);
+            padding: 20px 18px;
+            box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            transform: scale(0.92);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .security-modal-backdrop.show-modal .security-modal-card { 
+            transform: scale(1); 
+        }
+        .security-modal-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #fdf2f4;
+            color: var(--primary-burgundy);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px auto;
+        }
+        .security-modal-icon svg { 
+            width: 20px; 
+            height: 20px; 
+            fill: none; 
+            stroke: currentColor; 
+            stroke-width: 2.5; 
+        }
+        .security-modal-title { 
+            font-size: 15px; 
+            font-weight: 800; 
+            color: var(--text-dark); 
+            margin-bottom: 4px; 
+        }
+        .security-modal-desc { 
+            font-size: 12px; 
+            font-weight: 500; 
+            color: var(--text-muted); 
+            line-height: 1.4; 
+            margin-bottom: 14px; 
+        }
+        .modal-error-banner {
+            display: none;
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fee2e2;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            text-align: center;
+        }
+        .security-password-input {
+            width: 100%;
+            height: 42px;
+            border-radius: var(--border-radius-md);
+            border: 1.5px solid var(--border-light);
+            padding: 0 12px;
+            font-size: 14px;
+            font-weight: 600;
+            text-align: center;
+            letter-spacing: 4px;
+            margin-bottom: 14px;
+            outline: none;
+        }
+        .security-password-input:focus { 
+            border-color: var(--primary-burgundy); 
+        }
+        .security-modal-actions { 
+            display: grid; 
+            grid-template-columns: 1fr 2fr; 
+            gap: 8px; 
+        }
+        .btn-modal-cancel { 
+            height: 40px; 
+            background: #f1f5f9; 
+            color: var(--text-dark); 
+            border: none; 
+            border-radius: var(--border-radius-md); 
+            font-size: 12.5px; 
+            font-weight: 700; 
+            cursor: pointer; 
+        }
+        .btn-modal-submit { 
+            height: 40px; 
+            background: var(--primary-burgundy-gradient); 
+            color: #ffffff; 
+            border: none; 
+            border-radius: var(--border-radius-md); 
+            font-size: 12.5px; 
+            font-weight: 700; 
+            cursor: pointer; 
+        }
+        .security-modal-card.has-error .security-password-input { 
+            border-color: #dc2626; 
+            background-color: #fffafb; 
+        }
+        .security-modal-card.has-error .security-modal-icon { 
+            background: #fef2f2; 
+            color: #dc2626; 
         }
     </style>
 </head>
@@ -495,46 +672,71 @@
     <div class="app-view">
         
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+            <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
             <defs>
                 <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#9A0019"/>
-                    <stop offset="1" stop-color="#700010"/>
+                    <stop stop-color="#4a0012"/>
+                    <stop offset="1" stop-color="#800020"/>
                 </linearGradient>
             </defs>
         </svg>
 
         <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#2b000a"/>
         </svg>
         
         <div class="app-content">
             
             <div class="brand-header">
                 <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
-                <div class="profile-badge" id="profileBadgeNode">👤</div>
+                <button class="profile-btn" id="profileBadgeNode" aria-label="Profile">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
+                    </svg>
+                </button>
             </div>
 
             <div class="news-container">
                 <div class="news-pill" id="dashboardNewsPill">
                     <span class="news-dot"></span>
-                    <span>What's new today?</span>
+                    <span class="news-text">Today Giveaway</span>
                 </div>
             </div>
 
-            <div class="balance-card">
-                <div class="balance-meta">
-                    <span class="balance-label">Available Balance</span>
-                    <!-- Status pill set to Not Verified with customized soft-red style -->
-                    <span class="status-pill" style="background: rgba(239, 68, 68, 0.2); color: #fecaca;">Not Verified</span>
+            <div class="digital-card">
+                <div class="card-top">
+                    <div class="card-holder-label" style="margin-bottom:0;">Secure Account Info</div>
+                    <div class="card-identity-box">
+                        <button class="btn-card-action" id="copyIdBtn" title="Copy Account ID">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                        </button>
+                        <button class="btn-card-action" id="eyeToggleBtn" title="Toggle Visibility">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
-                <div class="balance-amount">
-                    <span id="dashboard-balance">0.00</span>
-                    <span class="balance-currency">Birr</span>
+                
+                <div class="card-center-stack">
+                    <div class="card-holder-label">Account ID</div>
+                    <div class="card-number" id="displayWalletId">BG ••••</div>
+                    
+                    <div class="asset-embedded-row">
+                        <div class="asset-mini-label">Total Asset</div>
+                        <div class="asset-mini-amount" id="dashboard-balance">•••• Birr</div>
+                    </div>
                 </div>
-                <div class="wallet-footer">
-                    <div class="wallet-id" id="displayWalletId">ID: •••• ••••</div>
-                    <div class="wallet-id">••• Gold Premium</div>
+                
+                <div class="card-bottom">
+                    <div class="card-col-left">
+                        <div class="card-holder-label">Account Level</div>
+                        <span class="status-pill">New Level</span>
+                    </div>
                 </div>
             </div>
 
@@ -552,25 +754,25 @@
             <div class="action-grid">
                 <div class="action-item" id="action-send">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
                     </div>
                     <div class="action-label">Send</div>
                 </div>
                 <div class="action-item" id="action-receive">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
                     </div>
                     <div class="action-label">Receive</div>
                 </div>
                 <div class="action-item" id="action-deposit">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
                     </div>
                     <div class="action-label">Deposit</div>
                 </div>
                 <div class="action-item" id="action-withdraw">
                     <div class="action-icon-box">
-                        <svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
+                        <svg viewBox="0 0 24 24"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>
                     </div>
                     <div class="action-label">Withdraw</div>
                 </div>
@@ -579,26 +781,26 @@
         </div>
 
         <nav class="bottom-nav-bar">
-            <div class="bottom-nav-container">
-                <a href="#" class="nav-item active-tab">
+            <div class="bottom-nav-container" style="display:flex; width:100%;">
+                <a href="#" class="nav-item-bottom active-tab">
                     <div class="tab-icon-wrapper">
-                        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <svg viewBox="0 0 24 24">
                             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                             <polyline points="9 22 9 12 15 12 15 22"></polyline>
                         </svg>
                     </div>
                     Home
                 </a>
-                <a href="task.html" class="nav-item">
-                    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
+                <a href="task.html" class="nav-item-bottom">
+                    <svg viewBox="0 0 24 24"><polyline points="9 11 12 14 22 4"></polyline><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path></svg>
                     Tasks
                 </a>
-                <a href="lottery.html" class="nav-item">
-                    <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                <a href="lottery.html" class="nav-item-bottom">
+                    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                     Lottery
                 </a>
-                <a href="wallet.html" class="nav-item">
-                    <svg viewBox="0 0 24 24" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
+                <a href="wallet.html" class="nav-item-bottom">
+                    <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>
                     Wallet
                 </a>
             </div>
@@ -606,20 +808,36 @@
 
         <div class="custom-popup-backdrop" id="customPopup">
             <div class="custom-popup-card">
-                <div class="popup-status-badge bg-lock">
+                <div class="popup-status-badge bg-lock" id="popupBadge">
                     <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
                 </div>
-                <h3 class="custom-popup-title">Feature Locked</h3>
-                <p class="custom-popup-msg" id="popupMessage">This action framework module is coming soon.</p>
+                <h3 class="custom-popup-title" id="popupTitle">Locked Coming Soon</h3>
+                <p class="custom-popup-msg" id="popupMessage">Locked coming soon</p>
                 <button class="btn-popup-confirm" id="popupConfirmBtn">OK</button>
             </div>
         </div>
 
     </div>
 
+    <div class="security-modal-backdrop" id="securityModal">
+        <div class="security-modal-card" id="securityModalCard">
+            <div class="security-modal-icon">
+                <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h3 class="security-modal-title">Enter PIN</h3>
+            <p class="security-modal-desc">Please input your 6-digit account security PIN to decrypt your secure ledger details.</p>
+            <div class="modal-error-banner" id="modalErrorBanner"></div>
+            <input type="password" maxlength="6" inputmode="numeric" class="security-password-input" id="securePassInput" placeholder="••••••">
+            <div class="security-modal-actions">
+                <button class="btn-modal-cancel" id="closeModalBtn">Cancel</button>
+                <button class="btn-modal-submit" id="submitPassBtn">Verify</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -636,27 +854,35 @@
         const db = getDatabase(app);
 
         let activeUserPhone = "";
+        let decryptedCardNum = "";
+        let liveBalanceStr = "0.00 Birr";
+        let infoIsVisible = false;
         const totalVideos = 5;
         const cooldownDuration = 3600000;
 
         const customPopup = document.getElementById('customPopup');
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
+        const popupTitle = document.getElementById('popupTitle');
+        const popupBadge = document.getElementById('popupBadge');
 
         document.addEventListener('DOMContentLoaded', () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
-            
             if (!activeUserPhone) {
                 window.location.href = "new2.html";
                 return;
             }
 
+            calculateCardIdentityMatrix();
             streamLiveDashboardMetrics();
             updateLocalTaskMetrics();
             setupInterfaceActions();
+            setupSecurityToggles();
         });
 
         function displayAppModal(message) {
+            popupBadge.className = "popup-status-badge bg-lock";
+            popupTitle.innerText = "Locked Coming Soon";
             popupMessage.innerText = message;
             customPopup.style.display = 'flex';
             setTimeout(() => customPopup.classList.add('show-modal'), 10);
@@ -667,10 +893,15 @@
             setTimeout(() => { customPopup.style.display = 'none'; }, 300);
         });
 
+        function calculateCardIdentityMatrix() {
+            const cleanPhone = activeUserPhone.replace(/\D/g, '');
+            const final4 = cleanPhone.slice(-4);
+            decryptedCardNum = "BG " + final4;
+        }
+
         function updateLocalTaskMetrics() {
             let currentlyClaimed = 0;
             const now = Date.now();
-
             for (let i = 1; i <= totalVideos; i++) {
                 const lastWatched = localStorage.getItem(`video_cooldown_${i}`);
                 if (lastWatched && (now - lastWatched < cooldownDuration)) {
@@ -681,19 +912,15 @@
         }
 
         function streamLiveDashboardMetrics() {
-            const cleanPhone = activeUserPhone.replace(/\D/g, '');
-            const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
-            const completeRawCardSequence = cleanPhone + final6Reversed;
-            const cardLast4Digits = completeRawCardSequence.slice(-4); 
-            
-            document.getElementById('displayWalletId').innerText = `ID: •••• ${cardLast4Digits}`;
-
             const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
             onValue(balanceRef, (snapshot) => {
                 const currentVal = snapshot.val();
                 let parsedBalance = parseFloat(currentVal);
                 if (currentVal === null || isNaN(parsedBalance)) parsedBalance = 0.00;
-                document.getElementById('dashboard-balance').innerText = parsedBalance.toFixed(2);
+                liveBalanceStr = parsedBalance.toFixed(2) + " Birr";
+                if (infoIsVisible) {
+                    document.getElementById('dashboard-balance').innerText = liveBalanceStr;
+                }
             });
 
             const referredRef = ref(db, `users/${activeUserPhone}/referredUsers`);
@@ -707,33 +934,82 @@
             });
         }
 
+        function setupSecurityToggles() {
+            const modal = document.getElementById('securityModal');
+            const modalCard = document.getElementById('securityModalCard');
+            const errorBanner = document.getElementById('modalErrorBanner');
+            const passInput = document.getElementById('securePassInput');
+
+            document.getElementById('eyeToggleBtn').addEventListener('click', () => {
+                if (infoIsVisible) {
+                    document.getElementById('displayWalletId').innerText = "BG ••••";
+                    document.getElementById('dashboard-balance').innerText = "•••• Birr";
+                    document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>`;
+                    infoIsVisible = false;
+                } else {
+                    modalCard.classList.remove('has-error');
+                    errorBanner.style.display = "none";
+                    passInput.value = "";
+                    modal.style.display = "flex";
+                    setTimeout(() => modal.classList.add('show-modal'), 10);
+                }
+            });
+
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                modal.classList.remove('show-modal');
+                setTimeout(() => modal.style.display = "none", 200);
+            });
+
+            document.getElementById('submitPassBtn').addEventListener('click', async () => {
+                const typedPin = passInput.value.trim();
+                if (!typedPin) return;
+
+                const pinRef = ref(db, `users/${activeUserPhone}/securityPin`);
+                try {
+                    const snap = await get(pinRef);
+                    if (snap.exists() && String(snap.val()) === typedPin) {
+                        document.getElementById('displayWalletId').innerText = decryptedCardNum;
+                        document.getElementById('dashboard-balance').innerText = liveBalanceStr;
+                        document.getElementById('eyeToggleBtn').innerHTML = `<svg viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>`;
+                        infoIsVisible = true;
+                        modal.classList.remove('show-modal');
+                        setTimeout(() => modal.style.display = "none", 200);
+                    } else {
+                        modalCard.classList.add('has-error');
+                        errorBanner.innerText = "Invalid security PIN sequence.";
+                        errorBanner.style.display = "block";
+                        passInput.value = "";
+                    }
+                } catch (e) {
+                    errorBanner.innerText = "Verification failed.";
+                    errorBanner.style.display = "block";
+                }
+            });
+        }
+
         function setupInterfaceActions() {
-            document.getElementById('action-send').addEventListener('click', () => {
-                displayAppModal("The P2P money transfer framework system module is coming soon in the next software wallet compilation release patch.");
-            });
+            document.getElementById('action-send').addEventListener('click', () => displayAppModal("Locked coming soon"));
+            document.getElementById('action-receive').addEventListener('click', () => displayAppModal("Locked coming soon"));
+            document.getElementById('action-deposit').addEventListener('click', () => displayAppModal("Locked coming soon"));
+            document.getElementById('action-withdraw').addEventListener('click', () => displayAppModal("Locked coming soon"));
+            document.getElementById('profileBadgeNode').addEventListener('click', () => window.location.href = "profile.html");
+            document.getElementById('dashboardNewsPill').addEventListener('click', () => window.location.href = "give.html");
 
-            document.getElementById('action-receive').addEventListener('click', () => {
-                displayAppModal("Your personal account QR matrix framework receipt module is coming soon.");
-            });
-
-            document.getElementById('action-deposit').addEventListener('click', () => {
-                displayAppModal("The secure automated local deposit payment systems network interface layer is coming soon.");
-            });
-
-            document.getElementById('action-withdraw').addEventListener('click', () => {
-                displayAppModal("Telebirr automatic instant gateway settlement withdrawal systems are processing setup and coming soon.");
-            });
-
-            document.getElementById('profileBadgeNode').addEventListener('click', () => {
-                window.location.href = "profile.html";
-            });
-
-            document.getElementById('dashboardNewsPill').addEventListener('click', () => {
-                window.location.href = "news.html";
+            document.getElementById('copyIdBtn').addEventListener('click', () => {
+                if (!infoIsVisible) {
+                    displayAppModal("Please verify your account PIN security context matrix first to view and copy this secure credential string.");
+                    return;
+                }
+                navigator.clipboard.writeText(decryptedCardNum)
+                    .then(() => {
+                        popupBadge.className = "popup-status-badge bg-lock"
+                        popupTitle.innerText = "Copied Successfully";
+                        popupMessage.innerText = "Account security code chain has been stored to local clipboard structures.";
+                        customPopup.style.display = 'flex';
+                        customPopup.classList.add('show-modal');
+                    });
             });
         }
     </script>
 </body>
 </html>
-
-
