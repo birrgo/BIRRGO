@@ -66,15 +66,23 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Adjusted background-color structure to stack clean under app.css properties */
-        html, body {
+        /* --- SEAMLESS TRANSITION STYLES --- */
+        body {
             width: 100%;
             min-height: 100vh; 
             background-color: #f8f9fa;
             position: relative;
             margin: 0;
             padding: 0;
+            transition: filter 0.4s ease-out, opacity 0.4s ease-out;
         }
+
+        body.is-loading-page {
+            filter: blur(8px);
+            opacity: 0.6;
+            pointer-events: none; /* Prevents double-clicking while loading */
+        }
+        /* ---------------------------------- */
 
         .bg-wave {
             position: absolute;
@@ -494,7 +502,6 @@
         </div>
     </div>
 
-    <!-- Modified: Restored viewBox and updated path for a smoother, tighter top curve -->
     <svg aria-hidden="true" class="bg-wave bg-wave-top" viewBox="0 0 375 120" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M0 0H375V60C250 120 125 120 0 60V0Z" fill="url(#paint0_linear)"/>
         <defs>
@@ -505,7 +512,6 @@
         </defs>
     </svg>
 
-    <!-- 100% Width SVG Wave Bottom -->
     <svg aria-hidden="true" class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
     </svg>
@@ -519,10 +525,7 @@
         </svg>
     </a>
 
-    <!-- Main Wrapper: Scales to 100% Width/Height -->
     <main class="app-view">
-        
-        <!-- Internal Content Constrained Visually for Desktop -->
         <div class="app-content-wrapper">
             <header class="header-content">
                 <h1>Welcome Back to <span style="color: var(--primary-burgundy);">BirrGo</span></h1>
@@ -560,7 +563,6 @@
                 </div>
 
                 <div class="form-action-area">
-                    
                     <div class="form-buttons-column">
                         <button type="submit" id="submitBtn" class="btn-submit">Log In</button>
                         
@@ -578,12 +580,52 @@
         <div class="signup-redirect-footer">
             New to BirrGo? <a href="register.html" title="Register a new BirrGo account">Create Account</a>
         </div>
-
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // --- SEAMLESS TRANSITION FUNCTION ---
+        async function smoothNavigate(url) {
+            // Apply the blur effect immediately
+            document.body.classList.add('is-loading-page');
+            
+            try {
+                // Fetch the new page in the background
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Network response failed');
+                const htmlString = await response.text();
+                
+                // Update URL silently
+                history.pushState(null, '', url);
+                
+                // document.write executes all embedded scripts perfectly (unlike innerHTML)
+                document.open();
+                document.write(htmlString);
+                document.close();
+            } catch (error) {
+                console.error("Seamless load failed, falling back to standard navigation", error);
+                window.location.href = url; 
+            }
+        }
+
+        // Intercept all standard links (Create Account, Back Button, etc)
+        document.addEventListener('click', (e) => {
+            const link = e.target.closest('a');
+            // Ensure it's a local link and not just an empty "#" href
+            if (link && link.href && link.origin === window.location.origin && !link.href.includes('#')) {
+                e.preventDefault();
+                smoothNavigate(link.href);
+            }
+        });
+
+        // Ensure browser "Back" button works properly
+        window.addEventListener('popstate', () => {
+            document.body.classList.add('is-loading-page');
+            window.location.reload(); 
+        });
+        // ------------------------------------
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -688,7 +730,8 @@
                 return;
             }
             
-            window.location.href = "finger.html";
+            // Replaced hard redirect with seamless navigation
+            smoothNavigate("finger.html");
         });
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -739,8 +782,10 @@
                 if (userData.securityPin === pinAttempt) {
                     localStorage.setItem('auth_session_phone', cleanPhone);
                     submitBtn.innerText = "Redirecting Securely...";
+                    
+                    // Replaced hard redirect with seamless navigation
                     setTimeout(() => {
-                        window.location.href = "dashboard.html";
+                        smoothNavigate("dashboard.html");
                     }, 1000);
                 } else {
                     showNotification("Incorrect security PIN.");

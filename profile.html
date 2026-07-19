@@ -18,7 +18,7 @@
           notifyButton: {
             enable: false, 
           },
-          allowLocalhostAsSecureOrigin: false // Disabled for production
+          allowLocalhostAsSecureOrigin: false // Strictly disabled for production
         });
       });
     </script>
@@ -728,12 +728,12 @@
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(async function(OneSignal) {
                     try {
-                        // FIXED: requestPermission() only triggers the prompt, we use .permission for status
                         await OneSignal.Notifications.requestPermission();
                         
                         if (OneSignal.Notifications.permission) {
+                            // Link push subscription token securely to their phone ID 
                             if (activeUserPhone) {
-                                OneSignal.login(activeUserPhone); 
+                                await OneSignal.login(activeUserPhone); 
                             }
                             
                             enableNotificationUI();
@@ -763,9 +763,9 @@
                 triggerNotificationPrompt();
             } else {
                 if (window.OneSignalDeferred) {
-                    window.OneSignalDeferred.push(function(OneSignal) {
+                    window.OneSignalDeferred.push(async function(OneSignal) {
                          if (activeUserPhone) {
-                             OneSignal.logout();
+                             await OneSignal.logout();
                          }
                     });
                 }
@@ -789,13 +789,13 @@
             originalToggleState = isBioEnabled;
             biometricsStatusText.innerText = isBioEnabled ? "Biometrics Active" : "Use fingerprint scanner";
 
+            // Initialize OneSignal logic on load
             if (window.OneSignalDeferred) {
-                window.OneSignalDeferred.push(function(OneSignal) {
-                    // FIXED: Replaced legacy hasPermission with strictly v16 compliant property
+                window.OneSignalDeferred.push(async function(OneSignal) {
                     if (OneSignal.Notifications.permission) {
                         enableNotificationUI();
                         if (activeUserPhone) {
-                            OneSignal.login(activeUserPhone);
+                            await OneSignal.login(activeUserPhone);
                         }
                     } else {
                         disableNotificationUI();
@@ -978,8 +978,8 @@
         
         logoutConfirmBtn.addEventListener('click', () => {
             if (window.OneSignalDeferred) {
-                window.OneSignalDeferred.push(function(OneSignal) {
-                     OneSignal.logout();
+                window.OneSignalDeferred.push(async function(OneSignal) {
+                     await OneSignal.logout();
                 });
             }
             localStorage.removeItem('auth_session_phone');

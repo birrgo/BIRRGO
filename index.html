@@ -29,14 +29,14 @@
     
     <link rel="stylesheet" href="app.css">
     
-    <!-- FIXED ONESIGNAL SDK FOR PRODUCTION -->
+    <!-- ONESIGNAL SDK FOR PRODUCTION -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
     <script>
       window.OneSignalDeferred = window.OneSignalDeferred || [];
       OneSignalDeferred.push(async function(OneSignal) {
         await OneSignal.init({
           appId: "afd5dff1-2571-4ac3-bbd9-14afe75c8474",
-          allowLocalhostAsSecureOrigin: false // Disabled for production
+          allowLocalhostAsSecureOrigin: false 
         });
       });
     </script>
@@ -338,15 +338,6 @@
                 deferredPrompt = null;
             });
         });
-
-        // FIXED: Registering the correct OneSignal SDK Worker for the PWA
-        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./OneSignalSDKWorker.js')
-                    .then(reg => console.log('SW connected', reg.scope))
-                    .catch(err => console.log('SW failed', err));
-            });
-        }
     </script>
 </body>
 </html>
