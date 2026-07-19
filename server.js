@@ -4,7 +4,6 @@ const { BrevoClient } = require('@getbrevo/brevo');
 const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
-// You might need node-fetch if you're on an older Node version. Native fetch is available in Node 18+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -113,7 +112,6 @@ app.post('/send-otp', async (req, res) => {
       `
     };
 
-    // Assuming standard brevo client send method (adjust based on the exact wrapper you use)
     await brevo.transactionalEmails.sendTransacEmail(emailData);
 
     return res.status(200).json({ success: true, message: 'OTP sent successfully' });
@@ -170,7 +168,6 @@ app.post('/send-push', async (req, res) => {
     const db = getDatabase();
     
     // Fetch OneSignal App ID and REST API Key from Firebase Config Node 
-    // (As mentioned in the "OneSignal Credentials Manager" UI in your screenshot)
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val();
 
