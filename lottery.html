@@ -175,7 +175,6 @@
             align-items: stretch; 
         }
 
-        /* Dark background style specifically for gradient themed cards if necessary */
         .featured-card.premium-theme {
             background: var(--primary-gradient);
             color: #ffffff;
@@ -197,11 +196,36 @@
             flex-shrink: 0;
         }
 
-        .card-img-wrapper img {
+        /* -- Progressive Image Loading CSS -- */
+        .card-img-wrapper img.placeholder {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            filter: blur(10px);
+            transform: scale(1.1); /* Prevents blurred edges from showing background color */
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
+
+        .card-img-wrapper img.high-res-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+        }
+
+        .card-img-wrapper img.high-res-image.loaded {
+            opacity: 1;
+        }
+        /* --------------------------------- */
 
         .badge-premium {
             position: absolute;
@@ -216,7 +240,7 @@
             text-transform: uppercase;
             letter-spacing: 0.3px;
             box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
-            z-index: 2;
+            z-index: 3;
         }
 
         .featured-card-body {
@@ -522,11 +546,13 @@
 
             <div class="page-view-section active-view" id="sectionPagePreview">
                 
-                <!-- Card 1: BYD Song Plus (3,000 Birr - Password Entry prompts gate to real.html) -->
+                <!-- Card 1: BYD Song Plus -->
                 <div class="featured-card premium-theme" id="bydSongPlusCard">
                     <span class="badge-premium">Grand Raffle</span>
                     <div class="card-img-wrapper">
-                        <img src="by.jpg" alt="BYD Song Plus Car">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="by.jpg" class="high-res-image" alt="BYD Song Plus Car" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">BYD Song Plus</h3>
@@ -537,11 +563,13 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Premium Grand Wheel / Jetour (5,000 Birr - Free Open targeting jetour.html) -->
+                <!-- Card 2: Premium Grand Wheel / Jetour -->
                 <div class="featured-card premium-theme" id="premiumLottoCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff007f, #7f00ff); color: #ffffff;">Premium Lotto</span>
                     <div class="card-img-wrapper">
-                        <img src="33111.jpg" alt="Premium Lotto Grand Wheel">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="33111.jpg" class="high-res-image" alt="Premium Lotto Grand Wheel" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Premium Grand Wheel</h3>
@@ -555,7 +583,9 @@
                 <div class="featured-card premium-theme" id="monthlyRaffleCard">
                     <span class="badge-premium" style="background: var(--success-green); color: #fff;">Monthly</span>
                     <div class="card-img-wrapper">
-                        <img src="33440.png" alt="Monthly BirrDraw">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="33440.png" class="high-res-image" alt="Monthly BirrDraw" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Win 1 Million Birr</h3>
@@ -569,7 +599,9 @@
                 <div class="featured-card premium-theme" id="bingoScratchCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff4e50, #f9d423); color: #ffffff;">Instant Win</span>
                     <div class="card-img-wrapper">
-                        <img src="33274.jpg" alt="Win 100,000 Birr Box">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="33274.jpg" class="high-res-image" alt="Win 100,000 Birr Box" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Win 100,000 Birr</h3>
@@ -587,7 +619,9 @@
                 <div class="featured-card" id="youngIphoneCard">
                     <span class="badge-premium" style="background: #00d2ff; color: #000;">New tech</span>
                     <div class="card-img-wrapper">
-                        <img src="i2.jpg" alt="iPhone 17 Pro Max">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="i2.jpg" class="high-res-image" alt="iPhone 17 Pro Max" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">iPhone 17 Pro Max</h3>
@@ -602,7 +636,9 @@
                 <div class="featured-card" id="youngSamsungCard">
                     <span class="badge-premium" style="background: #a855f7; color: #fff;">Flagship</span>
                     <div class="card-img-wrapper">
-                        <img src="s2.jpg" alt="Samsung S26 Ultra">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="s2.jpg" class="high-res-image" alt="Samsung S26 Ultra" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Samsung S26 Ultra</h3>
@@ -617,7 +653,9 @@
                 <div class="featured-card" id="youngMotoCard">
                     <span class="badge-premium" style="background: #10b981; color: #fff;">Speed</span>
                     <div class="card-img-wrapper">
-                        <img src="m2.jpg" alt="Motorcycle Apache">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="m2.jpg" class="high-res-image" alt="Motorcycle Apache" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Motorcycle Apache</h3>
@@ -632,7 +670,9 @@
                 <div class="featured-card" id="youngBajajCard">
                     <span class="badge-premium" style="background: var(--warning-amber); color: #000;">Eco-Drive</span>
                     <div class="card-img-wrapper">
-                        <img src="b2.jpg" alt="Electric Bajaj">
+                        <!-- Progressive Image Setup Here -->
+                        <img src="37023.jpg" class="placeholder" alt="Loading..." />
+                        <img src="b2.jpg" class="high-res-image" alt="Electric Bajaj" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Electric Bajaj</h3>
@@ -830,7 +870,6 @@
         }
 
         function setupGates() {
-            // First Card: BYD Song Plus passes verification target parameters directly to real.html
             const bydCard = document.getElementById('bydSongPlusCard');
             if (bydCard) {
                 bydCard.addEventListener('click', () => {
@@ -838,7 +877,6 @@
                 });
             }
 
-            // Second Card: Premium Lotto (realour) skips auth gates routing immediately to jetour.html
             const premiumCard = document.getElementById('premiumLottoCard');
             if (premiumCard) {
                 premiumCard.addEventListener('click', () => {
@@ -860,7 +898,6 @@
                 });
             }
 
-            // Young Gifts Section Click Handlers Map
             document.getElementById('youngIphoneCard').addEventListener('click', () => {
                 window.location.href = `i.html?card=${completeRawCardSequence}`;
             });
