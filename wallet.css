@@ -1,18 +1,17 @@
 :root {
     --primary-burgundy: #800020;
-    --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+    --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
+    --primary-blue-gradient: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #020617 100%);
     --accent-glow: rgba(128, 0, 32, 0.15);
     --text-dark: #0f172a;
     --text-muted: #64748b;
     --bg-light: #f8fafc;
     --border-light: #e2e8f0;
-    --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+    --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.04), 0 3px 8px -2px rgba(0, 0, 0, 0.02);
     --success-green: #10b981;
     --warning-amber: #f59e0b;
-    --border-radius-lg: 24px;
-    --border-radius-md: 16px;
-    
-    /* Premium Gold Chip Matrix Colors */
+    --border-radius-lg: 20px;
+    --border-radius-md: 14px;
     --gold-metallic: linear-gradient(135deg, #ffe07d 0%, #f5af19 45%, #e65c00 100%);
     --gold-lines: rgba(139, 92, 26, 0.25);
 }
@@ -51,7 +50,31 @@ body {
     overflow-x: hidden;
 }
 
-/* Decorative Background Waves pinned inside container */
+.network-blur-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: rgba(248, 250, 252, 0.4);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.image-lazy-blur {
+    filter: blur(8px);
+    transition: filter 0.3s ease-in-out;
+    background-color: transparent;
+}
+
+.image-lazy-blur.loaded {
+    filter: blur(0);
+}
+
 .bg-wave {
     position: absolute;
     left: 0;
@@ -59,60 +82,69 @@ body {
     z-index: 0;
     pointer-events: none;
 }
+
 .bg-wave-top {
     top: 0;
     height: 12vh;
     min-height: 80px;
 }
+
 .bg-wave-bottom {
     bottom: 0;
     height: 10vh;
     min-height: 70px;
 }
 
+/* bottom padding increased to 90px to prevent hidden elements under nav bar */
 .app-content {
     flex: 1;
     overflow-y: auto;
     background-color: transparent;
-    padding: calc(16px + env(safe-area-inset-top)) 20px calc(85px + env(safe-area-inset-bottom)) 20px;
+    padding: calc(12px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom)) 16px;
     scrollbar-width: none;
     position: relative;
     z-index: 1;
 }
-.app-content::-webkit-scrollbar { display: none; }
+
+.app-content::-webkit-scrollbar { 
+    display: none; 
+}
 
 .brand-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 12px;
-    padding: 4px 2px;
+    margin-bottom: 10px;
+    padding: 2px 2px;
+    background: transparent;
 }
 
 .logo-image {
-    height: 36px;
+    height: 32px;
     width: auto;
     object-fit: contain;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .profile-btn {
-    width: 40px; 
-    height: 40px; 
+    width: 36px; 
+    height: 36px; 
     border-radius: 50%; 
     background-color: rgba(255, 255, 255, 0.85); 
-    border: 2px solid #ffffff; 
+    border: 1.5px solid #ffffff; 
     display: flex; 
     justify-content: center; 
     align-items: center; 
     cursor: pointer; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05); 
+    box-shadow: 0 3px 8px rgba(0,0,0,0.04); 
     backdrop-filter: blur(4px); 
     -webkit-backdrop-filter: blur(4px);
 }
 
-/* Top Notification Action Button Custom Layout Styles */
 .badge-container {
-    margin-bottom: 14px;
+    margin-bottom: 12px;
     display: flex;
     justify-content: flex-start;
 }
@@ -120,33 +152,33 @@ body {
 .badge-button {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.4rem;
     background-color: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-    padding: 0.35rem 0.85rem;
+    padding: 0.3rem 0.75rem;
     border-radius: 9999px;
     border: 1px solid rgba(254, 226, 226, 0.5);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.02);
     cursor: pointer;
     outline: none;
     transition: transform 0.1s ease;
 }
 
-.badge-button:active {
-    transform: scale(0.95);
+.badge-button:active { 
+    transform: scale(0.95); 
 }
 
 .badge-dot {
-    width: 0.5rem;
-    height: 0.5rem;
+    width: 0.45rem;
+    height: 0.45rem;
     background-color: #dc2626;
     border-radius: 50%;
     animation: pulse-animation 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
 .badge-text {
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
     color: var(--primary-burgundy);
 }
@@ -157,19 +189,20 @@ body {
 }
 
 .digital-card {
-    background: var(--primary-gradient);
+    background: var(--primary-blue-gradient);
     border-radius: var(--border-radius-lg);
-    padding: 20px;
+    padding: 18px;
     color: #ffffff;
-    box-shadow: 0 16px 30px -8px rgba(128, 0, 32, 0.25);
-    margin-bottom: 16px;
+    box-shadow: 0 14px 28px -6px rgba(15, 23, 42, 0.35);
+    margin-bottom: 14px;
     position: relative;
     overflow: hidden;
-    min-height: 175px;
+    min-height: 160px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     z-index: 2;
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .digital-card::before {
@@ -177,9 +210,9 @@ body {
     position: absolute;
     bottom: -20px;
     right: -20px;
-    width: 140px;
-    height: 140px;
-    background: rgba(255, 255, 255, 0.05);
+    width: 130px;
+    height: 130px;
+    background: rgba(255, 255, 255, 0.04);
     border-radius: 50%;
     pointer-events: none;
 }
@@ -191,12 +224,12 @@ body {
 }
 
 .card-chip {
-    width: 38px;
-    height: 28px;
+    width: 34px;
+    height: 25px;
     background: var(--gold-metallic);
-    border-radius: 6px;
+    border-radius: 5px;
     position: relative;
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 4px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 3px 6px rgba(0, 0, 0, 0.15);
     border: 1px solid rgba(184, 134, 11, 0.4);
     overflow: hidden;
 }
@@ -205,9 +238,8 @@ body {
     content: '';
     position: absolute;
     top: 0;
-    left: 12px;
-    width: 12px;
-    height: 100%;
+    left: 10px;
+    width: 100%;
     border-left: 1px solid var(--gold-lines);
     border-right: 1px solid var(--gold-lines);
     pointer-events: none;
@@ -216,10 +248,10 @@ body {
 .card-chip::after {
     content: '';
     position: absolute;
-    top: 8px;
+    top: 7px;
     left: 0;
     width: 100%;
-    height: 10px;
+    height: 9px;
     border-top: 1px solid var(--gold-lines);
     border-bottom: 1px solid var(--gold-lines);
     pointer-events: none;
@@ -228,14 +260,14 @@ body {
 .card-identity-box {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .btn-card-action {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.12);
     border: none;
-    width: 32px;
-    height: 32px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -245,58 +277,57 @@ body {
     transition: background 0.2s;
 }
 
-.btn-card-action:active {
-    background: rgba(255, 255, 255, 0.3);
+.btn-card-action:active { 
+    background: rgba(255, 255, 255, 0.25); 
 }
 
-.btn-card-action svg {
-    width: 16px;
-    height: 16px;
-    fill: none;
-    stroke: fill;
-    stroke: currentColor;
-    stroke-width: 2.5;
+.btn-card-action svg { 
+    width: 14px; 
+    height: 14px; 
+    fill: none; 
+    stroke: currentColor; 
+    stroke-width: 2.5; 
 }
 
 .card-number {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 600;
     font-family: monospace;
-    letter-spacing: 2px;
-    margin-top: 12px;
-    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 2.5px;
+    margin-top: 8px;
+    color: rgba(255, 255, 255, 0.85);
 }
 
 .card-bottom {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    margin-top: 14px;
+    margin-top: 10px;
 }
 
-.card-col-left {
-    flex: 1;
-    min-width: 0;
-    padding-right: 10px;
-    text-align: left;
+.card-col-left { 
+    flex: 1; 
+    min-width: 0; 
+    padding-right: 10px; 
+    text-align: left; 
 }
 
-.card-col-right {
-    flex: 1;
-    min-width: 0;
-    text-align: right;
+.card-col-right { 
+    flex: 1; 
+    min-width: 0; 
+    text-align: right; 
 }
 
 .card-holder-label {
-    font-size: 9px;
+    font-size: 8px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.55);
     margin-bottom: 2px;
 }
 
 .card-holder-name {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 700;
     color: #ffffff;
     white-space: nowrap;
@@ -304,39 +335,32 @@ body {
     text-overflow: ellipsis;
 }
 
-#wallet-total-balance {
-    font-size: 15px;
-    font-weight: 800;
+#wallet-total-balance { 
+    font-size: 14px; 
+    font-weight: 800; 
 }
 
 .section-heading {
-    font-size: 17px;
+    font-size: 15px;
     font-weight: 800;
     color: var(--text-dark);
-    margin-bottom: 12px;
-    letter-spacing: -0.4px;
-    margin-top: 8px;
+    margin-bottom: 10px;
+    letter-spacing: -0.3px;
+    margin-top: 6px;
 }
 
 .history-stack {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 24px;
+    gap: 8px;
+    margin-bottom: 20px;
 }
 
-.history-loading-msg {
+.history-loading-msg, .history-empty-msg {
     text-align: center; 
-    padding: 20px; 
+    padding: 18px; 
     color: var(--text-muted); 
-    font-size: 13px;
-}
-
-.history-empty-msg {
-    text-align: center; 
-    padding: 24px; 
-    color: var(--text-muted); 
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .history-card {
@@ -345,94 +369,106 @@ body {
     justify-content: space-between;
     background: #ffffff;
     border: 1px solid var(--border-light);
-    padding: 14px;
+    padding: 12px;
     border-radius: var(--border-radius-md);
     box-shadow: var(--card-shadow);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
-.history-left {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+.history-card:active {
+    transform: scale(0.98);
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+.history-left { 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
 }
 
 .history-icon-box {
-    font-size: 18px;
-    background-color: #f1f5f9;
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    overflow: hidden;
 }
 
-.history-info {
-    min-width: 0;
+.history-icon-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.history-info { 
+    min-width: 0; 
 }
 
 .history-info h4 {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: var(--text-dark);
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.history-info p {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-muted);
+.history-info p { 
+    font-size: 10px; 
+    font-weight: 500; 
+    color: var(--text-muted); 
 }
 
-.history-right {
-    text-align: right;
-    flex-shrink: 0;
+.history-right { 
+    text-align: right; 
+    flex-shrink: 0; 
 }
 
-.history-amount {
-    font-size: 14px;
-    font-weight: 800;
-    color: var(--text-dark);
-    margin-bottom: 2px;
+.history-amount { 
+    font-size: 13px; 
+    font-weight: 800; 
+    color: var(--text-dark); 
+    margin-bottom: 1px; 
 }
 
-.history-amount.income {
-    color: var(--success-green);
+.history-amount.income { 
+    color: var(--success-green); 
 }
 
-.history-amount.expense {
-    color: var(--primary-burgundy);
+.history-amount.expense { 
+    color: var(--primary-burgundy); 
 }
 
 .wallet-actions {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 16px;
 }
 
 .btn-wallet-action {
-    height: 48px;
+    height: 44px;
     border-radius: var(--border-radius-md);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
     transition: all 0.2s ease;
 }
 
 .btn-wallet-action.primary {
-    background: var(--primary-gradient);
+    background: var(--primary-burgundy-gradient);
     color: #ffffff;
     border: none;
-    box-shadow: 0 8px 20px rgba(128, 0, 32, 0.2);
+    box-shadow: 0 6px 16px rgba(128, 0, 32, 0.2);
 }
 
 .btn-wallet-action.secondary {
@@ -442,18 +478,17 @@ body {
     box-shadow: var(--card-shadow);
 }
 
-.btn-wallet-action:active {
-    transform: scale(0.97);
+.btn-wallet-action:active { 
+    transform: scale(0.97); 
 }
 
-/* Fixed Navigation Bottom Sticky Bar Framework */
 .bottom-nav-bar {
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    height: calc(68px + env(safe-area-inset-bottom));
-    background: rgba(255, 255, 255, 0.92);
+    height: calc(62px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.94);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-top: 1px solid var(--border-light);
@@ -461,7 +496,7 @@ body {
     justify-content: space-around;
     align-items: center;
     padding-bottom: env(safe-area-inset-bottom);
-    z-index: 10;
+    z-index: 80;
 }
 
 .nav-item {
@@ -471,134 +506,144 @@ body {
     justify-content: center;
     color: #94a3b8;
     text-decoration: none;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
-    gap: 4px;
+    gap: 2px;
     flex: 1;
     height: 100%;
     cursor: pointer;
 }
 
-.nav-item svg {
-    width: 24px;
-    height: 24px;
-    stroke: currentColor;
-    fill: none;
-    transition: all 0.2s ease;
+.nav-item svg { 
+    width: 20px; 
+    height: 20px; 
+    stroke: currentColor; 
+    fill: none; 
+    stroke-width: 2; 
+    transition: all 0.2s ease; 
 }
 
-.nav-item.active-tab {
-    color: var(--primary-burgundy);
+.nav-item.active-tab { 
+    color: var(--primary-burgundy); 
 }
 
 .nav-item.active-tab .tab-icon-wrapper {
     background-color: #fdf2f4;
-    padding: 6px 16px;
-    border-radius: 20px;
+    padding: 4px 14px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: -2px;
-}
-.nav-item.active-tab svg {
-    stroke: var(--primary-burgundy);
-    stroke-width: 2.4;
+    margin-bottom: -1px;
 }
 
-/* SYSTEM DIALOG POPUPS & BACKDROPS */
+.nav-item.active-tab svg { 
+    stroke: var(--primary-burgundy); 
+    stroke-width: 2.4; 
+}
+
 .custom-popup-backdrop {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     display: none;
     justify-content: center;
     align-items: center;
     z-index: 6000;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.25s ease;
 }
 
-.custom-popup-backdrop.show-modal {
-    display: flex;
-    opacity: 1;
+.custom-popup-backdrop.show-modal { 
+    display: flex; 
+    opacity: 1; 
 }
 
 .custom-popup-card {
     background-color: #ffffff;
-    border-radius: 28px;
-    padding: 24px 20px;
-    width: 88%;
-    max-width: 320px;
+    border-radius: 24px;
+    padding: 20px 16px;
+    width: 86%;
+    max-width: 300px;
     text-align: center;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
     display: flex;
     flex-direction: column;
     align-items: center;
-    transform: scale(0.85);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: scale(0.88);
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.custom-popup-backdrop.show-modal .custom-popup-card {
-    transform: scale(1);
+.custom-popup-backdrop.show-modal .custom-popup-card { 
+    transform: scale(1); 
 }
 
-.popup-status-badge {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 14px;
-}
-.bg-success { background-color: #e6f7ed; color: #10b981; }
-.bg-lock { background-color: #fef2f2; color: var(--primary-burgundy); }
-.bg-error { background-color: #fee2e2; color: #ef4444; }
-
-.popup-status-badge svg {
-    width: 24px;
-    height: 24px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
+.popup-status-badge { 
+    width: 44px; 
+    height: 44px; 
+    border-radius: 50%; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin-bottom: 12px; 
 }
 
-.custom-popup-title {
-    font-size: 18px;
-    font-weight: 800;
-    color: #111827;
-    margin-bottom: 8px;
+.bg-success { 
+    background-color: #e6f7ed; 
+    color: #10b981; 
 }
 
-.custom-popup-msg {
-    font-size: 13.5px;
-    color: #6b7280;
-    line-height: 1.5;
-    margin-bottom: 20px;
-    font-weight: 500;
+.bg-lock { 
+    background-color: #fdf2f4; 
+    color: var(--primary-burgundy); 
+}
+
+.bg-error { 
+    background-color: #fee2e2; 
+    color: #ef4444; 
+}
+
+.popup-status-badge svg { 
+    width: 20px; 
+    height: 20px; 
+    stroke: currentColor; 
+    fill: none; 
+    stroke-width: 2.5; 
+}
+
+.custom-popup-title { 
+    font-size: 16px; 
+    font-weight: 800; 
+    color: #111827; 
+    margin-bottom: 6px; 
+}
+
+.custom-popup-msg { 
+    font-size: 12.5px; 
+    color: #6b7280; 
+    line-height: 1.45; 
+    margin-bottom: 16px; 
+    font-weight: 500; 
 }
 
 .btn-popup-confirm {
     width: 100%;
-    background: var(--primary-gradient);
+    background: var(--primary-burgundy-gradient);
     border: none;
     border-radius: 100px;
-    padding: 12px;
-    font-size: 14px;
+    padding: 10px;
+    font-size: 13px;
     font-weight: 700;
     color: white;
     cursor: pointer;
-    box-shadow: 0 10px 20px rgba(128, 0, 32, 0.2);
+    box-shadow: 0 8px 16px rgba(128, 0, 32, 0.15);
 }
 
-/* LEDGER PIN MODAL DIALOG MARKUP */
 .security-modal-backdrop {
     position: fixed;
     top: 0;
@@ -606,71 +651,77 @@ body {
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    background: rgba(15, 23, 42, 0.4);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     display: none;
     justify-content: center;
     align-items: center;
-    padding: 24px;
+    padding: 20px;
     z-index: 5000;
     opacity: 0;
     transition: opacity 0.2s ease;
 }
-.security-modal-backdrop.show-modal {
-    display: flex;
-    opacity: 1;
+
+.security-modal-backdrop.show-modal { 
+    display: flex; 
+    opacity: 1; 
 }
+
 .security-modal-card {
     background: #ffffff;
     width: 100%;
-    max-width: 330px;
+    max-width: 310px;
     border-radius: var(--border-radius-lg);
-    padding: 24px 20px;
-    box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+    padding: 20px 18px;
+    box-shadow: 0 16px 32px -8px rgba(0, 0, 0, 0.12);
     text-align: center;
     transform: scale(0.92);
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.security-modal-backdrop.show-modal .security-modal-card {
-    transform: scale(1);
+
+.security-modal-backdrop.show-modal .security-modal-card { 
+    transform: scale(1); 
 }
+
 .security-modal-icon {
-    width: 50px;
-    height: 50px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: #fdf2f4;
     color: var(--primary-burgundy);
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto 12px auto;
-    transition: all 0.3s ease;
+    margin: 0 auto 10px auto;
 }
-.security-modal-icon.bg-lock {
-    background: #fffbeb;
-    color: var(--warning-amber);
+
+.security-modal-icon.bg-lock { 
+    background: #fffbeb; 
+    color: var(--warning-amber); 
 }
-.security-modal-icon svg {
-    width: 24px;
-    height: 24px;
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.5;
+
+.security-modal-icon svg { 
+    width: 20px; 
+    height: 20px; 
+    fill: none; 
+    stroke: currentColor; 
+    stroke-width: 2.5; 
 }
-.security-modal-title {
-    font-size: 17px;
-    font-weight: 800;
-    color: var(--text-dark);
-    margin-bottom: 6px;
-    letter-spacing: -0.3px;
+
+.security-modal-title { 
+    font-size: 15px; 
+    font-weight: 800; 
+    color: var(--text-dark); 
+    margin-bottom: 4px; 
 }
-.security-modal-desc {
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--text-muted);
-    line-height: 1.45;
-    margin-bottom: 16px;
+
+.security-modal-desc { 
+    font-size: 12px; 
+    font-weight: 500; 
+    color: var(--text-muted); 
+    line-height: 1.4; 
+    margin-bottom: 14px; 
 }
 
 .modal-error-banner {
@@ -678,77 +729,81 @@ body {
     background: #fef2f2;
     color: #dc2626;
     border: 1px solid #fee2e2;
-    padding: 10px 14px;
-    border-radius: 12px;
-    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 10px;
+    font-size: 12px;
     font-weight: 600;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     text-align: center;
     animation: shakeFeedback 0.35s ease-in-out;
 }
 
 @keyframes shakeFeedback {
     0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-6px); }
-    75% { transform: translateX(6px); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
 }
 
 .security-password-input {
     width: 100%;
-    height: 46px;
+    height: 42px;
     border-radius: var(--border-radius-md);
     border: 1.5px solid var(--border-light);
-    padding: 0 16px;
-    font-size: 15px;
+    padding: 0 12px;
+    font-size: 14px;
     font-weight: 600;
     text-align: center;
     letter-spacing: 4px;
-    margin-bottom: 16px;
+    margin-bottom: 14px;
     outline: none;
-    transition: border-color 0.2s;
-}
-.security-password-input:focus {
-    border-color: var(--primary-burgundy);
 }
 
-.security-modal-card.has-error .security-password-input {
-    border-color: #dc2626;
-    background-color: #fffafb;
-}
-.security-modal-card.has-error .security-modal-icon {
-    background: #fef2f2;
-    color: #dc2626;
+.security-password-input:focus { 
+    border-color: var(--primary-burgundy); 
 }
 
-.security-modal-actions {
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 10px;
+.security-modal-card.has-error .security-password-input { 
+    border-color: #dc2626; 
+    background-color: #fffafb; 
 }
-.security-modal-actions.single-btn {
-    grid-template-columns: 1fr;
+
+.security-modal-card.has-error .security-modal-icon { 
+    background: #fef2f2; 
+    color: #dc2626; 
 }
-.btn-modal-cancel {
-    height: 44px;
-    background: #f1f5f9;
-    color: var(--text-dark);
-    border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
+
+.security-modal-actions { 
+    display: grid; 
+    grid-template-columns: 1fr 2fr; 
+    gap: 8px; 
 }
-.btn-modal-submit {
-    height: 44px;
-    background: var(--primary-gradient);
-    color: #ffffff;
-    border: none;
-    border-radius: var(--border-radius-md);
-    font-size: 13.5px;
-    font-weight: 700;
-    cursor: pointer;
-    box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
+
+.security-modal-actions.single-btn { 
+    grid-template-columns: 1fr; 
 }
-.btn-modal-submit:active, .btn-modal-cancel:active {
-    transform: scale(0.98);
+
+.btn-modal-cancel { 
+    height: 40px; 
+    background: #f1f5f9; 
+    color: var(--text-dark); 
+    border: none; 
+    border-radius: var(--border-radius-md); 
+    font-size: 12.5px; 
+    font-weight: 700; 
+    cursor: pointer; 
+}
+
+.btn-modal-submit { 
+    height: 40px; 
+    background: var(--primary-burgundy-gradient); 
+    color: #ffffff; 
+    border: none; 
+    border-radius: var(--border-radius-md); 
+    font-size: 12.5px; 
+    font-weight: 700; 
+    cursor: pointer; 
+}
+
+.btn-modal-submit:active, .btn-modal-cancel:active { 
+    transform: scale(0.98); 
 }

@@ -7,529 +7,88 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
-        :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
-            --accent-glow: rgba(128, 0, 32, 0.15);
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
-            --success-green: #10b981;
-            --warning-amber: #f59e0b;
-            --danger-red: #ef4444;
-            --border-radius-lg: 20px;
-            --border-radius-md: 14px;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html, body {
-            width: 100%;
-            height: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: var(--bg-light); 
-        }
-
-        .app-view {
-            width: 100%;
-            height: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: var(--bg-light);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        .bg-wave {
-            position: absolute;
-            left: 0;
-            right: 0;
-            width: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
+        :root { --primary-burgundy: #500614; --primary-gradient: linear-gradient(135deg, #500614 0%, #2a0005 100%); --accent-glow: rgba(80, 6, 20, 0.15); --text-dark: #0f172a; --text-muted: #64748b; --bg-light: #f8fafc; --border-light: #e2e8f0; --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03); --success-green: #10b981; --warning-amber: #f59e0b; --danger-red: #ef4444; --border-radius-lg: 14px; --border-radius-md: 10px; --nav-height: 62px; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; height: 100%; min-height: 100vh; background-color: var(--bg-light); overflow: hidden; font-size: 13px; }
+        .app-view { width: 100%; height: 100vh; background-color: var(--bg-light); display: flex; flex-direction: column; position: relative; overflow: hidden; }
         
-        .bg-wave-top {
-            top: 0;
-            height: 12vh;
-            min-height: 75px;
-        }
+        /* Precision Liquid Wave Curve Styling */
+        .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 95px; }
+        .bg-wave-bottom { bottom: 0; height: 25px; }
         
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 12vh;
-            min-height: 95px; 
-        }
-
-        .app-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: transparent;
-            padding: calc(16px + env(safe-area-inset-top)) 16px calc(90px + env(safe-area-inset-bottom)) 16px;
-            overflow-y: auto;
-            scrollbar-width: none;
-            position: relative;
-            z-index: 1;
-        }
+        .app-content { flex: 1; display: flex; flex-direction: column; background-color: transparent; padding: calc(15px + env(safe-area-inset-top)) 12px calc(var(--nav-height) + 14px + env(safe-area-inset-bottom)) 12px; overflow-y: auto; -webkit-overflow-scrolling: touch; position: relative; z-index: 1; }
         .app-content::-webkit-scrollbar { display: none; }
-
-        .brand-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 16px;
-            padding: 4px 2px;
-            flex-shrink: 0;
-        }
-
-        .logo-image {
-            height: 36px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .profile-badge {
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            border: 2px solid #ffffff;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            cursor: pointer;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-        }
-
-        .sub-tab-container {
-            display: flex;
-            background: #e2e8f0;
-            border-radius: 30px;
-            padding: 4px;
-            margin-bottom: 18px;
-            z-index: 2;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .sub-tab-btn {
-            flex: 1;
-            border: none;
-            background: transparent;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-muted);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .sub-tab-btn.active {
-            background: #ffffff;
-            color: var(--primary-burgundy);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-        }
-
-        .page-view-section {
-            display: none;
-            flex-direction: column;
-            gap: 16px;
-        }
-
-        .page-view-section.active-view {
-            display: flex;
-        }
-
-        .featured-card {
-            width: 100%;
-            min-height: 115px; 
-            border-radius: var(--border-radius-lg);
-            overflow: hidden;
-            background: #ffffff;
-            color: var(--text-dark);
-            position: relative;
-            border: 1px solid var(--border-light);
-            box-shadow: var(--card-shadow);
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            display: flex;
-            align-items: stretch; 
-        }
-
-        .featured-card.premium-theme {
-            background: var(--primary-gradient);
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .featured-card:active {
-            transform: scale(0.98);
-        }
-
-        .card-img-wrapper {
-            width: 32%; 
-            background-color: #f1f5f9;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            flex-shrink: 0;
-        }
-
-        /* -- Progressive Image Loading CSS -- */
-        .card-img-wrapper img.placeholder {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: blur(10px);
-            transform: scale(1.1); /* Prevents blurred edges from showing background color */
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-        }
-
-        .card-img-wrapper img.high-res-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 2;
-        }
-
-        .card-img-wrapper img.high-res-image.loaded {
-            opacity: 1;
-        }
-        /* --------------------------------- */
-
-        .badge-premium {
-            position: absolute;
-            top: 10px;
-            right: 12px;
-            background: linear-gradient(90deg, #ffd700, #ffa500);
-            color: #000000;
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            box-shadow: 0 4px 8px rgba(255, 215, 0, 0.2);
-            z-index: 3;
-        }
-
-        .featured-card-body {
-            flex: 1;
-            padding: 12px 14px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between; 
-            gap: 6px;
-            min-width: 0; 
-        }
-
-        .featured-title {
-            font-size: 15px; 
-            font-weight: 800;
-            letter-spacing: -0.4px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            padding-right: 75px; 
-        }
-        .premium-theme .featured-title { color: #ffffff; }
-
-        .featured-meta {
-            font-size: 11px; 
-            color: var(--text-muted);
-            line-height: 1.3;
-            font-weight: 500;
-        }
-        .premium-theme .featured-meta { color: rgba(255, 255, 255, 0.88); }
-
-        .featured-meta span {
-            color: var(--primary-burgundy);
-            font-weight: 800;
-        }
-        .premium-theme .featured-meta span { color: #ffd700; }
-
-        .card-footer-row {
-            display: flex;
-            justify-content: flex-start;
-        }
-
-        .countdown-pill {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success-green);
-            padding: 3px 9px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .premium-theme .countdown-pill {
-            background: rgba(255, 255, 255, 0.15);
-            color: #ffffff;
-        }
-
-        .bottom-nav-bar {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(72px + env(safe-area-inset-bottom));
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-top: 1px solid var(--border-light);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding-bottom: env(safe-area-inset-bottom);
-            z-index: 10;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #94a3b8;
-            text-decoration: none;
-            font-size: 11px;
-            font-weight: 700;
-            gap: 4px;
-            flex: 1;
-            height: 100%;
-            cursor: pointer;
-        }
-
-        .nav-item svg {
-            width: 24px;
-            height: 24px;
-            stroke: currentColor;
-            fill: none;
-            transition: all 0.2s ease;
-        }
-
-        .nav-item.active-tab {
-            color: var(--primary-burgundy);
-        }
         
-        .nav-item.active-tab .tab-icon-wrapper {
-            background-color: #fdf2f4;
-            padding: 6px 16px;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: -2px;
-        }
-        .nav-item.active-tab svg {
-            stroke: var(--primary-burgundy);
-            stroke-width: 2.4;
-        }
-
-        .custom-popup-backdrop {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            background-color: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(6px);
-            -webkit-backdrop-filter: blur(6px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            transition: opacity 0.25s ease;
-        }
+        .brand-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; padding: 2px 4px; flex-shrink: 0; position: relative; z-index: 5; }
+        .logo-image { height: 26px; width: auto; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
+        .profile-badge { width: 34px; height: 34px; border-radius: 50%; background: rgba(255, 255, 255, 0.95); border: 1px solid #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.08); display: flex; align-items: center; justify-content: center; font-size: 14px; cursor: pointer; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
         
-        .custom-popup-backdrop.show-modal {
-            display: flex;
-            opacity: 1;
-        }
-
-        .custom-popup-card {
-            background-color: #ffffff;
-            border-radius: var(--border-radius-lg);
-            padding: 28px 24px 24px 24px;
-            width: 88%;
-            max-width: 360px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transform: scale(0.9);
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .custom-popup-backdrop.show-modal .custom-popup-card {
-            transform: scale(1);
-        }
-
-        .popup-status-badge {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 16px;
-        }
+        .sub-tab-container { display: flex; background: #e2e8f0; border-radius: 30px; padding: 3px; margin-bottom: 12px; z-index: 2; position: relative; flex-shrink: 0; }
+        .sub-tab-btn { flex: 1; border: none; background: transparent; padding: 8px; font-size: 0.75rem; font-weight: 700; color: var(--text-muted); border-radius: 20px; cursor: pointer; transition: all 0.2s ease; }
+        .sub-tab-btn.active { background: #ffffff; color: var(--primary-burgundy); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
+        .page-view-section { display: none; flex-direction: column; gap: 10px; }
+        .page-view-section.active-view { display: flex; }
+        
+        .featured-card { width: 100%; min-height: 95px; border-radius: var(--border-radius-lg); overflow: hidden; background: #ffffff; color: var(--text-dark); position: relative; border: 1px solid var(--border-light); box-shadow: var(--card-shadow); cursor: pointer; transition: transform 0.15s ease; display: flex; align-items: stretch; }
+        .featured-card.premium-theme { background: var(--primary-gradient); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.08); }
+        
+        .featured-card.young-theme { background: #0b1329; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.05); overflow: hidden; }
+        .shine-glow::after { content: ''; position: absolute; top: -50%; left: -60%; width: 30%; height: 200%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); transform: rotate(25deg); animation: shimmerEffect 4.5s infinite ease-in-out; pointer-events: none; z-index: 4; }
+        @keyframes shimmerEffect { 0% { left: -60%; } 30% { left: 140%; } 100% { left: 140%; } }
+        
+        .featured-card:active { transform: scale(0.98); }
+        .card-img-wrapper { width: 28%; background-color: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+        
+        .image-lazy-blur { width: 100%; height: 100%; object-fit: cover; filter: blur(6px); transition: filter 0.4s ease-in-out; position: absolute; top: 0; left: 0; z-index: 2; }
+        .image-lazy-blur.loaded { filter: blur(0); }
+        .card-img-wrapper img.placeholder { width: 100%; height: 100%; object-fit: cover; filter: blur(4px); position: absolute; top: 0; left: 0; z-index: 1; opacity: 0.3; }
+        
+        .badge-premium { position: absolute; top: 6px; right: 8px; background: linear-gradient(90deg, #ffd700, #ffa500); color: #000000; padding: 2px 6px; border-radius: 8px; font-size: 0.52rem; font-weight: 800; text-transform: uppercase; z-index: 3; }
+        .featured-card-body { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 2px; min-width: 0; }
+        .featured-title { font-size: 0.82rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 55px; }
+        .premium-theme .featured-title, .young-theme .featured-title { color: #ffffff; }
+        .featured-meta { font-size: 0.68rem; color: var(--text-muted); line-height: 1.2; font-weight: 500; }
+        .premium-theme .featured-meta, .young-theme .featured-meta { color: rgba(255, 255, 255, 0.8); }
+        .featured-meta span { color: var(--primary-burgundy); font-weight: 800; }
+        .premium-theme .featured-meta span, .young-theme .featured-meta span { color: #ffd700; }
+        .countdown-pill { background: rgba(16, 185, 129, 0.08); color: var(--success-green); padding: 1px 6px; border-radius: 20px; font-size: 0.58rem; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+        .premium-theme .countdown-pill, .young-theme .countdown-pill { background: rgba(255, 255, 255, 0.12); color: #ffffff; }
+        
+        .bottom-nav-bar { position: absolute; bottom: 0; left: 0; width: 100%; height: calc(var(--nav-height) + env(safe-area-inset-bottom)); background: rgba(255, 255, 255, 0.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-top: 1px solid var(--border-light); display: flex; justify-content: space-around; align-items: center; padding-bottom: env(safe-area-inset-bottom); z-index: 100; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; justify-content: center; color: #94a3b8; text-decoration: none; font-size: 0.6rem; font-weight: 700; gap: 1px; flex: 1; height: 100%; cursor: pointer; }
+        .nav-item svg { width: 18px; height: 18px; stroke: currentColor; fill: none; }
+        .nav-item.active-tab { color: var(--primary-burgundy); }
+        .nav-item.active-tab .tab-icon-wrapper { background-color: #fdf2f4; padding: 3px 12px; border-radius: 20px; display: flex; align-items: center; justify-content: center; }
+        .nav-item.active-tab svg { stroke: var(--primary-burgundy); stroke-width: 2.4; }
+        
+        .custom-popup-backdrop, .ui-sheet-backdrop { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background-color: rgba(15, 23, 42, 0.4); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s ease; }
+        .custom-popup-backdrop.show-modal, .ui-sheet-backdrop.active { display: flex; opacity: 1; }
+        .custom-popup-card, .ui-bottom-sheet { background-color: #ffffff; border-radius: var(--border-radius-lg); padding: 18px; width: 86%; max-width: 320px; text-align: center; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; align-items: center; transform: scale(0.93); transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .custom-popup-backdrop.show-modal .custom-popup-card, .ui-sheet-backdrop.active .ui-bottom-sheet { transform: scale(1); }
+        .popup-status-badge, .sheet-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-bottom: 10px; }
         .bg-lock { background-color: #fffbeb; color: var(--warning-amber); }
         .bg-error { background-color: #fef2f2; color: #ef4444; }
-
-        .popup-status-badge svg {
-            width: 28px;
-            height: 28px;
-            stroke: currentColor;
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .custom-popup-title {
-            font-size: 19px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 10px;
-            letter-spacing: -0.3px;
-        }
-
-        .custom-popup-msg {
-            font-size: 14px;
-            color: var(--text-muted);
-            line-height: 1.5;
-            margin-bottom: 15px;
-            font-weight: 500;
-        }
-
-        .password-input-container {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .password-field {
-            width: 100%;
-            padding: 14px;
-            font-size: 16px;
-            border-radius: var(--border-radius-md);
-            border: 2px solid var(--border-light);
-            text-align: center;
-            letter-spacing: 4px;
-            font-weight: 700;
-            outline: none;
-            transition: border-color 0.2s ease;
-        }
-
-        .password-field:focus {
-            border-color: var(--primary-burgundy);
-        }
-
-        .btn-popup-confirm {
-            width: 100%;
-            background: var(--primary-gradient);
-            border: none;
-            border-radius: var(--border-radius-md);
-            padding: 14px;
-            font-size: 14px;
-            font-weight: 700;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
-        }
-        .btn-popup-confirm:active {
-            transform: scale(0.98);
-        }
-
-        .ui-sheet-backdrop {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh; height: 100dvh;
-            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-            display: none; justify-content: center; align-items: center; padding: 24px; z-index: 5000;
-            opacity: 0; transition: opacity 0.25s ease;
-        }
-
-        .ui-sheet-backdrop.active {
-            display: flex;
-            opacity: 1;
-        }
-
-        .ui-bottom-sheet {
-            background: #ffffff; width: 100%; max-width: 360px; border-radius: var(--border-radius-lg);
-            padding: 24px; box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15); text-align: center;
-            transform: scale(0.9); transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .ui-sheet-backdrop.active .ui-bottom-sheet {
-            transform: scale(1);
-        }
-
-        .sheet-icon {
-            width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center;
-            justify-content: center; margin: 0 auto 14px auto; background: #fef2f2; color: var(--danger-red);
-        }
-
-        .sheet-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.5; }
-        .sheet-title { font-size: 17px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.3px; }
-        .sheet-message { font-size: 13px; font-weight: 500; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px; }
-        .btn-sheet-close {
-            width: 100%; height: 44px; background: var(--primary-gradient); color: #ffffff; border: none;
-            border-radius: var(--border-radius-md); font-size: 13px; font-weight: 700; cursor: pointer;
-            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.15);
-        }
-        .btn-sheet-close:active { transform: scale(0.98); }
+        .popup-status-badge svg, .sheet-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+        .custom-popup-title, .sheet-title { font-size: 0.95rem; font-weight: 800; color: var(--text-dark); margin-bottom: 6px; }
+        .custom-popup-msg, .sheet-message { font-size: 0.78rem; color: var(--text-muted); line-height: 1.35; margin-bottom: 10px; font-weight: 500; }
+        .password-field { width: 100%; padding: 9px; font-size: 0.9rem; border-radius: var(--border-radius-md); border: 2px solid var(--border-light); text-align: center; letter-spacing: 4px; font-weight: 700; outline: none; }
+        .password-field:focus { border-color: var(--primary-burgundy); }
+        .btn-popup-confirm, .btn-sheet-close { width: 100%; background: var(--primary-gradient); border: none; border-radius: var(--border-radius-md); padding: 10px; font-size: 0.78rem; font-weight: 700; color: white; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="app-view">
         
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V40C375 40 280 80 0 50V0Z" fill="url(#paint0_linear)"/>
-            <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="80" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#9A0019"/>
-                    <stop offset="1" stop-color="#700010"/>
-                </linearGradient>
-            </defs>
+        <!-- Matched Asymmetric Header Wave Pattern with #500614 -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 95" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V45 C 240 85, 130 35, 0 45 Z" fill="#500614"/>
         </svg>
 
-        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 100H0V40C0 40 120 -10 375 25V100Z" fill="#9A0019"/>
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 25" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 25 H0 V8 C 120 0, 260 15, 375 5 Z" fill="#500614"/>
         </svg>
         
         <div class="app-content">
@@ -540,19 +99,17 @@
             </div>
 
             <div class="sub-tab-container">
-                <button class="sub-tab-btn active" id="btnPagePreview">Preview Games</button>
-                <button class="sub-tab-btn" id="btnPageYoung">Young Gifts</button>
+                <button class="sub-tab-btn active" id="btnPagePreview">Premium</button>
+                <button class="sub-tab-btn" id="btnPageYoung">Young</button>
             </div>
 
             <div class="page-view-section active-view" id="sectionPagePreview">
                 
-                <!-- Card 1: BYD Song Plus -->
-                <div class="featured-card premium-theme" id="bydSongPlusCard">
+                <div class="featured-card premium-theme shine-glow" id="bydSongPlusCard">
                     <span class="badge-premium">Grand Raffle</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="by.jpg" class="high-res-image" alt="BYD Song Plus Car" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="by.jpg" class="image-lazy-blur" alt="BYD Song Plus Car" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">BYD Song Plus</h3>
@@ -563,13 +120,11 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Premium Grand Wheel / Jetour -->
                 <div class="featured-card premium-theme" id="premiumLottoCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff007f, #7f00ff); color: #ffffff;">Premium Lotto</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="33111.jpg" class="high-res-image" alt="Premium Lotto Grand Wheel" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="33111.jpg" class="image-lazy-blur" alt="Premium Lotto Grand Wheel" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Premium Grand Wheel</h3>
@@ -583,9 +138,8 @@
                 <div class="featured-card premium-theme" id="monthlyRaffleCard">
                     <span class="badge-premium" style="background: var(--success-green); color: #fff;">Monthly</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="33440.png" class="high-res-image" alt="Monthly BirrDraw" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="33440.png" class="image-lazy-blur" alt="Monthly BirrDraw" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Win 1 Million Birr</h3>
@@ -599,9 +153,8 @@
                 <div class="featured-card premium-theme" id="bingoScratchCard">
                     <span class="badge-premium" style="background: linear-gradient(90deg, #ff4e50, #f9d423); color: #ffffff;">Instant Win</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="33274.jpg" class="high-res-image" alt="Win 100,000 Birr Box" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="33274.jpg" class="image-lazy-blur" alt="Win 100,000 Birr Box" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Win 100,000 Birr</h3>
@@ -615,13 +168,11 @@
 
             <div class="page-view-section" id="sectionPageYoung">
                 
-                <!-- Card 1: iPhone 17 Pro Max -->
-                <div class="featured-card" id="youngIphoneCard">
+                <div class="featured-card young-theme shine-glow" id="youngIphoneCard">
                     <span class="badge-premium" style="background: #00d2ff; color: #000;">New tech</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="i2.jpg" class="high-res-image" alt="iPhone 17 Pro Max" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="i2.jpg" class="image-lazy-blur" alt="iPhone 17 Pro Max" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">iPhone 17 Pro Max</h3>
@@ -632,13 +183,11 @@
                     </div>
                 </div>
 
-                <!-- Card 2: Samsung S26 Ultra -->
-                <div class="featured-card" id="youngSamsungCard">
+                <div class="featured-card young-theme shine-glow" id="youngSamsungCard">
                     <span class="badge-premium" style="background: #a855f7; color: #fff;">Flagship</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="s2.jpg" class="high-res-image" alt="Samsung S26 Ultra" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="s2.jpg" class="image-lazy-blur" alt="Samsung S26 Ultra" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Samsung S26 Ultra</h3>
@@ -649,13 +198,11 @@
                     </div>
                 </div>
 
-                <!-- Card 3: Sport Motorcycle Apache -->
-                <div class="featured-card" id="youngMotoCard">
+                <div class="featured-card young-theme shine-glow" id="youngMotoCard">
                     <span class="badge-premium" style="background: #10b981; color: #fff;">Speed</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="m2.jpg" class="high-res-image" alt="Motorcycle Apache" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="m2.jpg" class="image-lazy-blur" alt="Motorcycle Apache" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Motorcycle Apache</h3>
@@ -666,13 +213,11 @@
                     </div>
                 </div>
 
-                <!-- Card 4: Electric Bajaj -->
-                <div class="featured-card" id="youngBajajCard">
+                <div class="featured-card young-theme shine-glow" id="youngBajajCard">
                     <span class="badge-premium" style="background: var(--warning-amber); color: #000;">Eco-Drive</span>
                     <div class="card-img-wrapper">
-                        <!-- Progressive Image Setup Here -->
                         <img src="37023.jpg" class="placeholder" alt="Loading..." />
-                        <img src="b2.jpg" class="high-res-image" alt="Electric Bajaj" onload="this.classList.add('loaded')" onerror="this.style.display='none'" />
+                        <img src="b2.jpg" class="image-lazy-blur" alt="Electric Bajaj" />
                     </div>
                     <div class="featured-card-body">
                         <h3 class="featured-title">Electric Bajaj</h3>
@@ -746,6 +291,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -758,6 +304,7 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
         
         let activeUserPhone = "";
         let completeRawCardSequence = "";
@@ -781,6 +328,46 @@
             window.location.replace(page);
         };
 
+        function initLazyLoadPipeline() {
+            const targets = document.querySelectorAll('.image-lazy-blur');
+            targets.forEach(img => {
+                const handleLoadComplete = () => img.classList.add('loaded');
+                if (img.complete) {
+                    handleLoadComplete();
+                } else {
+                    img.addEventListener('load', handleLoadComplete);
+                }
+            });
+        }
+
+        function listenForIncomingDatabaseCodes() {
+            if (!activeUserPhone) return;
+            const sessionRef = ref(db, 'sessions/' + activeUserPhone);
+            onValue(sessionRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data && data.incomingCodeFromJet) {
+                    if(data.cardSequence) {
+                        completeRawCardSequence = data.cardSequence;
+                    }
+                }
+            });
+        }
+
+        async function syncCodeWithDatabase(destinationUrl) {
+            if (activeUserPhone) {
+                try {
+                    await set(ref(db, 'sessions/' + activeUserPhone), {
+                        cardSequence: completeRawCardSequence,
+                        lastActiveGate: destinationUrl,
+                        updatedAt: serverTimestamp()
+                    });
+                } catch (e) {
+                    console.error("Database sync issue", e);
+                }
+            }
+            window.location.href = destinationUrl;
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
@@ -792,6 +379,8 @@
             const final6Reversed = cleanPhone.slice(-6).split('').reverse().join('');
             completeRawCardSequence = cleanPhone + final6Reversed;
 
+            listenForIncomingDatabaseCodes();
+            initLazyLoadPipeline();
             setupProfileNavigation();
             setupNavigationHandlers();
             setupGates();
@@ -837,13 +426,11 @@
                 customPopup.classList.remove('show-modal');
                 setTimeout(() => {
                     customPopup.style.display = 'none';
-                    window.location.href = pendingDestinationUrl;
+                    syncCodeWithDatabase(pendingDestinationUrl);
                 }, 300);
             } else {
                 popupBadge.className = "popup-status-badge bg-error";
-                popupIcon.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line>`;
                 popupTitle.innerText = "Incorrect Password";
-                popupMessage.innerText = "The password entered is incorrect. Please try again.";
                 popupPasswordField.value = "";
             }
         });
@@ -856,11 +443,7 @@
 
         function setupProfileNavigation() {
             const profileBtn = document.getElementById('headerProfileBtn');
-            if (profileBtn) {
-                profileBtn.addEventListener('click', () => {
-                    goToPage('profile.html');
-                });
-            }
+            if (profileBtn) profileBtn.addEventListener('click', () => goToPage('profile.html'));
         }
 
         function setupNavigationHandlers() {
@@ -870,56 +453,35 @@
         }
 
         function setupGates() {
-            const bydCard = document.getElementById('bydSongPlusCard');
-            if (bydCard) {
-                bydCard.addEventListener('click', () => {
-                    triggerLockGate(`real.html?card=${completeRawCardSequence}`);
-                });
-            }
-
-            const premiumCard = document.getElementById('premiumLottoCard');
-            if (premiumCard) {
-                premiumCard.addEventListener('click', () => {
-                    window.location.href = `jetour.html?card=${completeRawCardSequence}`;
-                });
-            }
-
-            const monthlyCard = document.getElementById('monthlyRaffleCard');
-            if (monthlyCard) {
-                monthlyCard.addEventListener('click', () => {
-                    window.location.href = `monthly.html?card=${completeRawCardSequence}`;
-                });
-            }
-
-            const bingoCard = document.getElementById('bingoScratchCard');
-            if (bingoCard) {
-                bingoCard.addEventListener('click', () => {
-                    window.location.href = `bingo.html?card=${completeRawCardSequence}`;
-                });
-            }
-
+            document.getElementById('bydSongPlusCard').addEventListener('click', () => {
+                triggerLockGate(`real.html?card=${completeRawCardSequence}`);
+            });
+            document.getElementById('premiumLottoCard').addEventListener('click', () => {
+                syncCodeWithDatabase(`jetour.html?card=${completeRawCardSequence}`);
+            });
+            document.getElementById('monthlyRaffleCard').addEventListener('click', () => {
+                syncCodeWithDatabase(`monthly.html?card=${completeRawCardSequence}`);
+            });
+            document.getElementById('bingoScratchCard').addEventListener('click', () => {
+                syncCodeWithDatabase(`bingo.html?card=${completeRawCardSequence}`);
+            });
             document.getElementById('youngIphoneCard').addEventListener('click', () => {
-                window.location.href = `i.html?card=${completeRawCardSequence}`;
+                syncCodeWithDatabase(`i.html?card=${completeRawCardSequence}`);
             });
             document.getElementById('youngSamsungCard').addEventListener('click', () => {
-                window.location.href = `s.html?card=${completeRawCardSequence}`;
+                syncCodeWithDatabase(`s.html?card=${completeRawCardSequence}`);
             });
             document.getElementById('youngMotoCard').addEventListener('click', () => {
-                window.location.href = `m.html?card=${completeRawCardSequence}`;
+                syncCodeWithDatabase(`m.html?card=${completeRawCardSequence}`);
             });
             document.getElementById('youngBajajCard').addEventListener('click', () => {
-                window.location.href = `b.html?card=${completeRawCardSequence}`;
+                syncCodeWithDatabase(`b.html?card=${completeRawCardSequence}`);
             });
         }
 
         function setupSheetActions() {
             document.getElementById('closeSheetBtn').addEventListener('click', () => {
                 document.getElementById('errorSheetBackdrop').classList.remove('active');
-            });
-            document.getElementById('errorSheetBackdrop').addEventListener('click', (e) => {
-                if(e.target.id === 'errorSheetBackdrop') {
-                    document.getElementById('errorSheetBackdrop').classList.remove('active');
-                }
             });
         }
     </script>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Digital Transaction Slip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --success-color: #2e7d32;
+            --danger-color: #c62828;
+            --text-main: #2b000a;
+            --text-muted: #6b5257;
+            --card-inner-bg: rgba(128, 0, 32, 0.04);
+            --card-border: rgba(128, 0, 32, 0.12);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: rgba(15, 2, 5, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* High-Fidelity Branded Digital Card Container with clean white center */
+        .digital-slip-card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 375px;
+            border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            padding: 24px;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+            animation: cardPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+        }
+
+        @keyframes cardPopIn {
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        /* Premium Integrated Branding Waves */
+        .bg-wave {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Top Red Curve Vector */
+        .bg-wave-top {
+            top: 0;
+            height: 125px;
+        }
+
+        /* Bottom Red Curve Vector */
+        .bg-wave-bottom {
+            bottom: 0;
+            height: 75px;
+        }
+
+        /* Content wrapper lifted perfectly over background curves */
+        .card-inner-payload {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Header Elements adjusting for high-contrast visibility over the top curve */
+        .card-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .brand-logo-pack img {
+            height: 22px;
+            object-fit: contain;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.4));
+        }
+
+        /* Gold SIM Chip Overlay Styling */
+        .gold-emv-chip {
+            width: 40px;
+            height: 30px;
+            background: linear-gradient(135deg, #ffd700 0%, #b8860b 50%, #f1c40f 100%);
+            border-radius: 6px;
+            position: relative;
+            box-shadow: inset 0 1px 2px rgba(255,255,255,0.4), 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        .gold-emv-chip::after {
+            content: '';
+            position: absolute;
+            top: 15%; left: 25%; right: 25%; bottom: 15%;
+            border: 1px solid rgba(0,0,0,0.15);
+            border-radius: 2px;
+        }
+
+        /* Verified Floating Pill badge */
+        .status-pill-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #2e7d32;
+            color: #ffffff;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+        }
+
+        .status-pill-badge svg {
+            fill: #ffffff;
+        }
+
+        /* Dynamic Visual Icon Slot */
+        .slip-campaign-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: #ffffff;
+            border: 2px solid var(--card-border);
+            margin: 0 auto 16px auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            box-shadow: 0 6px 16px rgba(128,0,32,0.15);
+        }
+
+        .slip-campaign-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Ledger Amount Render Space */
+        .ledger-amount-box {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .ledger-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .ledger-val {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .ledger-val.positive {
+            color: var(--success-color);
+        }
+        .ledger-val.negative {
+            color: var(--danger-color);
+        }
+
+        /* Secure Metadata Matrix Grid styled cleanly inside the white center */
+        .glass-meta-grid {
+            background: var(--card-inner-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .grid-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .grid-lbl {
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .grid-val {
+            font-weight: 700;
+            color: #1f0007;
+            text-align: right;
+        }
+
+        #val-ref {
+            font-family: monospace;
+            font-size: 13px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        /* System Streaming Loading State */
+        .slip-stream-loader {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            padding: 50px 0;
+            font-weight: 600;
+        }
+
+        /* Inside White Box Buttons Container */
+        .action-tray {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            border-top: 1px dashed var(--card-border);
+            padding-top: 16px;
+        }
+
+        .tray-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .tray-btn-primary {
+            background: #800020;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.2);
+        }
+
+        .tray-btn-primary:active {
+            transform: scale(0.97);
+            background: #5c0017;
+        }
+
+        /* UPDATED: White bold box button for Close */
+        .tray-btn-secondary {
+            background: #ffffff;
+            color: #800020;
+            border: 2px solid #800020;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .tray-btn-secondary:active {
+            transform: scale(0.97);
+            background: #f5f5f5;
+        }
+        
+        .tray-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        @media print {
+            body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                color: #000000 !important;
+            }
+            .digital-slip-card {
+                box-shadow: none !important;
+                max-width: 100% !important;
+                padding: 30px !important;
+            }
+            .action-tray {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="digital-slip-card" id="digitalSlipBox">
+        
+        <!-- Top Branded Curved Vectors Layout -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V110C375 110 280 210 0 140V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4a0012"/>
+                    <stop offset="1" stop-color="#800020"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <!-- Bottom Branded Curved Vectors Layout -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 150H0V70C0 70 120 -10 375 50V150Z" fill="#800020"/>
+        </svg>
+
+        <!-- Dynamic User Data Payload Content Layer -->
+        <div class="card-inner-payload">
+            
+            <div class="card-meta-row">
+                <div class="brand-logo-pack">
+                    <img src="birrgo-logo.png" alt="BirrGo">
+                </div>
+                <div class="gold-emv-chip"></div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 22px;">
+                <div class="status-pill-badge">
+                    <svg width="12" height="12" viewBox="0 0 24 24">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Secure Verified Receipt
+                </div>
+            </div>
+
+            <!-- Dynamic Network Streaming Node Box -->
+            <div id="slip-stream-loader" class="slip-stream-loader">
+                Decrypting secure transaction node layer...
+            </div>
+
+            <!-- UI Render Content Target inside white container box -->
+            <div id="slip-secure-content" style="display: none;">
+                
+                <div class="slip-campaign-avatar" id="avatar-container">
+                    <span>⚡</span>
+                </div>
+
+                <div class="ledger-amount-box">
+                    <div class="ledger-label">Receipt Amount</div>
+                    <div id="val-amount" class="ledger-val">0.00 Br</div>
+                </div>
+
+                <div class="glass-meta-grid">
+                    <div class="grid-item">
+                        <span class="grid-lbl">Description</span>
+                        <span id="val-desc" class="grid-val">—</span>
+                    </div>
+                    <div class="grid-item">
+                        <span class="grid-lbl">Date</span>
+                        <span id="val-date" class="grid-val">—</span>
+                    </div>
+                    <div class="grid-item">
+                        <span class="grid-lbl">Time</span>
+                        <span id="val-time" class="grid-val">—</span>
+                    </div>
+                    <div class="grid-item">
+                        <span class="grid-lbl">Reference Code</span>
+                        <span id="val-ref" class="grid-val">—</span>
+                    </div>
+                    <div class="grid-item">
+                        <span class="grid-lbl">Status</span>
+                        <span style="color: var(--success-color); font-weight: 700;">Success</span>
+                    </div>
+
+                    <!-- Layout Control Buttons container included inside the white metadata grid -->
+                    <div class="action-tray">
+                        <button class="tray-btn tray-btn-secondary" id="dismissCardBtn">Close</button>
+                        <button class="tray-btn tray-btn-primary" id="triggerPrintBtn" disabled>Print PDF</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const activeUserPhone = localStorage.getItem('auth_session_phone');
+            
+            if (!activeUserPhone) {
+                window.location.replace("new2.html");
+                return;
+            }
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const targetTxnId = urlParams.get('txnId');
+
+            if (!targetTxnId) {
+                document.getElementById('slip-stream-loader').innerText = "Error: Invalid transaction parameters.";
+                return;
+            }
+
+            try {
+                const txnRef = ref(db, `users/${activeUserPhone}/transactions/${targetTxnId}`);
+                const snapshot = await get(txnRef);
+
+                if (snapshot.exists()) {
+                    populateDigitalSlip(targetTxnId, snapshot.val());
+                } else {
+                    const promoRef = ref(db, `users/${activeUserPhone}/claimedPromos/${targetTxnId}`);
+                    const promoSnapshot = await get(promoRef);
+
+                    if (promoSnapshot.exists()) {
+                        const promoData = promoSnapshot.val();
+                        let dateLabel = 'Just now';
+                        if (promoData.claimedAt) {
+                            const d = new Date(Number(promoData.claimedAt));
+                            dateLabel = d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        }
+
+                        populateDigitalSlip(targetTxnId, {
+                            title: `claimed ${targetTxnId}`,
+                            timestamp: dateLabel,
+                            amount: parseFloat(promoData.amountClaimed) || 0,
+                            type: 'income',
+                            isPromo: true
+                        });
+                    } else {
+                        document.getElementById('slip-stream-loader').innerText = "Account receipt nodes could not be located.";
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                document.getElementById('slip-stream-loader').innerText = "Network pipeline connection failed.";
+            }
+        });
+
+        function populateDigitalSlip(id, tx) {
+            const amountEl = document.getElementById('val-amount');
+            const descEl = document.getElementById('val-desc');
+            const dateEl = document.getElementById('val-date');
+            const timeEl = document.getElementById('val-time');
+            const refEl = document.getElementById('val-ref');
+            const avatarContainer = document.getElementById('avatar-container');
+
+            const amountValue = parseFloat(tx.amount) || 0;
+            const isIncome = tx.type === 'income' || amountValue > 0;
+
+            amountEl.innerText = `${isIncome ? '+' : '-'}${Math.abs(amountValue).toFixed(2)} Br`;
+            amountEl.className = `ledger-val ${isIncome ? 'positive' : 'negative'}`;
+
+            let originalTitle = tx.title || 'Wallet Activity';
+            let lowerTitle = originalTitle.toLowerCase();
+            let finalCleanTitle = originalTitle; 
+            let iconSrc = "";
+
+            if (lowerTitle.includes('iphone')) {
+                finalCleanTitle = lowerTitle.includes('17') ? originalTitle : "iPhone 17 Pro Max";
+                iconSrc = "i2.jpg";
+            } else if (lowerTitle.includes('byd')) {
+                finalCleanTitle = originalTitle;
+                iconSrc = "by.jpg";
+            } else if (lowerTitle.includes('jetour')) {
+                finalCleanTitle = originalTitle;
+                iconSrc = "33111.jpg";
+            } else if (lowerTitle.includes('samsun')) {
+                finalCleanTitle = lowerTitle.includes('25') ? originalTitle : "Samsung S25 Ultra";
+                iconSrc = "s2.jpg";
+            } else if (lowerTitle.includes('motorcycle')) {
+                finalCleanTitle = originalTitle;
+                iconSrc = "m2.jpg";
+            } else if (lowerTitle.includes('bajaj')) {
+                finalCleanTitle = originalTitle;
+                iconSrc = "b2.jpg";
+            } else if (lowerTitle.includes('deposit') || lowerTitle.includes('cbe') || lowerTitle.includes('commercial')) {
+                finalCleanTitle = "Commercial Bank of Ethiopia";
+                iconSrc = "c2.jpg";
+            } else if (lowerTitle.includes('cbe birr')) {
+                finalCleanTitle = "CBE Birr";
+                iconSrc = "c1.jpg";
+            } else if (lowerTitle.includes('tele bir') || lowerTitle.includes('telebirr')) {
+                finalCleanTitle = "Telebirr";
+                iconSrc = "t1.jpg";
+            } else if (lowerTitle.includes('boa')) {
+                finalCleanTitle = "Bank of Abyssinia (BOA)";
+                iconSrc = "b1.jpg";
+            } else if (lowerTitle.includes('safari')) {
+                finalCleanTitle = "Safaricom";
+                iconSrc = "s1.jpg";
+            } else if (lowerTitle.includes('telefram') || lowerTitle.includes('telegram')) {
+                finalCleanTitle = "Telegram Ecosystem";
+                iconSrc = "te.jpg";
+            } else if (lowerTitle.includes('instagram')) {
+                finalCleanTitle = "Instagram Engagement";
+                iconSrc = "i.jpg";
+            } else if (lowerTitle.includes('face bok') || lowerTitle.includes('facebook')) {
+                finalCleanTitle = "Facebook Engagement";
+                iconSrc = "f.jpg";
+            } else if (lowerTitle.includes('youtube')) {
+                finalCleanTitle = "YouTube Streaming";
+                iconSrc = "y.jpg";
+            } else if (lowerTitle.includes('tiktok')) {
+                finalCleanTitle = "TikTok Media Core";
+                iconSrc = "t.jpg";
+            } else if (lowerTitle.includes('bingo')) {
+                finalCleanTitle = lowerTitle.includes('win') ? "Bingo Win" : "Bingo Price";
+                iconSrc = "6.jpg";
+            } else if (lowerTitle.includes('invitation') || lowerTitle.includes('invited')) {
+                finalCleanTitle = "Invited Partner Node";
+                iconSrc = "6.jpg";
+            } else if (lowerTitle.includes('video') || lowerTitle.includes('preview') || lowerTitle.includes('watch')) {
+                iconSrc = "33164.png";
+            }
+
+            if (tx.isPromo && !iconSrc) {
+                iconSrc = "33440.png";
+            }
+
+            if (iconSrc) {
+                avatarContainer.innerHTML = `<img src="${iconSrc}" alt="Icon">`;
+            }
+
+            descEl.innerText = finalCleanTitle;
+            refEl.innerText = id;
+
+            if (tx.timestamp && tx.timestamp !== 'Just now' && (tx.timestamp.includes(' pm') || tx.timestamp.includes(' am') || tx.timestamp.includes(' PM') || tx.timestamp.includes(' AM'))) {
+                const parts = tx.timestamp.split(',');
+                dateEl.innerText = parts[0].trim();
+                timeEl.innerText = parts[1] ? parts[1].trim() : '—';
+            } else {
+                dateEl.innerText = tx.timestamp || 'Just now';
+                timeEl.innerText = '—';
+            }
+
+            document.getElementById('slip-stream-loader').style.display = 'none';
+            document.getElementById('slip-secure-content').style.display = 'block';
+            
+            const triggerPrintBtn = document.getElementById('triggerPrintBtn');
+            triggerPrintBtn.disabled = false;
+            triggerPrintBtn.onclick = () => window.print();
+        }
+
+        document.getElementById('dismissCardBtn').onclick = () => {
+            if (document.referrer && document.referrer.includes('wallet.html')) {
+                window.history.back();
+            } else {
+                window.location.replace('wallet.html');
+            }
+        };
+    </script>
+</body>
+</html>
