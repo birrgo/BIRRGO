@@ -719,13 +719,11 @@
             notificationRingBtn.classList.add('disabled-badge');
         }
 
-        // NEW: Check if browser environment supports Push API
         function isPushSupported() {
             return 'serviceWorker' in navigator && 'PushManager' in window;
         }
 
         async function triggerNotificationPrompt() {
-            // Failsafe 1: Check environment support first
             if (!isPushSupported()) {
                 showToast("Not Supported", "Push alerts are not supported by this browser.", "error");
                 disableNotificationUI();
@@ -735,20 +733,22 @@
             if (window.OneSignalDeferred) {
                 window.OneSignalDeferred.push(async function(OneSignal) {
                     try {
-                        // Failsafe 2: Native prompt and strict error enforcement
                         const permissionGranted = await OneSignal.Notifications.requestPermission();
                         
                         if (permissionGranted) {
+                            // Link the device to the registered phone number in OneSignal dashboard
+                            if (activeUserPhone) {
+                                OneSignal.login(activeUserPhone); 
+                            }
+                            
                             enableNotificationUI();
                             showToast("Permission Granted", "Your device is now connected to alerts.", "success");
                         } else {
-                            // Enforce UI rejection if user clicks "X" or "Block"
                             disableNotificationUI();
                             showToast("Permission Denied", "Alerts were blocked or closed.", "error");
                         }
                     } catch (error) {
                         console.error("OneSignal Setup Error:", error);
-                        // Enforce UI rejection if SSL/Worker fails
                         disableNotificationUI();
                         showToast("Setup Failed", "Could not complete secure setup.", "error");
                     }
@@ -769,6 +769,13 @@
             if (notificationsToggle.checked) {
                 triggerNotificationPrompt();
             } else {
+                if (window.OneSignalDeferred) {
+                    window.OneSignalDeferred.push(function(OneSignal) {
+                         if (activeUserPhone) {
+                             OneSignal.logout();
+                         }
+                    });
+                }
                 disableNotificationUI();
                 showToast("Alerts Silenced", "Push alerts have been disabled.", "success");
             }
@@ -795,6 +802,9 @@
                 window.OneSignalDeferred.push(function(OneSignal) {
                     if (OneSignal.Notifications.hasPermission) {
                         enableNotificationUI();
+                        if (activeUserPhone) {
+                            OneSignal.login(activeUserPhone);
+                        }
                     } else {
                         disableNotificationUI();
                     }
@@ -979,6 +989,11 @@
         }
         
         logoutConfirmBtn.addEventListener('click', () => {
+            if (window.OneSignalDeferred) {
+                window.OneSignalDeferred.push(function(OneSignal) {
+                     OneSignal.logout();
+                });
+            }
             localStorage.removeItem('auth_session_phone');
             window.location.href = "new2.html";
         });
