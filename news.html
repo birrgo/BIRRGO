@@ -69,9 +69,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
         }
 
-        .back-action-btn {
+        .back-action-btn, .search-action-btn {
             width: 32px;
             height: 32px;
             border-radius: 50%;
@@ -84,14 +85,14 @@
             cursor: pointer;
             text-decoration: none;
             transition: transform 0.15s ease;
+            flex-shrink: 0;
         }
-        .back-action-btn:active { transform: scale(0.92); }
-        .back-action-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+        .back-action-btn:active, .search-action-btn:active { transform: scale(0.92); }
+        .back-action-btn svg, .search-action-btn svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.5; }
 
         .header-title-text { font-size: 15px; font-weight: 800; color: #ffffff; white-space: nowrap; }
 
         .header-live-clock-badge {
-            margin-left: auto;
             background: rgba(255, 255, 255, 0.15);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 5px 10px;
@@ -103,6 +104,8 @@
             letter-spacing: 0.2px;
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+            text-align: center;
+            margin: 0 auto;
         }
 
         .app-content {
@@ -173,9 +176,7 @@
             padding: 14px 16px;
             min-height: 290px;
         }
-        .featured-broadcast-card.native-ad-card::before {
-            background: #2563eb;
-        }
+        .featured-broadcast-card.native-ad-card::before { background: #2563eb; }
 
         .ad-script-wrapper {
             width: 100%;
@@ -186,7 +187,7 @@
             position: relative;
         }
 
-        .badge-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .badge-meta-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; flex-wrap: wrap; gap: 6px; }
 
         .spotlight-pill {
             background: rgba(128, 0, 32, 0.06);
@@ -197,17 +198,20 @@
             font-weight: 800;
             text-transform: uppercase;
         }
-        
-        .spotlight-pill.system-badge {
-            background: #f0f4f9;
-            color: #2563eb;
-        }
 
-        .spotlight-pill.inline-ad-badge {
-            background: #f0f4f9;
-            color: #2563eb;
+        .news-code-badge {
+            background: #f1f5f9;
+            color: #475569;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 10px;
             font-weight: 800;
+            letter-spacing: 0.5px;
+            border: 1px solid var(--border-light);
         }
+        
+        .spotlight-pill.system-badge { background: #f0f4f9; color: #2563eb; }
+        .spotlight-pill.inline-ad-badge { background: #f0f4f9; color: #2563eb; font-weight: 800; }
 
         .timestamp-log-text { font-size: 11px; font-weight: 600; color: var(--text-muted); font-variant-numeric: tabular-nums; }
 
@@ -230,9 +234,7 @@
             transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .broadcast-image-frame img.loaded {
-            filter: blur(0);
-        }
+        .broadcast-image-frame img.loaded { filter: blur(0); }
 
         .broadcast-title {
             font-size: 16px;
@@ -240,6 +242,7 @@
             color: var(--text-dark);
             line-height: 1.35;
             margin-bottom: 6px;
+            cursor: pointer;
         }
 
         .broadcast-body-text {
@@ -250,25 +253,57 @@
             white-space: pre-wrap;
         }
 
-        /* Responsive branding logo for standard news cards */
+        .action-buttons-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .view-full-news-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--bg-light);
+            color: var(--primary-burgundy);
+            border: 1px solid rgba(128, 0, 32, 0.2);
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+        }
+        .view-full-news-btn:active { transform: scale(0.96); }
+
+        .redirect-link-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            border-radius: 8px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px var(--accent-glow);
+            transition: transform 0.15s ease, opacity 0.2s;
+        }
+        .redirect-link-btn:active { transform: scale(0.97); }
+        .redirect-link-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
         .card-footer-branding-row {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
-            margin-top: 10px;
+            justify-content: space-between;
+            margin-top: 12px;
             width: 100%;
         }
 
-        .inline-card-logo {
-            width: 18px;
-            height: 18px;
-            object-fit: contain;
-            opacity: 0.85;
-            transition: transform 0.2s ease;
-        }
-        .inline-card-logo:hover {
-            transform: scale(1.1);
-        }
+        .inline-card-logo { width: 18px; height: 18px; object-fit: contain; opacity: 0.85; }
 
         .promo-redeem-card {
             display: none;
@@ -299,10 +334,6 @@
             background-color: var(--bg-light);
             outline: none;
         }
-        .promo-input-field:focus {
-            border-color: var(--primary-burgundy);
-            background-color: #ffffff;
-        }
 
         .promo-submit-btn {
             padding: 0 18px;
@@ -315,6 +346,141 @@
             cursor: pointer;
         }
 
+        /* Search Overlay Drawer */
+        .search-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            flex-direction: column;
+            padding: calc(12px + env(safe-area-inset-top)) 16px 20px 16px;
+        }
+        .search-modal-overlay.active-search { display: flex; }
+
+        .search-box-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+
+        .search-input-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 0 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .search-input-wrapper svg { width: 18px; height: 18px; color: var(--text-muted); margin-right: 8px; flex-shrink: 0; }
+
+        .search-news-field {
+            width: 100%;
+            height: 44px;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-dark);
+            background: transparent;
+        }
+
+        .close-search-btn {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            color: var(--text-dark);
+            font-size: 13px;
+            font-weight: 800;
+            padding: 10px 14px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .search-results-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+
+        /* Full News Dedicated View Modal Page */
+        .full-news-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            z-index: 2000;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .full-news-modal-overlay.active-reader { display: flex; }
+
+        .news-reader-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: calc(12px + env(safe-area-inset-top)) 16px 12px 16px;
+            background: var(--primary-gradient);
+            color: #ffffff;
+        }
+
+        .close-reader-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .close-reader-btn svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2.5; }
+
+        .news-reader-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 16px 40px 16px;
+        }
+
+        .reader-meta-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .reader-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.35;
+            margin-bottom: 14px;
+        }
+
+        .reader-image-frame {
+            width: 100%;
+            max-height: 280px;
+            border-radius: 14px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-light);
+        }
+        .reader-image-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .reader-full-body {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #334155;
+            white-space: pre-wrap;
+            font-weight: 500;
+        }
+
         .custom-popup-overlay {
             display: none;
             position: fixed;
@@ -325,7 +491,7 @@
             background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
-            z-index: 1000;
+            z-index: 2100;
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -374,14 +540,48 @@
             </div>
         </div>
 
+        <!-- Dedicated Full News View Overlay -->
+        <div class="full-news-modal-overlay" id="fullNewsModalOverlay">
+            <div class="news-reader-header">
+                <h2 style="font-size: 15px; font-weight: 800;">Full Article Details</h2>
+                <button class="close-reader-btn" id="closeNewsReaderBtn" aria-label="Close Reader">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="news-reader-content" id="fullNewsReaderBody">
+                <!-- Content injected dynamically -->
+            </div>
+        </div>
+
+        <!-- Search Drawer Overlay -->
+        <div class="search-modal-overlay" id="searchModalOverlay">
+            <div class="search-box-header">
+                <div class="search-input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter News Code (e.g. N-102) or title..." autocomplete="off">
+                </div>
+                <button class="close-search-btn" id="closeSearchDrawerBtn">Cancel</button>
+            </div>
+            <div class="search-results-area" id="searchResultsArea">
+                <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
+                    Type a news code or keyword above to find updates quickly.
+                </div>
+            </div>
+        </div>
+
         <header class="nav-header">
             <div class="header-left-group">
                 <a href="dashboard.html" class="back-action-btn" aria-label="Navigate Back">
                     <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
                 </a>
-                <h1 class="header-title-text">What's new today?</h1>
+                <h1 class="header-title-text">What's new?</h1>
             </div>
+            
             <div class="header-live-clock-badge" id="topCornerLiveClock">00:00:00 AM</div>
+
+            <button class="search-action-btn" id="openSearchBtn" aria-label="Search News">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
         </header>
 
         <main class="app-content">
@@ -458,6 +658,8 @@
 
             streamLiveAdminUpdatesLog();
             bindVisualInterfaceControls();
+            setupSearchEngineControls();
+            setupNewsReaderModalControls();
             
             const claimBtn = document.getElementById('claimPromoBtn');
             if (claimBtn) claimBtn.addEventListener('click', processPromoClaim);
@@ -554,7 +756,7 @@
                         <div class="badge-meta-row"><span class="spotlight-pill">System OK</span></div>
                         <h2 class="broadcast-title">All Systems Nominal</h2>
                         <p class="broadcast-body-text">There are no updates or notices posted under this filter category today.</p>
-                        <div class="card-footer-branding-row"><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
+                        <div class="card-footer-branding-row"><div></div><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
                     </article>
                 `;
             }
@@ -606,6 +808,151 @@
             iframeDoc.close();
         }
 
+        /* Build Card Preview HTML */
+        function buildSingleNewsCardHTML(item) {
+            const headline = item.title || "Platform Announcement";
+            const fullContent = item.content || item.message || "";
+            const category = item.category || "All Updates";
+            const imageUrl = item.imageUrl || "";
+            const newsCode = item.newsCode || item.code || item.id || "";
+            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
+
+            // Truncate text for preview if it's long
+            const maxPreviewLen = 120;
+            const isLongText = fullContent.length > maxPreviewLen;
+            const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
+
+            let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
+
+            if (!numericalTime && item.date) {
+                const parsed = new Date(item.date).getTime();
+                if (!isNaN(parsed)) numericalTime = parsed;
+            }
+
+            if (!numericalTime) numericalTime = Date.now(); 
+
+            const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
+            const isSystem = category.trim().toLowerCase() === "system releases";
+            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+
+            let imageHTML = "";
+            if (imageUrl && imageUrl.trim().length > 0) {
+                imageHTML = `<div class="broadcast-image-frame"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
+            }
+
+            let codeBadgeHTML = "";
+            if (newsCode) {
+                codeBadgeHTML = `<span class="news-code-badge">CODE: ${newsCode}</span>`;
+            }
+
+            let redirectBtnHTML = "";
+            if (targetRedirectUrl && targetRedirectUrl.trim().length > 0) {
+                redirectBtnHTML = `
+                    <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn">
+                        <span>Open Link</span>
+                        <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                `;
+            }
+
+            return `
+                <div class="badge-meta-row">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
+                        ${codeBadgeHTML}
+                    </div>
+                    <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
+                </div>
+                ${imageHTML}
+                <h2 class="broadcast-title" onclick="openFullNewsReader('${item.id}')">${headline}</h2>
+                <p class="broadcast-body-text">${previewContent}</p>
+                
+                <div class="action-buttons-group">
+                    <button class="view-full-news-btn" onclick="openFullNewsReader('${item.id}')">
+                        📖 Read Full News
+                    </button>
+                    ${redirectBtnHTML}
+                </div>
+
+                <div class="card-footer-branding-row">
+                    <div></div>
+                    <img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token">
+                </div>
+            `;
+        }
+
+        window.openFullNewsReader = function(itemId) {
+            const item = localCachedBroadcasts.find(n => n.id === itemId);
+            if (!item) return;
+
+            const readerOverlay = document.getElementById('fullNewsModalOverlay');
+            const readerBody = document.getElementById('fullNewsReaderBody');
+
+            if (!readerOverlay || !readerBody) return;
+
+            const headline = item.title || "Platform Announcement";
+            const fullContent = item.content || item.message || "";
+            const category = item.category || "All Updates";
+            const imageUrl = item.imageUrl || "";
+            const newsCode = item.newsCode || item.code || item.id || "";
+            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
+
+            let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
+            if (!numericalTime && item.date) {
+                const parsed = new Date(item.date).getTime();
+                if (!isNaN(parsed)) numericalTime = parsed;
+            }
+            if (!numericalTime) numericalTime = Date.now();
+
+            const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
+            const isSystem = category.trim().toLowerCase() === "system releases";
+            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+
+            let imageHTML = "";
+            if (imageUrl && imageUrl.trim().length > 0) {
+                imageHTML = `<div class="reader-image-frame"><img src="${imageUrl}"></div>`;
+            }
+
+            let redirectBtnHTML = "";
+            if (targetRedirectUrl && targetRedirectUrl.trim().length > 0) {
+                redirectBtnHTML = `
+                    <div style="margin-top:20px;">
+                        <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn" style="width:100%; justify-content:center; padding:12px;">
+                            <span>Visit External Source / Link</span>
+                            <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                `;
+            }
+
+            readerBody.innerHTML = `
+                <div class="reader-meta-bar">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
+                        ${newsCode ? `<span class="news-code-badge">CODE: ${newsCode}</span>` : ''}
+                    </div>
+                    <span class="timestamp-log-text">${initialFormattedClock}</span>
+                </div>
+                <h1 class="reader-title">${headline}</h1>
+                ${imageHTML}
+                <div class="reader-full-body">${fullContent}</div>
+                ${redirectBtnHTML}
+            `;
+
+            readerOverlay.classList.add('active-reader');
+        };
+
+        function setupNewsReaderModalControls() {
+            const closeBtn = document.getElementById('closeNewsReaderBtn');
+            const readerOverlay = document.getElementById('fullNewsModalOverlay');
+
+            if (closeBtn && readerOverlay) {
+                closeBtn.addEventListener('click', () => {
+                    readerOverlay.classList.remove('active-reader');
+                });
+            }
+        }
+
         function renderFilteredBroadcasts() {
             const container = document.getElementById('broadcastsContainer');
             if (!container) return;
@@ -640,44 +987,9 @@
             }
 
             filtered.forEach((item, index) => {
-                const headline = item.title || "Platform Announcement";
-                const content = item.content || item.message || "";
-                const category = item.category || "All Updates";
-                const imageUrl = item.imageUrl || "";
-
-                let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
-
-                if (!numericalTime && item.date) {
-                    const parsed = new Date(item.date).getTime();
-                    if (!isNaN(parsed)) numericalTime = parsed;
-                }
-
-                if (!numericalTime) {
-                    numericalTime = Date.now(); 
-                }
-
-                const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-                const isSystem = category.trim().toLowerCase() === "system releases";
-                const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
-
                 const card = document.createElement('article');
                 card.className = "featured-broadcast-card";
-                
-                let imageHTML = "";
-                if (imageUrl && imageUrl.trim().length > 0) {
-                    imageHTML = `<div class="broadcast-image-frame"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
-                }
-
-                card.innerHTML = `
-                    <div class="badge-meta-row">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
-                        <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
-                    </div>
-                    ${imageHTML}
-                    <h2 class="broadcast-title">${headline}</h2>
-                    <p class="broadcast-body-text">${content}</p>
-                    <div class="card-footer-branding-row"><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
-                `;
+                card.innerHTML = buildSingleNewsCardHTML(item);
                 container.appendChild(card);
 
                 if (currentActiveCategoryFilter === "All Updates" || currentActiveCategoryFilter === "System Releases") {
@@ -712,6 +1024,78 @@
                     currentActiveCategoryFilter = this.getAttribute('data-category') || this.innerText.trim();
                     renderFilteredBroadcasts();
                 });
+            });
+        }
+
+        /* News Code Search Engine Logic */
+        function setupSearchEngineControls() {
+            const openBtn = document.getElementById('openSearchBtn');
+            const closeBtn = document.getElementById('closeSearchDrawerBtn');
+            const searchOverlay = document.getElementById('searchModalOverlay');
+            const searchInput = document.getElementById('newsCodeSearchInput');
+
+            if (openBtn && searchOverlay) {
+                openBtn.addEventListener('click', () => {
+                    searchOverlay.classList.add('active-search');
+                    if (searchInput) {
+                        searchInput.value = '';
+                        searchInput.focus();
+                    }
+                    executeNewsSearchQuery('');
+                });
+            }
+
+            if (closeBtn && searchOverlay) {
+                closeBtn.addEventListener('click', () => {
+                    searchOverlay.classList.remove('active-search');
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    executeNewsSearchQuery(e.target.value);
+                });
+            }
+        }
+
+        function executeNewsSearchQuery(query) {
+            const resultsArea = document.getElementById('searchResultsArea');
+            if (!resultsArea) return;
+
+            const cleanQuery = query.trim().toLowerCase();
+
+            if (!cleanQuery) {
+                resultsArea.innerHTML = `
+                    <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
+                        Type a news code or keyword above to find updates quickly.
+                    </div>
+                `;
+                return;
+            }
+
+            const matchedNews = localCachedBroadcasts.filter(item => {
+                const code = String(item.newsCode || item.code || item.id || '').toLowerCase();
+                const title = String(item.title || '').toLowerCase();
+                const content = String(item.content || item.message || '').toLowerCase();
+
+                return code.includes(cleanQuery) || title.includes(cleanQuery) || content.includes(cleanQuery);
+            });
+
+            if (matchedNews.length === 0) {
+                resultsArea.innerHTML = `
+                    <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
+                        No updates matching "<strong>${cleanQuery}</strong>" found.
+                    </div>
+                `;
+                return;
+            }
+
+            resultsArea.innerHTML = '';
+            matchedNews.forEach(item => {
+                const card = document.createElement('article');
+                card.className = "featured-broadcast-card";
+                card.innerHTML = buildSingleNewsCardHTML(item);
+                resultsArea.appendChild(card);
             });
         }
 
