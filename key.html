@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Video Key Challenge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
+            --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --success-green: #059669;
+            --warning-amber: #d97706;
+            --error-red: #dc2626;
+            --border-radius-lg: 20px;
+            --border-radius-md: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100dvh;
+            background-color: #f1f5f9;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .app-view {
+            width: 100%;
+            height: 100dvh;
+            max-width: 450px;
+            background-color: var(--bg-light);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(128, 0, 32, 0.08);
+            overflow: hidden;
+            transition: filter 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .tech-bg-pattern {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
+                radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 16px 16px;
+        }
+
+        .app-view.network-offline-blur {
+            filter: blur(6px);
+            pointer-events: none;
+        }
+
+        .top-wave-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(82px + env(safe-area-inset-top));
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .top-wave-header svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
+        }
+
+        .bottom-wave-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bottom-wave-footer svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .brand-header {
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            left: 16px;
+            right: 16px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .back-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--primary-burgundy);
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
+            transition: transform 0.15s, box-shadow 0.15s ease;
+        }
+        .back-btn:active {
+            transform: translateY(2px) scale(0.94);
+        }
+
+        .logo-image {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
+        }
+
+        .app-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: calc(78px + env(safe-area-inset-top)) 16px calc(70px + env(safe-area-inset-bottom)) 16px;
+            scrollbar-width: none;
+            position: relative;
+            z-index: 2;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        .section-heading {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-top: 4px;
+            margin-bottom: 12px;
+        }
+
+        .task-container {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .task-card {
+            background: var(--card-tech-bg);
+            border: 1.5px solid #e2e8f0;
+            border-radius: var(--border-radius-md);
+            padding: 12px 14px;
+            box-shadow: var(--blue-glow-shadow);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s;
+        }
+
+        .task-card:hover {
+            border-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        .task-card.completed {
+            border-color: #a7f3d0;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        }
+
+        .task-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .task-icon-badge {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            font-size: 18px;
+        }
+
+        .task-details h4 {
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 2px;
+        }
+
+        .task-details p {
+            font-size: 11px;
+            color: var(--primary-burgundy);
+            font-weight: 800;
+        }
+
+        .btn-watch-container {
+            width: 100%;
+        }
+
+        .btn-watch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 9px 14px;
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            border: none;
+            background: var(--primary-gradient);
+            box-shadow: 
+                0 4px 0px #4a0000,
+                0 6px 14px rgba(128, 0, 32, 0.25);
+            transform: translateY(0);
+            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .watch-icon-play {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            font-size: 9px;
+            animation: pulseGlow 1.8s infinite ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6); }
+            70% { transform: scale(1.15); box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+        }
+
+        .btn-watch:active {
+            transform: translateY(3px);
+            box-shadow: 
+                0 1px 0px #4a0000,
+                0 2px 6px rgba(128, 0, 32, 0.2);
+        }
+
+        .action-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .key-input {
+            flex: 1;
+            padding: 8px 10px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            outline: none;
+            text-align: center;
+            color: var(--text-dark);
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .key-input:focus {
+            border-color: var(--primary-burgundy);
+            box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.12);
+        }
+
+        .btn-claim {
+            border: none;
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            color: #ffffff;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+            transition: transform 0.15s ease;
+            white-space: nowrap;
+        }
+
+        .btn-claim:active {
+            transform: scale(0.95);
+        }
+
+        .status-verified {
+            color: #059669;
+            font-size: 11px;
+            font-weight: 800;
+            background: #dcfce7;
+            border: 1px solid #a7f3d0;
+            padding: 6px 14px;
+            border-radius: 100px;
+            display: inline-block;
+        }
+
+        .popup-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 6000;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .popup-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px 20px;
+            width: 88%;
+            max-width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            transform: scale(0.95);
+            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+
+        .popup-icon-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px auto;
+            font-size: 24px;
+        }
+
+        .popup-icon-circle.success { background: #dcfce7; color: #059669; }
+        .popup-icon-circle.error { background: #fee2e2; color: #dc2626; }
+        .popup-icon-circle.warning { background: #fef3c7; color: #d97706; }
+
+        .popup-title {
+            font-size: 17px;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .popup-title.success { color: #059669; }
+        .popup-title.error { color: #dc2626; }
+        .popup-title.warning { color: #d97706; }
+
+        .popup-message {
+            font-size: 13px;
+            color: #334155;
+            font-weight: 600;
+            line-height: 1.45;
+            margin-bottom: 16px;
+        }
+
+        .popup-btn {
+            width: 100%;
+            border: none;
+            border-radius: 100px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.1s ease;
+        }
+
+        .popup-btn:active {
+            transform: scale(0.97);
+        }
+
+        .popup-btn.btn-success { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
+        .popup-btn.btn-error { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
+        .popup-btn.btn-warning { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
+        .popup-btn.btn-brand { background: var(--primary-gradient); }
+    </style>
+</head>
+<body>
+
+    <div class="app-view" id="appView">
+        <div class="tech-bg-pattern"></div>
+
+        <div class="brand-header">
+            <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
+            <img class="logo-image" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
+        </div>
+        
+        <div class="top-wave-header">
+            <svg viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V55C250 85 125 40 0 65V0Z" fill="url(#brandGradientTop)"/>
+                <defs>
+                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="90" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#800020"/>
+                        <stop offset="1" stop-color="#5a0016"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="app-content">
+            <h2 class="section-heading">Watch Video & Find Key</h2>
+            <div class="task-container" id="videoTasksContainer">
+                <div style="text-align: center; padding: 20px; color: #64748b; font-size: 13px;">
+                    Loading video tasks...
+                </div>
+            </div>
+        </div>
+
+        <div class="bottom-wave-footer">
+            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
+                <defs>
+                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#800020"/>
+                        <stop offset="1" stop-color="#5a0016"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="popup-backdrop" id="customPopup">
+            <div class="popup-card">
+                <div class="popup-icon-circle" id="popupIconCircle"></div>
+                <h3 class="popup-title" id="popupTitle"></h3>
+                <p class="popup-message" id="popupMessage"></p>
+                <button class="popup-btn" id="popupActionBtn">OK</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, runTransaction, push, set, onValue, get, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const rawPhone = localStorage.getItem('auth_session_phone');
+            if (!rawPhone) {
+                window.location.replace("new2.html");
+                return;
+            }
+
+            const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
+
+            const appView = document.getElementById('appView');
+            const handleNetworkChange = () => {
+                if (!navigator.onLine) appView.classList.add('network-offline-blur');
+                else appView.classList.remove('network-offline-blur');
+            };
+            window.addEventListener('offline', handleNetworkChange);
+            window.addEventListener('online', handleNetworkChange);
+
+            const customPopup = document.getElementById('customPopup');
+            const popupIconCircle = document.getElementById('popupIconCircle');
+            const popupTitle = document.getElementById('popupTitle');
+            const popupMessage = document.getElementById('popupMessage');
+            const popupActionBtn = document.getElementById('popupActionBtn');
+
+            function showCustomPopup(type, title, message, btnText = "OK") {
+                popupIconCircle.className = `popup-icon-circle ${type}`;
+                popupTitle.className = `popup-title ${type}`;
+                popupActionBtn.className = `popup-btn btn-${type}`;
+
+                if (type === 'success') {
+                    popupIconCircle.innerHTML = "✔";
+                } else if (type === 'error') {
+                    popupIconCircle.innerHTML = "✖";
+                } else if (type === 'warning') {
+                    popupIconCircle.innerHTML = "⚠️";
+                } else {
+                    popupIconCircle.innerHTML = "ℹ️";
+                    popupActionBtn.className = "popup-btn btn-brand";
+                }
+
+                popupTitle.innerText = title;
+                popupMessage.innerText = message;
+                popupActionBtn.innerText = btnText;
+
+                customPopup.style.display = 'flex';
+            }
+
+            popupActionBtn.addEventListener('click', () => {
+                customPopup.style.display = 'none';
+            });
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+                authDomain: "birrgo-fdf7e.firebaseapp.com",
+                databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+                projectId: "birrgo-fdf7e",
+                storageBucket: "birrgo-fdf7e.firebasestorage.app",
+                messagingSenderId: "2317445154",
+                appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+                measurementId: "G-24X13TZ43D"
+            };
+
+            const app = initializeApp(firebaseConfig);
+            const db = getDatabase(app);
+
+            const container = document.getElementById('videoTasksContainer');
+
+            onValue(ref(db, 'video_tasks'), async (snapshot) => {
+                const data = snapshot.exists() ? snapshot.val() : {};
+                
+                let activeVideos = [];
+                for (let i = 1; i <= 6; i++) {
+                    if (data[`v${i}_url`]) {
+                        activeVideos.push({
+                            id: `v${i}`,
+                            name: `Video Task ${i}`,
+                            icon: "🎬",
+                            url: data[`v${i}_url`],
+                            key: String(data[`v${i}_key`] || "0000"),
+                            limit: data[`v${i}_limit`] || 100,
+                            prize: 30
+                        });
+                    }
+                }
+
+                if (activeVideos.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 30px; color: #64748b; font-size: 13px;">
+                            No active video tasks at the moment. Check back soon!
+                        </div>
+                    `;
+                    return;
+                }
+
+                await renderVideoCampaign(activeVideos);
+            }, (error) => {
+                console.error("Firebase fetch error:", error);
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444; font-size:13px;">Failed to load tasks. Check connection.</div>`;
+            });
+
+            async function renderVideoCampaign(taskList) {
+                container.innerHTML = '';
+
+                const claimedSnapshot = await get(ref(db, `users/${activeUserPhone}/claimed_tasks`));
+                const claimedData = claimedSnapshot.exists() ? claimedSnapshot.val() : {};
+                
+                for (const item of taskList) {
+                    const storageKey = `claimed_vid_${activeUserPhone}_${item.id}`;
+                    const savedUrlKey = `task_url_${activeUserPhone}_${item.id}`;
+                    
+                    const previousUrl = localStorage.getItem(savedUrlKey);
+                    let isAlreadyClaimed = localStorage.getItem(storageKey) === 'true' || claimedData[item.id] === true;
+
+                    // IF ADMIN UPDATED THE VIDEO URL -> RESET THE TASK FOR USER
+                    if (previousUrl && previousUrl !== item.url) {
+                        isAlreadyClaimed = false;
+                        localStorage.removeItem(storageKey);
+                        await remove(ref(db, `users/${activeUserPhone}/claimed_tasks/${item.id}`));
+                    }
+                    
+                    // Store current URL to detect future admin changes
+                    localStorage.setItem(savedUrlKey, item.url);
+
+                    const card = document.createElement('div');
+                    card.className = 'task-card';
+                    card.id = `card-${item.id}`;
+                    
+                    if (isAlreadyClaimed) {
+                        card.classList.add('completed');
+                        card.innerHTML = `
+                            <div class="task-top-row">
+                                <div class="task-left">
+                                    <div class="task-icon-badge">${item.icon}</div>
+                                    <div class="task-details">
+                                        <h4>${item.name}</h4>
+                                        <p style="color:#64748b;">Reward Claimed</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    <span class="status-verified">Claimed Already ✔</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        card.innerHTML = `
+                            <div class="task-top-row">
+                                <div class="task-left">
+                                    <div class="task-icon-badge">${item.icon}</div>
+                                    <div class="task-details">
+                                        <h4>${item.name}</h4>
+                                        <p>+${item.prize} Birr</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="btn-watch-container">
+                                <a href="${item.url}" target="_blank" class="btn-watch">
+                                    <span class="watch-icon-play">▶</span>
+                                    <span>WATCH VIDEO</span>
+                                </a>
+                            </div>
+
+                            <div class="action-row">
+                                <input type="text" class="key-input" id="input-${item.id}" placeholder="Enter Secret Key">
+                                <button class="btn-claim" id="claim-btn-${item.id}">Claim</button>
+                            </div>
+                        `;
+                    }
+                    container.appendChild(card);
+
+                    if (!isAlreadyClaimed) {
+                        document.getElementById(`claim-btn-${item.id}`).addEventListener('click', () => {
+                            verifyAndClaim(item);
+                        });
+                    }
+                }
+            }
+
+            async function verifyAndClaim(item) {
+                const inputField = document.getElementById(`input-${item.id}`);
+                const enteredKey = inputField.value.trim();
+                const btn = document.getElementById(`claim-btn-${item.id}`);
+
+                if (!enteredKey) {
+                    showCustomPopup('warning', 'Missing Key', 'Please enter the secret key found in the video to claim your reward.');
+                    return;
+                }
+
+                const storageKey = `claimed_vid_${activeUserPhone}_${item.id}`;
+                if (localStorage.getItem(storageKey) === 'true') {
+                    showCustomPopup('warning', 'Already Claimed', 'You have already claimed this video key reward.');
+                    return;
+                }
+
+                if (enteredKey !== item.key) {
+                    inputField.style.borderColor = "#ef4444";
+                    showCustomPopup('error', 'Wrong Secret Key', 'Wrong Key! No money added. Pay close attention to the video and try again.');
+                    return;
+                }
+
+                btn.disabled = true;
+                btn.innerText = "Adding...";
+                inputField.style.borderColor = "#059669";
+
+                try {
+                    // Credit wallet
+                    const walletBalanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                    await runTransaction(walletBalanceRef, (currentBalance) => {
+                        let balance = parseFloat(currentBalance) || 0;
+                        return balance + item.prize;
+                    });
+
+                    // Add transaction history
+                    const now = new Date();
+                    const timeStr = now.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ', ' + 
+                                    now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true });
+
+                    await set(push(ref(db, `users/${activeUserPhone}/transactions`)), {
+                        title: `Video Key Reward (${item.name})`,
+                        amount: item.prize,
+                        type: "income",
+                        timestamp: timeStr
+                    });
+
+                    // Save task status and current URL
+                    await set(ref(db, `users/${activeUserPhone}/claimed_tasks/${item.id}`), true);
+                    localStorage.setItem(storageKey, 'true');
+                    localStorage.setItem(`task_url_${activeUserPhone}_${item.id}`, item.url);
+
+                    // Update UI card to Completed
+                    const card = document.getElementById(`card-${item.id}`);
+                    card.classList.add('completed');
+                    card.innerHTML = `
+                        <div class="task-top-row">
+                            <div class="task-left">
+                                <div class="task-icon-badge">${item.icon}</div>
+                                <div class="task-details">
+                                    <h4>${item.name}</h4>
+                                    <p style="color:#64748b;">Reward Claimed</p>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="status-verified">Claimed Already ✔</span>
+                            </div>
+                        </div>
+                    `;
+
+                    showCustomPopup('success', 'Valid Key!', `${item.prize} Birr has been successfully added to your wallet.`, 'Awesome!');
+
+                } catch (err) {
+                    console.error("Transaction Error:", err);
+                    showCustomPopup('error', 'Network Error', "Couldn't update wallet due to connection issues. Please try again.");
+                    btn.disabled = false;
+                    btn.innerText = "Claim";
+                }
+            }
+
+            document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
+        });
+    </script>
+</body>
+</html>

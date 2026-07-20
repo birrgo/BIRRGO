@@ -390,8 +390,8 @@
             <div class="giveaway-hero-card video-pool">
                 <div class="giveaway-icon">🎬</div>
                 <div class="card-body">
-                    <h3 class="giveaway-title">Video Drop</h3>
-                    <p class="giveaway-desc">Watch quick verification clips.</p>
+                    <h3 class="giveaway-title">Watch Video and Fill Key</h3>
+                    <p class="giveaway-desc">Watch clips and enter secret keys.</p>
                 </div>
                 <button class="btn-claim" id="videoGiveawayBtn">Watch</button>
             </div>
@@ -485,8 +485,9 @@
                 window.location.replace('social.html');
             });
 
+            // Redirects directly to key.html
             document.getElementById('videoGiveawayBtn').addEventListener('click', () => {
-                openPopup('Video Stream Verification', 'Video streaming modules are currently syncing with live ledgers. Please check back shortly for updated streaming campaigns.');
+                window.location.replace('key.html');
             });
 
             document.getElementById('quizGiveawayBtn').addEventListener('click', () => {

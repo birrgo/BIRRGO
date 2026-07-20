@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Tasks Manager</title>
+    <link rel="stylesheet" href="new.css">
+    <style>
+        body { 
+            padding: 20px; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f1f5f9; 
+            margin: 0;
+        } 
+        
+        .top-nav {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .back-link { 
+            display: inline-flex; 
+            align-items: center;
+            gap: 8px;
+            color: #800020; 
+            font-weight: 700; 
+            text-decoration: none; 
+            font-size: 15px;
+            padding: 8px 12px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: background 0.2s;
+        }
+        .back-link:hover { background: #f8fafc; }
+        
+        .video-group {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        .video-group h4 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #800020;
+            font-size: 15px;
+            font-weight: 800;
+        }
+        .input-row { display: flex; gap: 10px; margin-bottom: 10px; }
+        .input-field-wrapper { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .input-field-wrapper label { font-size: 11px; font-weight: 600; color: #64748b; }
+        .admin-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .admin-input:focus { border-color: #2563eb; }
+    </style>
+</head>
+<body>
+    
+    <div class="top-nav">
+        <a href="new.html" class="back-link">
+            <span style="font-size: 18px;">←</span> Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Alert Toast -->
+    <div class="toast-banner" id="adminToast" style="display:none; position:fixed; top:20px; right:20px; padding:12px 20px; border-radius:8px; color:white; z-index:9999; font-weight: 600;"></div>
+
+    <div class="workspace-card" style="margin: 0 auto; max-width: 600px; display: block;">
+        <h3 class="section-title title-burgundy" style="color:#800020; font-size: 20px; margin-bottom: 5px; margin-top: 0;">Video Tasks Manager</h3>
+        <p style="font-size:13px;color:#64748b;margin-top:0;margin-bottom:20px;">Enter video tasks below. Fill in 1 or more videos and click push.</p>
+        
+        <div id="videoFieldsContainer"></div>
+
+        <button class="btn-admin-action btn-broadcast" id="updateVideoTasksBtn" style="margin-top:15px; width:100%; padding: 14px; font-size: 14px; font-weight: bold; background: linear-gradient(135deg, #800020 0%, #4a0000 100%); color: white; border: none; border-radius: 8px; cursor: pointer; box-shadow: 0 4px 10px rgba(128,0,32,0.2);">Push Video Tasks Live</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, get, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        // Direct Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        function triggerAdminAlert(msg, isSuccess=true) {
+            const t = document.getElementById('adminToast'); 
+            t.innerText = msg;
+            t.style.background = isSuccess ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; 
+            setTimeout(() => t.style.display = 'none', 4000);
+        }
+
+        // Render 6 Input Fields
+        const container = document.getElementById('videoFieldsContainer');
+        for(let i = 1; i <= 6; i++) {
+            container.innerHTML += `
+                <div class="video-group">
+                    <h4>Video Task ${i} <span style="font-size:11px; color:#94a3b8;">(Optional)</span></h4>
+                    <div class="input-field-wrapper" style="margin-bottom:8px;">
+                        <label>Video URL</label>
+                        <input type="text" id="v${i}_url" class="admin-input" placeholder="https://youtube.com/...">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-field-wrapper">
+                            <label>Secret Key</label>
+                            <input type="text" id="v${i}_key" class="admin-input" placeholder="e.g. 1234">
+                        </div>
+                        <div class="input-field-wrapper">
+                            <label>Max Winners Limit</label>
+                            <input type="number" id="v${i}_limit" class="admin-input" placeholder="e.g. 500">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch current active data from top-level 'video_tasks'
+        get(ref(db, 'video_tasks')).then(snap => {
+            if(snap.exists()) {
+                const d = snap.val();
+                for(let i = 1; i <= 6; i++) {
+                    if(d[`v${i}_url`]) document.getElementById(`v${i}_url`).value = d[`v${i}_url`];
+                    if(d[`v${i}_key`]) document.getElementById(`v${i}_key`).value = d[`v${i}_key`];
+                    if(d[`v${i}_limit`]) document.getElementById(`v${i}_limit`).value = d[`v${i}_limit`];
+                }
+            }
+        }).catch(err => {
+            console.error("Read Error:", err);
+            triggerAdminAlert("Error loading database: " + err.message, false);
+        });
+
+        // Submit directly to Realtime Database
+        document.getElementById('updateVideoTasksBtn').addEventListener('click', async () => {
+            const payload = {};
+            let activeCount = 0;
+
+            for(let i = 1; i <= 6; i++) {
+                const url = document.getElementById(`v${i}_url`).value.trim();
+                const key = document.getElementById(`v${i}_key`).value.trim();
+                const limit = parseInt(document.getElementById(`v${i}_limit`).value);
+
+                if(url !== "") {
+                    payload[`v${i}_url`] = url;
+                    payload[`v${i}_key`] = key || "0000";
+                    payload[`v${i}_limit`] = isNaN(limit) ? 100 : limit;
+                    activeCount++;
+                }
+            }
+
+            if(activeCount === 0) {
+                alert("Please enter at least 1 Video URL!");
+                triggerAdminAlert("Please enter at least 1 Video URL!", false);
+                return;
+            }
+
+            if(!confirm(`Push ${activeCount} video task(s) directly to Realtime Database?`)) {
+                return;
+            }
+
+            try {
+                let version = 1;
+                const snap = await get(ref(db, 'video_tasks'));
+                if(snap.exists() && snap.val().version) {
+                    version = (parseInt(snap.val().version) || 0) + 1;
+                }
+
+                payload.version = version;
+
+                // Save directly under 'video_tasks' in Realtime Database
+                await set(ref(db, 'video_tasks'), payload);
+                
+                alert(`SUCCESS! Saved ${activeCount} task(s) to Firebase Realtime Database.`);
+                triggerAdminAlert(`SUCCESS! Pushed ${activeCount} task(s) live.`, true);
+
+            } catch(error) {
+                console.error("Write Error:", error);
+                alert("DATABASE ERROR: " + error.message);
+                triggerAdminAlert("Error saving: " + error.message, false);
+            }
+        });
+    </script>
+</body>
+</html>
