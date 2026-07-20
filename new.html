@@ -69,10 +69,23 @@
         .btn-socials {
             background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
         }
+        .btn-user {
+            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
+        }
+        .btn-support {
+            background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
+        }
+        
+        /* Modernized split actions for notifications & AI settings portal */
+        .btn-push-action {
+            background: linear-gradient(135deg, #047857 0%, #022c22 100%);
+        }
+        .btn-ai-action {
+            background: linear-gradient(135deg, #b91c1c 0%, #580016 100%);
+        }
     </style>
 
     <script>
-        // Authorized! Allow the body elements to render once DOM is ready
         document.documentElement.style.visibility = "visible";
         document.addEventListener("DOMContentLoaded", () => {
             document.body.style.display = "block";
@@ -95,12 +108,20 @@
                 </button>
             </a>
 
-            <!-- NEW PUSH NOTIFICATIONS GATEWAY -->
-            <a href="push.html" style="text-decoration: none;">
-                <button class="role-nav-btn" style="background: linear-gradient(135deg, #047857 0%, #022c22 100%); color: white; width: 100%;">
-                    <span class="icon">🔔</span> Push Notification
-                </button>
-            </a>
+            <!-- INTEGRATED NOTIFICATIONS & AI MANAGMENT CONTROL BOX -->
+            <div class="nested-box-container">
+                <div class="nested-title-header">
+                    <span>📣</span> Gateways & Support AI
+                </div>
+                <div class="nested-btn-split">
+                    <a href="push.html">
+                        <button class="sub-nav-btn btn-push-action">Push Info</button>
+                    </a>
+                    <a href="ais.html">
+                        <button class="sub-nav-btn btn-ai-action">🤖 Gemini</button>
+                    </a>
+                </div>
+            </div>
 
             <!-- NEW VERIFIED EMAIL & OTP SYSTEM BUTTON -->
             <a href="verified.html" style="text-decoration: none;">
@@ -146,11 +167,21 @@
                 </div>
             </div>
 
-            <a href="user-profile.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-stats" style="width: 100%;">
-                    <span class="icon">👤</span> User Profile
-                </button>
-            </a>
+            <!-- COMBINED USER & SUPPORT CONTAINER -->
+            <div class="nested-box-container">
+                <div class="nested-title-header">
+                    <span>👥</span> User & Support
+                </div>
+                <div class="nested-btn-split">
+                    <a href="user-profile.html">
+                        <button class="sub-nav-btn btn-user">Profile</button>
+                    </a>
+                    <a href="supports.html">
+                        <button class="sub-nav-btn btn-support">Support</button>
+                    </a>
+                </div>
+            </div>
+
             <a href="ecosystem.html" style="text-decoration: none;">
                 <button class="role-nav-btn btn-role-ecosystem" style="width: 100%;">
                     <span class="icon">🌐</span> Ecosystem Matrix

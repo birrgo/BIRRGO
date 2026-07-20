@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BirrGo Admin Panel</title>
+  <style>
+    :root {
+      --burgundy: #580016;
+      --burgundy-hover: #400010;
+      --border: #cbd5e1;
+      --text-dark: #1f2937;
+    }
+
+    body { 
+      font-family: system-ui, -apple-system, sans-serif; 
+      background: #f1f5f9; 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+      margin: 0; 
+      position: relative;
+    }
+
+    /* Production Back Button */
+    .back-btn {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background: white;
+      color: var(--text-dark);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
+    }
+
+    .back-btn:hover {
+      background: #f8fafc;
+      transform: translateX(-2px);
+    }
+
+    .card { 
+      background: white; 
+      padding: 30px; 
+      border-radius: 16px; 
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+      width: 100%; 
+      max-width: 400px; 
+    }
+
+    h2 { margin-top: 0; color: var(--burgundy); font-size: 1.5rem; text-align: center; }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #4b5563;
+      margin-bottom: 4px;
+    }
+
+    input { 
+      width: 100%; 
+      padding: 12px; 
+      border: 1px solid var(--border); 
+      border-radius: 8px; 
+      box-sizing: border-box; 
+      outline: none;
+      font-size: 0.95rem;
+      transition: border-color 0.2s;
+    }
+
+    input:focus {
+      border-color: var(--burgundy);
+    }
+
+    button { 
+      width: 100%; 
+      background: var(--burgundy); 
+      color: white; 
+      border: none; 
+      padding: 14px; 
+      border-radius: 8px; 
+      font-weight: bold; 
+      font-size: 1rem;
+      cursor: pointer; 
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+
+    button:hover {
+      background: var(--burgundy-hover);
+    }
+    
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #msg { 
+      text-align: center; 
+      margin-top: 15px; 
+      font-weight: 500; 
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top-left Back Button -->
+  <a href="new.html" class="back-btn">⬅ Back</a>
+
+  <div class="card">
+    <h2>Update Gemini API Key</h2>
+    
+    <!-- Secret Admin Token Input for Production Authentication -->
+    <div class="form-group">
+      <label for="token-input">Admin Verification Token</label>
+      <input type="password" id="token-input" value="YOUR_ADMIN_SECRET_TOKEN" placeholder="Enter your server authorization token...">
+    </div>
+
+    <!-- API Key Input -->
+    <div class="form-group">
+      <label for="key-input">Google Gemini API Key</label>
+      <input type="password" id="key-input" placeholder="Paste your AIzaSy API key here...">
+    </div>
+
+    <button id="save-btn" onclick="updateKey()">Save to Live Database</button>
+    <div id="msg"></div>
+  </div>
+
+  <script>
+    // Production Note: Once hosted, change this to your live server domain!
+    // Example: 'https://birrgo-backend.onrender.com/api/admin/apikey'
+    const BACKEND_ADMIN_URL = 'http://localhost:3000/api/admin/apikey';
+
+    async function updateKey() {
+      const key = document.getElementById('key-input').value.trim();
+      const token = document.getElementById('token-input').value.trim();
+      const msg = document.getElementById('msg');
+      const saveBtn = document.getElementById('save-btn');
+
+      if (!token) {
+        msg.innerText = "Error: Admin verification token is required.";
+        msg.style.color = "#dc2626";
+        return;
+      }
+
+      if (!key) {
+        msg.innerText = "Error: Please paste a valid Gemini API key.";
+        msg.style.color = "#dc2626";
+        return;
+      }
+
+      // UI feedback during update
+      msg.innerText = "Syncing with secure vault...";
+      msg.style.color = "#64748b";
+      saveBtn.disabled = true;
+
+      try {
+        const res = await fetch(BACKEND_ADMIN_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ apiKey: key })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          msg.innerText = "💥 Key pushed to Firebase successfully!";
+          msg.style.color = "#16a34a";
+          document.getElementById('key-input').value = ""; // Protect key display after save
+        } else {
+          msg.innerText = `Failed: ${data.error || 'Check server settings.'}`;
+          msg.style.color = "#dc2626";
+        }
+      } catch (e) {
+        msg.innerText = "Network connection error. Verify your server is live.";
+        msg.style.color = "#dc2626";
+      } finally {
+        saveBtn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>

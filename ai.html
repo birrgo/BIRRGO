@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BirrGo - AI Assistant</title>
+  <style>
+    :root { 
+      --burgundy: #580016; 
+      --burgundy-gradient: linear-gradient(135deg, #600018 0%, #3a000e 100%); 
+      --text-dark: #1f2937; 
+      --text-muted: #6b7280;
+      --ai-bubble: #f1f5f9; 
+      --border: #e2e8f0; 
+    }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    
+    body { 
+      background: rgba(15, 23, 42, 0.6); 
+      backdrop-filter: blur(8px); 
+      -webkit-backdrop-filter: blur(8px); 
+      display: flex; 
+      justify-content: center; 
+      align-items: center; 
+      min-height: 100vh; 
+      padding: 16px; 
+    }
+    
+    .popup-container { 
+      width: 100%; 
+      max-width: 420px; 
+      height: 620px; 
+      background: #ffffff; 
+      border-radius: 28px; 
+      display: flex; 
+      flex-direction: column; 
+      overflow: hidden; 
+      border: 1px solid rgba(255, 255, 255, 0.8); 
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25); 
+      animation: popupIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); 
+    }
+    
+    @keyframes popupIn { 
+      from { opacity: 0; transform: scale(0.9) translateY(10px); } 
+      to { opacity: 1; transform: scale(1) translateY(0); } 
+    }
+    
+    .popup-header { 
+      background: var(--burgundy-gradient); 
+      color: #ffffff; 
+      padding: 18px 20px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between; 
+    }
+    
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .header-title { font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
+    
+    /* Header Dashboard Link updated to Dashboard.html */
+    .dashboard-link {
+      color: rgba(255, 255, 255, 0.75);
+      text-decoration: none;
+      font-size: 0.8rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+      width: max-content;
+    }
+
+    .dashboard-link:hover {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+
+    .close-btn { 
+      background: rgba(255, 255, 255, 0.15); 
+      border: none; 
+      color: #ffffff; 
+      width: 30px; 
+      height: 30px; 
+      border-radius: 50%; 
+      cursor: pointer; 
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+    
+    .close-btn:hover { background: rgba(255, 255, 255, 0.3); }
+    
+    .chat-messages { 
+      flex: 1; 
+      padding: 20px 16px; 
+      overflow-y: auto; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 14px; 
+      background: #f8fafc; 
+      scroll-behavior: smooth;
+    }
+    
+    .message { max-width: 82%; padding: 12px 16px; border-radius: 18px; font-size: 0.92rem; line-height: 1.45; word-wrap: break-word; }
+    .user-message { align-self: flex-end; background: var(--burgundy-gradient); color: #ffffff; border-bottom-right-radius: 4px; box-shadow: 0 4px 10px rgba(88, 0, 22, 0.15); }
+    .ai-message { align-self: flex-start; background-color: var(--ai-bubble); color: var(--text-dark); border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+    
+    .typing { display: flex; gap: 4px; padding: 4px 0; align-items: center; }
+    .typing span { width: 6px; height: 6px; background-color: var(--text-muted); border-radius: 50%; animation: blink 1.4s infinite both; }
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+    @keyframes blink { 0%, 100% { opacity: .2; } 20% { opacity: 1; } }
+
+    .input-area { padding: 14px 16px; background: #ffffff; border-top: 1px solid var(--border); display: flex; gap: 10px; }
+    .input-area input { flex: 1; padding: 12px 18px; border: 1px solid #cbd5e1; border-radius: 24px; outline: none; font-size: 0.95rem; }
+    .input-area input:focus { border-color: var(--burgundy); }
+    
+    .send-btn { background: var(--burgundy-gradient); color: #ffffff; border: none; padding: 12px 20px; border-radius: 24px; font-weight: 600; cursor: pointer; transition: opacity 0.2s; }
+    .send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <div class="header-left">
+        <div class="header-title">🤖 BirrGo AI Support</div>
+        <!-- Link updated to redirect to Dashboard.html -->
+        <a href="Dashboard.html" class="dashboard-link">⬅ Return to Dashboard</a>
+      </div>
+      <button class="close-btn" onclick="handleClose()">✕</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="message ai-message">👋 Hello! How can I assist you with BirrGo today?</div>
+    </div>
+    <div class="input-area">
+      <input type="text" id="user-input" placeholder="Ask AI something..." autocomplete="off">
+      <button class="send-btn" id="send-btn" onclick="sendMessage()">Send</button>
+    </div>
+  </div>
+
+  <script>
+    // PRODUCTION CONFIGURATION: Update this to your deployed domain (e.g., Render)
+    const BACKEND_URL = 'http://localhost:3000/api/chat';
+
+    const inputField = document.getElementById('user-input');
+    const sendBtn = document.getElementById('send-btn');
+    const messagesContainer = document.getElementById('chat-messages');
+
+    inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+
+    function handleClose() {
+      if (window.history.length > 1) {
+        window.history.back();
+      } else {
+        window.location.href = 'Dashboard.html'; // Fallback link updated here too
+      }
+    }
+
+    async function sendMessage() {
+      const text = inputField.value.trim();
+      if (!text) return;
+
+      appendMessage(text, 'user-message');
+      inputField.value = '';
+      inputField.disabled = true;
+      sendBtn.disabled = true;
+
+      const loadingMessage = appendTypingIndicator();
+
+      try {
+        const response = await fetch(BACKEND_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: text })
+        });
+        const data = await response.json();
+        
+        loadingMessage.innerHTML = ''; 
+        if (response.ok) {
+          loadingMessage.textContent = data.reply;
+        } else {
+          loadingMessage.textContent = 'Error: ' + data.error;
+          loadingMessage.style.color = '#dc2626';
+        }
+      } catch (error) {
+        loadingMessage.innerHTML = 'Network error. Check your server connection.';
+        loadingMessage.style.color = '#dc2626';
+      } finally {
+        inputField.disabled = false;
+        sendBtn.disabled = false;
+        inputField.focus();
+        scrollToBottom();
+      }
+    }
+
+    function appendMessage(text, className) {
+      const div = document.createElement('div');
+      div.className = `message ${className}`;
+      div.textContent = text;
+      messagesContainer.appendChild(div);
+      scrollToBottom();
+      return div;
+    }
+
+    function appendTypingIndicator() {
+      const div = document.createElement('div');
+      div.className = 'message ai-message';
+      div.innerHTML = '<div class="typing"><span></span><span></span><span></span></div>';
+      messagesContainer.appendChild(div);
+      scrollToBottom();
+      return div;
+    }
+
+    function scrollToBottom() {
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  </script>
+</body>
+</html>
