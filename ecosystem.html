@@ -5,7 +5,101 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ecosystem Matrix</title>
     <link rel="stylesheet" href="new.css">
-    <style>body { padding: 30px; } .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }</style>
+    <style>
+        body { padding: 30px; } 
+        .back-link { display: inline-block; margin-bottom: 20px; color: var(--primary-burgundy); font-weight: bold; text-decoration: none; }
+        
+        /* Delete Action Button Styles */
+        .btn-delete {
+            background: #ffebee;
+            color: #d32f2f;
+            border: 1px solid #ffcdd2;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+        .btn-delete:hover {
+            background: #d32f2f;
+            color: #ffffff;
+            border-color: #d32f2f;
+        }
+
+        /* Email Column Highlight */
+        .email-cell {
+            color: #2b6cb0;
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        /* Custom Modal UI Styling */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+            z-index: 9999;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px 28px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1);
+            text-align: center;
+            transform: scale(0.95);
+            transition: transform 0.25s ease;
+        }
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+        .modal-icon {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 8px;
+        }
+        .modal-text {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .modal-btn {
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: opacity 0.2s;
+        }
+        .modal-btn:hover { opacity: 0.9; }
+        .btn-confirm-delete { background: #d32f2f; color: #fff; }
+        .btn-cancel { background: #edf2f7; color: #4a5568; }
+        .btn-ok { background: #2e7d32; color: #fff; width: 100%; }
+    </style>
 </head>
 <body>
     <a href="new.html" class="back-link">← Back to Dashboard</a>
@@ -14,43 +108,134 @@
         <p style="font-size:13px;color:var(--text-muted);margin-top:-14px;">Real-time node queries tracking active ledger details, parameters, and balances.</p>
         <div class="input-field-wrapper" style="margin-bottom: 8px;">
             <label>Realtime Directory Filter</label>
-            <input type="text" id="ecosystemSearchInput" class="admin-input" placeholder="Search cleanly by Mobile number, Card, or Name...">
+            <input type="text" id="ecosystemSearchInput" class="admin-input" placeholder="Search cleanly by Mobile number, Card, Name, or Email...">
         </div>
         <div class="table-scroll-container">
             <table class="directory-table">
-                <thead><tr><th>Account ID</th><th>Card Record Token</th><th>First Name</th><th>Full Profile Name</th><th>Phone Identity</th><th>Wallet Balances</th><th>Created Stamp</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>Account ID</th>
+                        <th>Card Record Token</th>
+                        <th>First Name</th>
+                        <th>Full Profile Name</th>
+                        <th>Email Address</th>
+                        <th>Phone Identity</th>
+                        <th>Wallet Balances</th>
+                        <th>Created Stamp</th>
+                        <th style="text-align: center;">Action</th>
+                    </tr>
+                </thead>
                 <tbody id="directory-table-body"></tbody>
             </table>
         </div>
     </div>
 
-    <script type="module">
-        import { db, ref, onValue } from "./db.js";
-        let cache = {};
-        function genCard(p) { const c = p.replace(/\D/g, ''); return c + c.slice(-6).split('').reverse().join(''); }
+    <!-- UI Custom Pop-up Modal -->
+    <div class="modal-overlay" id="customModal">
+        <div class="modal-card">
+            <div class="modal-icon" id="modalIcon">⚠️</div>
+            <div class="modal-title" id="modalTitle">Confirm Action</div>
+            <div class="modal-text" id="modalText">Are you sure?</div>
+            <div class="modal-actions" id="modalActions"></div>
+        </div>
+    </div>
 
+    <script type="module">
+        import { db, ref, onValue, remove } from "./db.js";
+        let cache = {};
+
+        function genCard(p) { 
+            const c = p.replace(/\D/g, ''); 
+            return c + c.slice(-6).split('').reverse().join(''); 
+        }
+
+        // Realtime sync listener
         onValue(ref(db, 'users'), (snap) => {
-            cache = snap.exists() ? snap.val() : {}; render();
+            cache = snap.exists() ? snap.val() : {}; 
+            render(document.getElementById('ecosystemSearchInput').value);
         });
 
         function render(query = '') {
-            const body = document.getElementById('directory-table-body'); body.innerHTML = '';
+            const body = document.getElementById('directory-table-body'); 
+            body.innerHTML = '';
             const q = query.toLowerCase().trim().replace(/\s/g, '');
+            
             Object.keys(cache).forEach(k => {
                 const p = cache[k], b = parseFloat(p.walletBalance) || 0, c = p.cardNumber || genCard(k);
-                if(q && !k.includes(q) && !c.includes(q) && !(p.firstName||'').toLowerCase().includes(q) && !(p.fullName||'').toLowerCase().includes(q)) return;
-                let date = "N/A"; if(p.createdAt) try { date = new Date(p.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); }catch(e){}
-                body.innerHTML += `<tr>
+                const userEmail = p.email || p.emailAddress || (p.profile && p.profile.email) || 'N/A';
+                
+                // Search filter
+                if(q && !k.includes(q) && !c.includes(q) && !(p.firstName||'').toLowerCase().includes(q) && !(p.fullName||'').toLowerCase().includes(q) && !userEmail.toLowerCase().includes(q)) return;
+                
+                let date = "N/A"; 
+                if(p.createdAt) try { date = new Date(p.createdAt).toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); }catch(e){}
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
                     <td><span class="id-badge">BG-${p.userNumber || '1000'}</span></td>
                     <td style="font-family:monospace;font-weight:600;color:var(--text-muted);">${c}</td>
                     <td style="font-weight:700;color:var(--text-dark);">${p.firstName || 'N/A'}</td>
                     <td>${p.fullName || 'Anonymous'}</td>
+                    <td class="email-cell">${userEmail}</td>
                     <td>+251${k}</td>
                     <td style="font-weight:700;color:var(--primary-burgundy);">${b.toFixed(2)} ETB</td>
                     <td style="color:var(--text-muted);font-size:12px;">${date}</td>
-                </tr>`;
+                    <td style="text-align: center;">
+                        <button class="btn-delete" title="Permanently Erase User">🗑️</button>
+                    </td>
+                `;
+
+                tr.querySelector('.btn-delete').addEventListener('click', () => promptDeleteUser(k));
+                body.appendChild(tr);
             });
         }
+
+        // Modal Utility Functions
+        const modal = document.getElementById('customModal');
+        const modalIcon = document.getElementById('modalIcon');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalText = document.getElementById('modalText');
+        const modalActions = document.getElementById('modalActions');
+
+        function closeModal() {
+            modal.classList.remove('active');
+        }
+
+        function promptDeleteUser(key) {
+            modalIcon.textContent = "🗑️";
+            modalTitle.textContent = "Delete User Record";
+            modalText.textContent = `Are you sure you want to permanently erase user +251${key} from the database?`;
+            modalActions.innerHTML = `
+                <button class="modal-btn btn-cancel" id="cancelDelete">Cancel</button>
+                <button class="modal-btn btn-confirm-delete" id="confirmDelete">Delete Record</button>
+            `;
+            modal.classList.add('active');
+
+            document.getElementById('cancelDelete').onclick = closeModal;
+            document.getElementById('confirmDelete').onclick = () => executeDelete(key);
+        }
+
+        async function executeDelete(key) {
+            try {
+                // Delete directly under users path
+                await remove(ref(db, `users/${key}`));
+                showSuccessModal(key);
+            } catch (error) {
+                closeModal();
+                alert("Error deleting user: " + error.message);
+            }
+        }
+
+        function showSuccessModal(key) {
+            modalIcon.textContent = "✅";
+            modalTitle.textContent = "Successfully Deleted!";
+            modalText.textContent = `User record +251${key} was permanently removed from the database.`;
+            modalActions.innerHTML = `<button class="modal-btn btn-ok" id="closeSuccess">OK</button>`;
+            modal.classList.add('active');
+
+            document.getElementById('closeSuccess').onclick = closeModal;
+        }
+
         document.getElementById('ecosystemSearchInput').addEventListener('input', (e) => render(e.target.value));
     </script>
 </body>

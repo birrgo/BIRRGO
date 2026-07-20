@@ -27,12 +27,8 @@
         }
     </script>
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-        }
-        h1, h2, h3 {
-            font-family: 'Space Grotesk', sans-serif;
-        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen p-6">
@@ -43,10 +39,10 @@
                 <h1 class="text-3xl font-bold bg-gradient-to-r from-emerald-400 to-green-500 bg-clip-text text-transparent">
                     🔑 Verification Matrix
                 </h1>
-                <p class="text-slate-400 text-sm mt-1">Configure global registration credentials, monitor real-time verification logs, and send secure custom OTPs.</p>
+                <p class="text-slate-400 text-sm mt-1">Configure global registration credentials, monitor real-time verified logs, and send secure custom OTPs.</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="dashboard.html" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 rounded-xl text-xs font-semibold tracking-wide transition">
+                <a href="new.html" class="px-4 py-2 bg-slate-900 border border-slate-800 hover:bg-slate-800 rounded-xl text-xs font-semibold tracking-wide transition">
                     ← Core Dashboard
                 </a>
                 <span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold px-3 py-1.5 rounded-full">
@@ -57,6 +53,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-1 space-y-6">
+                <!-- System Gateway -->
                 <div class="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-bold text-slate-200">System Gateway</h2>
@@ -89,6 +86,7 @@
                     </div>
                 </div>
 
+                <!-- Bypass Override -->
                 <div class="bg-slate-900/50 border border-slate-800/80 p-6 rounded-2xl shadow-xl space-y-4">
                     <h2 class="text-lg font-bold text-slate-200">Force Bypass Override</h2>
                     
@@ -107,7 +105,8 @@
                             </div>
                             <div>
                                 <label class="block text-xs font-medium text-slate-400">Expiry (Mins)</label>
-                                <input type="number" id="expiryMinutes" required value="5" readonly
+                                <!-- Updated to 15 minutes -->
+                                <input type="number" id="expiryMinutes" required value="15" readonly
                                     class="mt-1 w-full p-2.5 bg-slate-900 border border-slate-800 rounded-lg text-xs text-slate-400 focus:outline-none cursor-not-allowed">
                             </div>
                         </div>
@@ -123,8 +122,8 @@
                 <div class="bg-slate-900/50 border border-slate-800/80 rounded-2xl shadow-xl overflow-hidden">
                     <div class="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/20">
                         <div>
-                            <h3 class="text-lg font-bold text-slate-200">Live Verification Logs</h3>
-                            <p class="text-xs text-slate-500">Real-time sync feeding active OTP transactions directly from Firebase.</p>
+                            <h3 class="text-lg font-bold text-slate-200">Verified User Logs</h3>
+                            <p class="text-xs text-slate-500">Real-time sync of verified active OTP transactions (15 min validity).</p>
                         </div>
                         <span class="h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse" title="Connected to Firebase"></span>
                     </div>
@@ -133,7 +132,7 @@
                         <table class="w-full text-left border-collapse text-xs">
                             <thead>
                                 <tr class="bg-slate-950 text-slate-400 uppercase tracking-wider border-b border-slate-800">
-                                    <th class="p-4 font-semibold">User Email</th>
+                                    <th class="p-4 font-semibold">Verified Email</th>
                                     <th class="p-4 font-semibold text-center">Active OTP</th>
                                     <th class="p-4 font-semibold text-center">Expiry Target</th>
                                     <th class="p-4 font-semibold text-right">Status</th>

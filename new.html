@@ -13,8 +13,8 @@
         /* Hide the body initially to prevent unauthorized layout flashing */
         body { display: none; }
         
-        /* Inline utility layout helpers for the sub-buttons inside the grid item */
-        .lottery-nested-container {
+        /* Inline utility layout helpers for nested sub-buttons inside the grid */
+        .nested-box-container {
             background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
             border-radius: 1rem;
             padding: 1rem;
@@ -24,7 +24,7 @@
             gap: 0.75rem;
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .lottery-title-header {
+        .nested-title-header {
             color: #f7fafc;
             font-size: 0.95rem;
             font-weight: 700;
@@ -33,12 +33,12 @@
             gap: 0.5rem;
             padding-left: 0.25rem;
         }
-        .lottery-btn-split {
+        .nested-btn-split {
             display: flex;
             gap: 0.5rem;
             width: 100%;
         }
-        .lottery-btn-split a {
+        .nested-btn-split a {
             flex: 1;
             text-decoration: none;
         }
@@ -62,6 +62,12 @@
         }
         .btn-lot {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+        .btn-tasks {
+            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+        }
+        .btn-socials {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
         }
     </style>
 
@@ -103,17 +109,39 @@
                 </button>
             </a>
 
-            <!-- NEW INTEGRATED LOTTERY CONTROL BOX WITH TWO BUTTONS -->
-            <div class="lottery-nested-container">
-                <div class="lottery-title-header">
+            <!-- NEW KEYS PORTAL LINK -->
+            <a href="keys.html" style="text-decoration: none;">
+                <button class="role-nav-btn" style="background: linear-gradient(135deg, #d97706 0%, #78350f 100%); color: white; width: 100%;">
+                    <span class="icon">🗝️</span> Keys Manager
+                </button>
+            </a>
+
+            <!-- INTEGRATED LOTTERY CONTROL BOX WITH TWO BUTTONS -->
+            <div class="nested-box-container">
+                <div class="nested-title-header">
                     <span>🎟️</span> Lottery Engine
                 </div>
-                <div class="lottery-btn-split">
+                <div class="nested-btn-split">
                     <a href="jet.html">
                         <button class="sub-nav-btn btn-jet">Jet</button>
                     </a>
                     <a href="lot.html">
                         <button class="sub-nav-btn btn-lot">Lot</button>
+                    </a>
+                </div>
+            </div>
+
+            <!-- COMBINED TASKS & SOCIAL LINKS CONTAINER -->
+            <div class="nested-box-container">
+                <div class="nested-title-header">
+                    <span>⚡</span> Tasks & Socials
+                </div>
+                <div class="nested-btn-split">
+                    <a href="tasks.html">
+                        <button class="sub-nav-btn btn-tasks">Enter Tasks</button>
+                    </a>
+                    <a href="socials.html">
+                        <button class="sub-nav-btn btn-socials">Social Links</button>
                     </a>
                 </div>
             </div>
@@ -131,16 +159,6 @@
             <a href="money.html" style="text-decoration: none;">
                 <button class="role-nav-btn btn-role-money" style="width: 100%;">
                     <span class="icon">💰</span> Money Controller
-                </button>
-            </a>
-            <a href="tasks.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-tasks" style="width: 100%;">
-                    <span class="icon">🔗</span> Enter Tasks
-                </button>
-            </a>
-            <a href="socials.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-news" style="background: linear-gradient(135deg, #4b0082 0%, #1a0033 100%); color: white; width: 100%;">
-                    <span class="icon">📱</span> Social Links
                 </button>
             </a>
             <a href="broadcast.html" style="text-decoration: none;">

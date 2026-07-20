@@ -429,7 +429,7 @@
 
         <div class="app-content">
 
-            <h2 class="section-heading">Social Media Follow Challenge </h2>
+            <h2 class="section-heading">Social Media Follow Challenge</h2>
             
             <div class="task-container" id="socialTasksContainer">
             </div>
@@ -518,10 +518,13 @@
             ];
 
             let matrixVersion = "1";
+            let userDbClaimedTasks = {};
+
             try {
-                const snapshot = await get(ref(db, 'new/social_links'));
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
+                // Fetch links and campaign version from DB
+                const linksSnapshot = await get(ref(db, 'new/social_links'));
+                if (linksSnapshot.exists()) {
+                    const data = linksSnapshot.val();
                     if (data.version) matrixVersion = String(data.version);
                     
                     if (data.tg) adminSocialChannels[0].link = data.tg.startsWith('tg://') ? data.tg.replace('tg://resolve?domain=', 'https://t.me/') : data.tg;
@@ -530,8 +533,14 @@
                     if (data.tt) adminSocialChannels[3].link = data.tt.startsWith('snssdk1128://') ? 'https://tiktok.com/' : data.tt;
                     if (data.yt) adminSocialChannels[4].link = data.yt.startsWith('vnd.youtube://') ? 'https://youtube.com/' : data.yt;
                 }
+
+                // Fetch database records for user's claims under the current version
+                const claimedSnapshot = await get(ref(db, `users/${activeUserPhone}/claimed_social_tasks_v${matrixVersion}`));
+                if (claimedSnapshot.exists()) {
+                    userDbClaimedTasks = claimedSnapshot.val() || {};
+                }
             } catch (err) {
-                console.error("Matrix configurations fallbacks triggered.", err);
+                console.error("Matrix configurations or user claims fallback triggered.", err);
             }
 
             const taskTracker = {}; 
@@ -542,13 +551,17 @@
                 adminSocialChannels.forEach(item => {
                     
                     const storageKey = `claimed_task_${activeUserPhone}_${item.id}_v${matrixVersion}`;
-                    const isAlreadyClaimed = localStorage.getItem(storageKey);
+                    const isClaimedLocally = localStorage.getItem(storageKey) === 'true';
+                    const isClaimedInDb = userDbClaimedTasks[item.id] === true;
+
+                    // Strictly lock task if claimed either in database or local storage
+                    const isAlreadyClaimed = isClaimedLocally || isClaimedInDb;
 
                     const card = document.createElement('div');
                     card.className = 'task-card';
                     card.id = `card-${item.id}`;
                     
-                    if (isAlreadyClaimed === 'true') {
+                    if (isAlreadyClaimed) {
                         taskTracker[item.id] = 'cleared';
                         card.classList.add('completed');
                         card.innerHTML = `
@@ -598,7 +611,7 @@
                         }
                     }
 
-                    if (isAlreadyClaimed !== 'true') {
+                    if (!isAlreadyClaimed) {
                         document.getElementById(`link-click-${item.id}`).addEventListener('click', () => {
                             processFollowInitialization(item.id);
                         });
@@ -654,6 +667,10 @@
                                 timestamp: timeStr
                             });
 
+                            // Save lock state to Firebase Realtime Database
+                            await set(ref(db, `users/${activeUserPhone}/claimed_social_tasks_v${matrixVersion}/${id}`), true);
+
+                            // Save lock state locally
                             const storageKey = `claimed_task_${activeUserPhone}_${id}_v${matrixVersion}`;
                             localStorage.setItem(storageKey, 'true');
 

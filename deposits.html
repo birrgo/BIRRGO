@@ -14,6 +14,30 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
     <style>
+        /* Top Navigation Back Button Styling */
+        .btn-back-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+            font-size: 18px;
+            transition: background 0.2s ease, transform 0.1s ease;
+            margin-right: 12px;
+        }
+        .btn-back-icon:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+        .btn-back-icon:active {
+            transform: scale(0.95);
+        }
+
         /* Custom UI Toast Pop-up Notification */
         .custom-toast {
             position: fixed;
@@ -81,6 +105,10 @@
 
     <header class="top-nav">
         <div class="brand-header">
+            <!-- BACK BUTTON ICON IN TOP CORNER -->
+            <button class="btn-back-icon" onclick="window.history.back()" title="Go Back">
+                &#8592;
+            </button>
             <div class="brand-logo">Birr<span>Go Admin Hub </span></div>
         </div>
         <div class="nav-tabs">
