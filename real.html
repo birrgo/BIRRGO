@@ -38,10 +38,11 @@
             width: 100%;
             height: 100dvh;
             overflow: hidden;
-            background-color: #f8fafc;
+            background-color: var(--bg-light);
             color: var(--text-dark);
         }
 
+        /* --- Layout Containers --- */
         .app-view {
             width: 100%;
             height: 100dvh;
@@ -67,6 +68,12 @@
             gap: 12px;
         }
 
+        .header-title h2 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
         .btn-back {
             background: #ffffff;
             border: 1px solid #e2e8f0;
@@ -80,31 +87,38 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+
         .btn-back:active {
             transform: scale(0.95);
         }
 
+        /* --- Branding --- */
         .birrgo-logo-container {
             display: flex;
             align-items: center;
             gap: 8px;
         }
+
         .birrgo-brand-text {
             display: flex;
             flex-direction: column;
+            text-align: right;
         }
+
         .brand-main-title {
             font-size: 15px;
             font-weight: 800;
             color: var(--primary-burgundy);
             line-height: 1.1;
         }
+
         .brand-sub-motto {
             font-size: 9px;
             font-weight: 600;
             color: var(--text-muted);
             letter-spacing: 0.5px;
         }
+
         .birrgo-badge-icon {
             width: 32px;
             height: 32px;
@@ -119,6 +133,7 @@
             box-shadow: 0 4px 12px rgba(119, 5, 28, 0.2);
         }
 
+        /* --- Main Content Section --- */
         .app-content {
             background-color: #fafbfc;
             padding: 12px 16px;
@@ -146,6 +161,7 @@
             min-height: 80px;
         }
 
+        /* --- Analytics & Metrics --- */
         .analytics-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -176,9 +192,16 @@
             font-weight: 800;
             letter-spacing: -0.5px;
         }
-        .stat-card.sold h3 { color: var(--text-dark); }
-        .stat-card.remain h3 { color: var(--success-green); }
 
+        .stat-card.sold h3 { 
+            color: var(--text-dark); 
+        }
+
+        .stat-card.remain h3 { 
+            color: var(--success-green); 
+        }
+
+        /* --- Card Forms & Controls --- */
         .premium-card-box {
             background: #ffffff;
             border: 1px solid var(--border-light);
@@ -228,6 +251,7 @@
             transition: all 0.2s ease;
             width: 100%;
         }
+
         .premium-input:focus {
             border-color: var(--primary-burgundy);
             background: #ffffff;
@@ -252,6 +276,12 @@
             text-transform: uppercase;
         }
 
+        .search-engine-box p {
+            font-size: 10px; 
+            color: rgba(255, 255, 255, 0.7); 
+            margin-bottom: 2px;
+        }
+
         .large-number-input {
             width: 100%;
             height: 40px;
@@ -268,6 +298,7 @@
             letter-spacing: 1px;
             transition: all 0.2s ease;
         }
+
         .large-number-input:focus {
             border-color: rgba(255, 255, 255, 0.4);
             background: rgba(255, 255, 255, 0.12);
@@ -280,11 +311,13 @@
             border-radius: 6px;
             display: none;
         }
+
         .status-feedback.available {
             display: inline-block;
             background-color: rgba(255, 255, 255, 0.15);
             color: #ffffff;
         }
+
         .status-feedback.taken {
             display: inline-block;
             background-color: rgba(0, 0, 0, 0.3);
@@ -292,6 +325,7 @@
             opacity: 0.9;
         }
 
+        /* --- Stream & Activity Feed --- */
         .live-feed-panel {
             background: #ffffff;
             border: 1px solid var(--border-light);
@@ -310,7 +344,10 @@
             overflow-y: auto;
             scrollbar-width: none;
         }
-        #liveOrdersFeed::-webkit-scrollbar { display: none; }
+
+        #liveOrdersFeed::-webkit-scrollbar { 
+            display: none; 
+        }
 
         .feed-row {
             display: flex;
@@ -320,7 +357,10 @@
             border-bottom: 1px solid #f8fafc;
             font-size: 12.5px;
         }
-        .feed-row:last-child { border-bottom: none; }
+
+        .feed-row:last-child { 
+            border-bottom: none; 
+        }
         
         .buyer-id { 
             font-weight: 600; 
@@ -329,6 +369,7 @@
             align-items: center; 
             gap: 6px; 
         }
+
         .buyer-id::before { 
             content: ''; 
             width: 5px;
@@ -347,6 +388,7 @@
             font-size: 10px;
         }
 
+        /* --- Footer & Actions --- */
         .action-container {
             display: flex;
             flex-direction: column;
@@ -373,12 +415,14 @@
             gap: 8px;
             transition: all 0.2s ease;
         }
+
         .btn-submit-booking:disabled {
             background: #cbd5e1;
             color: #94a3b8;
             box-shadow: none;
             cursor: not-allowed;
         }
+
         .btn-submit-booking:active:not(:disabled) { 
             transform: scale(0.98); 
         }
@@ -396,9 +440,13 @@
             padding: 2px 0;
         }
 
+        /* --- Modals & Popups --- */
         .modal-overlay {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
+            top: 0; 
+            left: 0; 
+            width: 100vw; 
+            height: 100vh;
             background: rgba(15, 23, 42, 0.3);
             backdrop-filter: blur(6px);
             -webkit-backdrop-filter: blur(6px);
@@ -411,11 +459,14 @@
             pointer-events: none;
             transition: opacity 0.2s ease;
         }
+
         .modal-overlay.active {
             opacity: 1;
             pointer-events: auto;
         }
-        .password-popup-card, .status-popup-card {
+
+        .password-popup-card, 
+        .status-popup-card {
             width: 100%;
             max-width: 330px;
             background: #ffffff;
@@ -426,10 +477,12 @@
             transform: scale(0.95);
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
+
         .modal-overlay.active .password-popup-card,
         .modal-overlay.active .status-popup-card {
             transform: scale(1);
         }
+
         .popup-icon {
             width: 40px;
             height: 40px;
@@ -441,6 +494,7 @@
             justify-content: center;
             margin: 0 auto 10px auto;
         }
+
         .popup-icon svg {
             width: 20px;
             height: 20px;
@@ -448,12 +502,14 @@
             stroke: currentColor;
             stroke-width: 2.5;
         }
+
         .popup-title {
             font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 4px;
         }
+
         .popup-subtitle {
             font-size: 12px;
             font-weight: 500;
@@ -461,6 +517,7 @@
             line-height: 1.4;
             margin-bottom: 14px;
         }
+
         .password-input-field {
             width: 100%;
             height: 42px;
@@ -474,17 +531,20 @@
             margin-bottom: 14px;
             outline: none;
             background: #f8fafc;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
+
         .password-input-field:focus {
             border-color: var(--primary-burgundy);
             background: #ffffff;
         }
+
         .popup-action-row {
             display: grid;
             grid-template-columns: 1fr 2fr;
             gap: 10px;
         }
+
         .btn-popup-cancel {
             height: 40px;
             background: #f1f5f9;
@@ -495,6 +555,7 @@
             font-weight: 700;
             cursor: pointer;
         }
+
         .btn-popup-confirm {
             height: 40px;
             background: var(--primary-gradient);
@@ -515,20 +576,24 @@
             justify-content: center;
             margin: 0 auto 10px auto;
         }
+
         .status-icon-circle.error-state {
             background: #fdf2f2;
             color: var(--error-crimson);
         }
+
         .status-icon-circle.success-state {
             background: #ecfdf5;
             color: var(--success-green);
         }
+
         .status-msg-title {
             font-size: 16px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 6px;
         }
+
         .status-msg-desc {
             font-size: 13px;
             font-weight: 500;
@@ -536,6 +601,7 @@
             line-height: 1.4;
             margin-bottom: 18px;
         }
+
         .btn-status-close {
             width: 100%;
             height: 40px;
@@ -559,12 +625,12 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"></polyline></svg>
                 </button>
                 <div class="header-title">
-                    <h2 style="font-size: 15px; font-weight: 700; color: var(--text-dark);">BYD Song Plus Campaign</h2>
+                    <h2>BYD Song Plus Campaign</h2>
                 </div>
             </div>
             
             <div class="birrgo-logo-container">
-                <div class="birrgo-brand-text" style="text-align: right;">
+                <div class="birrgo-brand-text">
                     <span class="brand-main-title">BirrGo</span>
                     <span class="brand-sub-motto">PREMIUM</span>
                 </div>
@@ -601,7 +667,7 @@
 
             <div class="search-engine-box">
                 <h3>Select Raffle Position</h3>
-                <p style="font-size: 10px; color: rgba(255, 255, 255, 0.7); margin-bottom: 2px;">Enter code sequence interval (0 - 3500)</p>
+                <p>Enter code sequence interval (0 - 3500)</p>
                 <input type="number" id="ticketNumberInput" class="large-number-input" placeholder="0000" min="0" max="3500">
                 <div id="feedbackBadge" class="status-feedback"></div>
             </div>
