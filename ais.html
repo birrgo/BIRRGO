@@ -199,10 +199,13 @@
         const saveKeyBtn = document.getElementById('saveKeyBtn');
         const statusMessage = document.getElementById('statusMessage');
 
-        // Dynamic backend URL
-        const API_ENDPOINT = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        // ⚠️ REPLACE THIS WITH YOUR ACTUAL DEPLOYED BACKEND URL (e.g. Render, Railway, etc.)
+        const BACKEND_BASE_URL = 'https://birrgo-otp-backend.onrender.com';
+
+        // Connects to local port when developing locally, or production backend when live
+        const API_ENDPOINT = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
             ? 'http://localhost:3000/api/admin/apikey'
-            : '/api/admin/apikey';
+            : `${BACKEND_BASE_URL}/api/admin/apikey`;
 
         function showMessage(text, isError) {
             statusMessage.innerText = text;
