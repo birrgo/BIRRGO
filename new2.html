@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="google" content="notranslate">
     
     <title>Login to BirrGo | Secure Mobile Wallet Ethiopia</title>
     <meta name="description" content="Log in to your secure BirrGo mobile wallet account to send, receive, and manage your money safely. Access your digital funds in Ethiopia instantly.">
@@ -31,14 +32,14 @@
     <link rel="manifest" href="manifest.json">
     
     <!-- PWA / Mobile App Meta Tags -->
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#800020">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- ONESIGNAL SDK FOR PRODUCTION -->
     <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
@@ -54,15 +55,15 @@
 
     <style>
         :root {
-            --primary-burgundy: #8b0015;
-            --primary-gradient: linear-gradient(90deg, #7a0010 0%, #a30018 100%);
-            --text-dark: #111827;
-            --text-muted: #4b5563;
-            --input-bg: #f3f4f6;
-            --focus-shadow: 0 4px 12px rgba(139, 0, 21, 0.08);
+            --primary-burgundy: #800020;
+            --primary-burgundy-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --input-bg: #f1f5f9;
+            --focus-shadow: 0 4px 12px rgba(128, 0, 32, 0.1);
             --error-red: #df2222;
             --success-green: #10b981;
-            --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.03);
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.04);
         }
 
         * {
@@ -70,6 +71,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            letter-spacing: -0.3px;
             -webkit-tap-highlight-color: transparent;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -84,19 +86,27 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            min-height: 100vh; 
-            min-height: 100dvh; 
-            background-color: #f8f9fa;
+            height: 100vh; 
+            height: 100dvh; 
+            background-color: #fafbfc;
+            background-image: 
+                radial-gradient(rgba(148, 163, 184, 0.12) 1px, transparent 1px), 
+                linear-gradient(to right, rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+            background-size: 20px 20px, 40px 40px, 40px 40px;
+            background-position: 0 0, 0 0, 0 0;
             display: flex;
             flex-direction: column;
             position: relative;
-            overflow-x: hidden;
-            transition: filter 0.4s ease-out, opacity 0.4s ease-out;
+            overflow: hidden;
+            transition: filter 0.3s ease-out, opacity 0.3s ease-out;
+            opacity: 1;
+            filter: blur(0);
         }
 
         body.is-loading-page {
             filter: blur(8px);
-            opacity: 0.6;
+            opacity: 0.5;
             pointer-events: none;
         }
 
@@ -110,13 +120,15 @@
         
         .bg-wave-top {
             top: 0;
-            height: 9vh; 
-            min-height: 60px; 
+            height: 11vh; 
+            min-height: 82px; 
         }
         
         .bg-wave-bottom {
-            bottom: 0;
-            height: 85px;
+            bottom: env(safe-area-inset-bottom, 0px);
+            height: 7vh;
+            min-height: 48px;
+            z-index: 2;
         }
 
         .header-top-area {
@@ -151,17 +163,18 @@
 
         .download-banner {
             flex-grow: 1;
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.09);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            border-radius: 10px;
             padding: 5px 10px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             gap: 6px;
             min-width: 0;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
         .download-info {
@@ -172,11 +185,11 @@
         }
 
         .apk-icon-box {
-            width: 26px;
-            height: 26px;
+            width: 22px;
+            height: 22px;
             background: #ffffff;
             color: var(--primary-burgundy);
-            border-radius: 6px;
+            border-radius: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -184,24 +197,25 @@
         }
 
         .apk-icon-box svg {
-            width: 13px;
-            height: 13px;
+            width: 11px;
+            height: 11px;
         }
 
         .download-text-main {
-            font-size: 10.5px;
+            font-size: 11px;
             font-weight: 700;
             color: #ffffff;
-            letter-spacing: -0.01em;
+            letter-spacing: -0.1px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
         .download-text-sub {
-            font-size: 8px;
-            color: rgba(255, 255, 255, 0.85);
-            margin-top: 0.5px;
+            font-size: 8.5px;
+            color: rgba(255, 255, 255, 0.75);
+            margin-top: 0px;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -211,11 +225,10 @@
             background: #ffffff;
             color: var(--primary-burgundy);
             text-decoration: none;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-            padding: 4.5px 9px;
-            border-radius: 6px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 4px 8px;
+            border-radius: 5px;
             cursor: pointer;
             border: none;
             transition: all 0.2s ease;
@@ -236,14 +249,24 @@
 
         .app-view {
             width: 100%;
-            flex-grow: 1; 
+            height: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center; 
-            padding: calc(70px + env(safe-area-inset-top)) 20px calc(95px + env(safe-area-inset-bottom)) 20px;
+            justify-content: fill; 
+            padding: calc(90px + env(safe-area-inset-top)) 20px calc(25px + env(safe-area-inset-bottom)) 20px;
             position: relative;
             z-index: 1;
             box-sizing: border-box;
+            max-width: 680px;
+            margin: 0 auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .app-view::-webkit-scrollbar {
+            display: none;
         }
 
         .app-content-wrapper {
@@ -251,10 +274,8 @@
             max-width: 360px;
             display: flex;
             flex-direction: column;
-            margin-left: auto;
-            margin-right: auto;
-            margin-top: auto;
-            margin-bottom: auto; 
+            height: 100%;
+            margin: 12px auto auto auto; 
         }
 
         .header-content {
@@ -263,15 +284,15 @@
         }
 
         .header-content h1 {
-            font-size: 21px;
+            font-size: 26px;
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 4px;
-            letter-spacing: -0.03em;
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
         }
 
         .header-content p {
-            font-size: 12px;
+            font-size: 13px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -281,6 +302,7 @@
             display: flex;
             flex-direction: column;
             gap: 16px;
+            flex-grow: 1;
         }
 
         .input-group {
@@ -295,7 +317,7 @@
             border: 1.5px solid transparent;
             border-radius: 12px;
             padding: 0 42px 0 14px;
-            font-size: 13.5px;
+            font-size: 14px;
             font-weight: 600;
             color: var(--text-dark);
             outline: none;
@@ -310,11 +332,11 @@
 
         .field-label {
             position: absolute;
-            top: -8px;
+            top: -7px;
             left: 12px;
-            background-color: #f8f9fa; 
+            background-color: #fafbfc; 
             padding: 0 5px;
-            font-size: 10.5px;
+            font-size: 11px;
             font-weight: 700;
             color: var(--text-dark);
             z-index: 2;
@@ -341,16 +363,16 @@
             cursor: pointer;
             height: 100%;
             padding-right: 8px;
-            border-right: 1.5px solid #e5e7eb;
+            border-right: 1.5px solid #e2e8f0;
         }
 
         .trigger-flag {
-            font-size: 15px;
+            font-size: 16px;
             line-height: 1;
         }
 
         .trigger-code {
-            font-size: 12.5px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-dark);
         }
@@ -362,7 +384,7 @@
         }
 
         .input-box.phone-indent {
-            padding-left: 94px;
+            padding-left: 98px;
         }
 
         .input-icon-right {
@@ -372,7 +394,7 @@
             transform: translateY(-50%);
             width: 16px;
             height: 16px;
-            color: #9ca3af;
+            color: #94a3b8;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -384,14 +406,15 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 14px;
+            gap: 16px;
             margin-top: 4px;
+            flex-grow: 1;
         }
 
         .form-buttons-column {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
             width: 100%;
             align-items: center;
         }
@@ -399,16 +422,15 @@
         .btn-submit {
             width: 100%;
             height: 48px;
-            background: var(--primary-gradient);
+            background: var(--primary-burgundy-gradient);
             color: #ffffff;
             font-size: 14px;
             font-weight: 700;
             border: none;
-            border-radius: 14px;
+            border-radius: 30px; 
             cursor: pointer;
-            box-shadow: 0 8px 16px rgba(139, 0, 21, 0.12);
-            transition: transform 0.1s ease, opacity 0.2s ease;
-            letter-spacing: -0.01em;
+            box-shadow: 0 6px 16px rgba(128, 0, 32, 0.2);
+            transition: transform 0.15s ease, box-shadow 0.2s ease;
         }
 
         .btn-submit:active {
@@ -420,20 +442,30 @@
             cursor: not-allowed;
         }
 
-        /* Biometric Container with Breathing Animation Linkage */
+        .biometric-sensor-container {
+            margin-top: auto;
+            padding-top: 40px;
+            padding-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            z-index: 5;
+        }
+
         .btn-biometric {
-            width: 76px; 
-            height: 76px;
+            width: 68px; 
+            height: 68px;
             background: #ffffff; 
-            border: 4px solid #f8f9fa;
-            border-radius: 20px; 
+            border: 4px solid #fafbfc;
+            border-radius: 50%; 
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 
-                6px 6px 14px rgba(0, 0, 0, 0.05), 
-                -6px -6px 14px #ffffff;
+                0 10px 25px rgba(0, 0, 0, 0.08), 
+                0 4px 10px rgba(128, 0, 32, 0.04);
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -441,14 +473,13 @@
             animation: bioPulse 3s infinite ease-in-out;
         }
 
-        /* Ambient ripple rings emitting behind the icon inside the box layout */
         .btn-biometric::before {
             content: '';
             position: absolute;
             width: 100%;
             height: 100%;
             border-radius: inherit;
-            background: rgba(139, 0, 21, 0.08);
+            background: rgba(128, 0, 32, 0.08);
             z-index: 1;
             pointer-events: none;
             transform: scale(0.8);
@@ -457,11 +488,12 @@
         }
 
         .btn-biometric:active {
-            box-shadow: inset 4px 4px 10px rgba(0, 0, 0, 0.05), inset -4px -4px 10px #ffffff;
+            box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.05);
             transform: translateY(2px) scale(0.94);
             animation-play-state: paused;
         }
 
+        /* Zoomed up image layout to fill entire sensor container */
         .biometric-btn-icon {
             width: 100%; 
             height: 100%; 
@@ -469,6 +501,7 @@
             display: block;
             position: relative;
             z-index: 2;
+            transform: scale(1.3); /* Effectively zooms image to fill container edge-to-edge */
             filter: blur(10px);
             transition: filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -479,27 +512,26 @@
 
         .biometric-btn-icon.img-error {
             filter: blur(0) !important;
-            background-color: #e5e7eb;
-            padding: 8px;
-            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="%238b0015" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.54 16.59c.22.28.57.41.92.33a8 8 0 0 1 13.24 0c.35.08.7-.05.92-.33A10 10 0 0 0 12 2z"/></svg>');
+            transform: scale(1);
+            background-color: #e2e8f0;
+            padding: 12px;
+            content: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="%23800020" stroke-width="2"><path d="M12 2a10 10 0 0 0-7.54 16.59c.22.28.57.41.92.33a8 8 0 0 1 13.24 0c.35.08.7-.05.92-.33A10 10 0 0 0 12 2z"/></svg>');
         }
 
-        /* Smooth Breathing Scaling Motion Keyframes */
         @keyframes bioPulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.03); box-shadow: 8px 8px 18px rgba(139, 0, 21, 0.08), -6px -6px 14px #ffffff; }
+            50% { transform: scale(1.04); box-shadow: 0 12px 30px rgba(128, 0, 32, 0.12); }
             100% { transform: scale(1); }
         }
 
-        /* Subtle Inner Ripple Keyframes */
         @keyframes bioRipple {
             0% { transform: scale(0.7); opacity: 0.8; }
-            70% { transform: scale(1.2); opacity: 0; }
-            100% { transform: scale(1.2); opacity: 0; }
+            70% { transform: scale(1.3); opacity: 0; }
+            100% { transform: scale(1.3); opacity: 0; }
         }
 
         .reset-link {
-            font-size: 12.5px;
+            font-size: 13px;
             color: var(--text-dark);
             font-weight: 500;
             text-decoration: none;
@@ -510,35 +542,6 @@
             text-decoration: underline;
             color: var(--primary-burgundy);
             font-weight: 700;
-        }
-
-        .footer-area {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            flex-shrink: 0;
-            z-index: 2;
-        }
-
-        .signup-redirect-footer {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 4px;
-            font-size: 11px;
-            color: #ffffff;
-            font-weight: 700;
-            padding-bottom: calc(16px + env(safe-area-inset-bottom));
-            text-align: center;
-            width: 100%;
-        }
-
-        .signup-redirect-footer a {
-            color: #ffffff;
-            font-weight: 800;
-            text-decoration: underline;
         }
 
         .modal-overlay {
@@ -589,15 +592,15 @@
         .country-item { display: flex; align-items: center; padding: 10px 18px; cursor: pointer; transition: background 0.15s ease; gap: 12px; }
         .country-item:active { background: #f9fafb; }
         .item-flag { font-size: 18px; }
-        .item-name { font-size: 13.5px; font-weight: 600; color: var(--text-dark); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-        .item-code { font-size: 12.5px; font-weight: 700; color: var(--text-muted); }
+        .item-name { font-size: 14px; font-weight: 600; color: var(--text-dark); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .item-code { font-size: 13px; font-weight: 700; color: var(--text-muted); }
 
         .toast-container {
             position: fixed;
             top: calc(16px + env(safe-area-inset-top));
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(17, 24, 39, 0.96);
+            background: rgba(15, 23, 42, 0.96);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             color: #ffffff;
@@ -621,7 +624,6 @@
                 top: 0;
                 left: 0;
                 width: 100%;
-                height: 100%;
                 height: 100dvh; 
                 overflow: hidden; 
                 overscroll-behavior-y: none;
@@ -636,38 +638,6 @@
             input, textarea {
                 -webkit-user-select: auto !important;
                 user-select: auto !important;
-            }
-
-            .app-view {
-                height: 100%;
-                height: 100dvh;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch; 
-                scrollbar-width: none;
-                -ms-overflow-style: none;
-                padding-top: calc(80px + env(safe-area-inset-top)) !important;
-                padding-bottom: calc(48px + env(safe-area-inset-bottom, 24px)) !important;
-            }
-            
-            .app-view::-webkit-scrollbar {
-                display: none;
-            }
-            
-            .footer-area {
-                position: fixed !important;
-                bottom: calc(6px + env(safe-area-inset-bottom, 14px)) !important;
-                left: 0;
-                width: 100%;
-                pointer-events: none;
-            }
-
-            .signup-redirect-footer {
-                padding-top: 0 !important;
-                pointer-events: auto;
-            }
-            
-            .header-top-area {
-                top: calc(15px + env(safe-area-inset-top));
             }
         }
     </style>
@@ -684,33 +654,35 @@
         </div>
     </div>
 
-    <!-- PWA Installation Context Status Modal Dropdown -->
-    <div id="alreadyInstalledModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); z-index: 9999; align-items: flex-end; justify-content: center;">
+    <!-- PWA Installation Status Modal -->
+    <div id="alreadyInstalledModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 9999; align-items: flex-end; justify-content: center; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);">
         <div style="background: #ffffff; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 28px 24px calc(24px + env(safe-area-inset-bottom)) 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.15); animation: slideUp 0.3s cubic-bezier(0.1, 0.8, 0.3, 1); box-sizing: border-box; text-align: center;">
-            <div id="modalIconWrapper" style="width: 64px; height: 64px; background: #e8f5e9; border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
-                <svg id="modalIconSvg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <div id="modalIconWrapper" style="width: 56px; height: 56px; background: #ecfdf5; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 16px auto;">
+                <svg id="modalIconSvg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
                     <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
             </div>
-            <h3 id="modalTitleText" style="font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.02em;">Already Installed!</h3>
-            <p id="modalDescText" style="font-size: 13px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px; font-weight: 400;">BirrGo Mobile Wallet is already set up on your device. Look for the application shortcut icon directly on your home screen or app launcher to open it instantly.</p>
-            <button id="closeInstalledModalBtn" style="width: 100%; height: 50px; background: var(--primary-gradient); color: #ffffff; border: none; border-radius: 14px; font-size: 14px; font-weight: 600; cursor: pointer; box-shadow: 0 8px 16px rgba(139, 0, 21, 0.12); outline: none;">Got It</button>
+            <h3 id="modalTitleText" style="font-size: 18px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; letter-spacing: -0.4px;">Already Installed!</h3>
+            <p id="modalDescText" style="font-size: 13px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px; font-weight: 500;">BirrGo Mobile Wallet is already set up on your device. Look for the application shortcut icon directly on your home screen or app launcher to open it instantly.</p>
+            <button id="closeInstalledModalBtn" style="width: 100%; height: 44px; background: var(--primary-burgundy-gradient); color: #ffffff; border: none; border-radius: 100px; font-size: 13px; font-weight: 700; cursor: pointer; box-shadow: 0 8px 20px rgba(128, 0, 32, 0.2); outline: none;">Got It</button>
         </div>
     </div>
 
-    <svg aria-hidden="true" class="bg-wave bg-wave-top" viewBox="0 0 375 120" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 0H375V60C250 120 125 120 0 60V0Z" fill="url(#paint0_linear)"/>
+    <!-- Top Wave Gradient -->
+    <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
         <defs>
-            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="120" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#9A0019"/>
-                <stop offset="1" stop-color="#700010"/>
+            <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#4a0012"/>
+                <stop offset="1" stop-color="#800020"/>
             </linearGradient>
         </defs>
     </svg>
 
-    <svg aria-hidden="true" class="bg-wave bg-wave-bottom" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 40C125 28 250 28 375 40V100H0V40Z" fill="#9A0019"/>
+    <!-- Bottom Wave -->
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 90H0V70C120 62 250 55 375 65V90Z" fill="#2b000a"/>
     </svg>
 
     <div class="toast-container" id="toast-message" role="alert">Error notification message</div>
@@ -727,7 +699,7 @@
             <div class="download-banner" id="pwaInstallBanner">
                 <div class="download-info">
                     <div class="apk-icon-box">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
@@ -744,7 +716,7 @@
 
         <div class="app-content-wrapper">
             <header class="header-content">
-                <h1>Welcome Back to <span style="color: var(--primary-burgundy);">BirrGo</span></h1>
+                <h1>Welcome Back to <span style="color: var(--primary-burgundy);">BirrGo!</span></h1>
                 <p>Log in to your account</p>
             </header>
 
@@ -781,30 +753,34 @@
                 <div class="form-action-area">
                     <div class="form-buttons-column">
                         <button type="submit" id="submitBtn" class="btn-submit">Log In</button>
-                        
+                    </div>
+                    
+                    <!-- Updated URL target to resolve support layout queries instantly -->
+                    <a href="support.html" class="reset-link" title="Reset your BirrGo secure PIN via Support Hub">Forgot Pin? <span>Reset</span></a>
+                    
+                    <div class="biometric-sensor-container">
                         <button type="button" id="biometricBtn" class="btn-biometric" aria-label="Use Fingerprint Login" title="Login with Fingerprint">
                             <img src="fi.jpg" id="biometricImg" alt="Biometric Fingerprint Button" class="biometric-btn-icon"
                                  onload="this.classList.add('loaded')" 
                                  onerror="this.removeAttribute('onload'); this.classList.add('img-error');">
                         </button>
                     </div>
-                    
-                    <a href="#" class="reset-link" title="Reset your BirrGo secure PIN">Forgot Pin? <span>Reset</span></a>
                 </div>
 
             </form>
         </div>
-
-        <footer class="footer-area">
-            <div class="signup-redirect-footer">
-                New to BirrGo? <a href="register.html" title="Register a new BirrGo account">Create Account</a>
-            </div>
-        </footer>
     </main>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        function smoothNavigate(url) {
+            document.body.classList.add('is-loading-page');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
             const bioImg = document.getElementById('biometricImg');
@@ -866,15 +842,15 @@
                         }
                         deferredPrompt = null;
                     } else if (isIOS) {
-                        modalIconWrapper.style.background = "#e3f2fd";
-                        modalIconSvg.setAttribute('stroke', '#1976d2');
+                        modalIconWrapper.style.background = "#fdf2f4";
+                        modalIconSvg.setAttribute('stroke', '#800020');
                         modalIconSvg.innerHTML = `<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line>`;
                         modalTitleText.innerText = "Install on iOS";
                         modalDescText.innerText = "To install BirrGo on your iPhone or iPad, tap the 'Share' icon at the bottom of Safari, then scroll down and select 'Add to Home Screen'.";
                         installedModal.style.display = 'flex';
                     } else {
-                        modalIconWrapper.style.background = "#fff3e0";
-                        modalIconSvg.setAttribute('stroke', '#f57c00');
+                        modalIconWrapper.style.background = "#fdf2f4";
+                        modalIconSvg.setAttribute('stroke', '#800020');
                         modalIconSvg.innerHTML = `<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>`;
                         modalTitleText.innerText = "Install App";
                         modalDescText.innerText = "To install BirrGo, tap your browser's menu icon (⋮) and select 'Add to Home screen' or 'Install App'.";
@@ -897,35 +873,12 @@
             });
         });
 
-        async function smoothNavigate(url) {
-            document.body.classList.add('is-loading-page');
-            try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Network response failed');
-                const htmlString = await response.text();
-                
-                history.pushState(null, '', url);
-                
-                document.open();
-                document.write(htmlString);
-                document.close();
-            } catch (error) {
-                console.error("Seamless load failed, falling back to standard navigation", error);
-                window.location.href = url; 
-            }
-        }
-
         document.addEventListener('click', (e) => {
             const link = e.target.closest('a');
             if (link && link.href && link.origin === window.location.origin && !link.href.includes('#')) {
                 e.preventDefault();
                 smoothNavigate(link.href);
             }
-        });
-
-        window.addEventListener('popstate', () => {
-            document.body.classList.add('is-loading-page');
-            window.location.reload(); 
         });
 
         const firebaseConfig = {

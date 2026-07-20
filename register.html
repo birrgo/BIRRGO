@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="notranslate" translate="no">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="google" content="notranslate">
     
     <!-- ADVANCED SEO BLOCK -->
     <title>Create BirrGo Account | Secure Mobile Wallet Registration Ethiopia</title>
@@ -36,8 +37,8 @@
     <!-- PWA Root App Integration Linkage -->
     <link rel="manifest" href="manifest.json">
     
-    <!-- PWA / Mobile App Meta Tags (Configured for All-White Theme & iOS Support) -->
-    <meta name="theme-color" content="#ffffff">
+    <!-- PWA / Mobile App Meta Tags -->
+    <meta name="theme-color" content="#800020">
     <link rel="apple-touch-icon" href="icon-192.png">
     
     <!-- FAVICON LOGO -->
@@ -49,76 +50,79 @@
     <!-- Preload fonts to prevent layout shifts/breaks on low connections -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Link the powerful global app.css BEFORE your unique local styling override sheets -->
-    <link rel="stylesheet" href="app.css">
     <link rel="stylesheet" href="register.css">
 </head>
 <body>
 
-    <div class="country-modal-overlay" id="countryModalOverlay">
-        <div class="country-modal">
+    <div class="modal-overlay" id="countryModalOverlay">
+        <div class="modal-card">
             <div class="modal-search-wrapper">
-                <input type="text" id="modalSearchInput" class="modal-search" placeholder="Search country..." autocomplete="off">
+                <input type="text" id="modalSearchInput" class="modal-search" placeholder="Search country or code..." autocomplete="off">
             </div>
             <div class="country-list-scroll" id="countryListScroll"></div>
         </div>
     </div>
 
+    <!-- Top Wave Gradient Match -->
     <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
+        <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
         <defs>
             <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#9A0019"/>
-                <stop offset="1" stop-color="#700010"/>
+                <stop stop-color="#4a0012"/>
+                <stop offset="1" stop-color="#800020"/>
             </linearGradient>
         </defs>
     </svg>
 
-    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
+    <!-- Bottom Wave Match -->
+    <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M375 90H0V70C120 62 250 55 375 65V90Z" fill="#2b000a"/>
     </svg>
 
-    <div class="toast-container" id="toast-message"></div>
+    <div class="toast-container" id="toast-message" role="alert"></div>
 
-    <button id="navBackBtn" class="back-btn" style="border:none; cursor:pointer;" aria-label="Go back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22">
-            <path d="M19 12H5M12 19l-7-7 7-7"/>
-        </svg>
-    </button>
+    <div class="header-top-area">
+        <button id="navBackBtn" class="back-btn" aria-label="Go back" title="Go back">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"/>
+            </svg>
+        </button>
+    </div>
 
-    <!-- App View Wrapper uses structural logic -->
-    <div class="app-view">
-        <div class="header-content">
-            <h1 id="screen-title">Create Your Account</h1>
-            <p id="referrer-label">Enter your details to get started with BirrGo.</p>
-        </div>
+    <!-- App View Wrapper aligned with login framework heights -->
+    <main class="app-view">
+        <div class="app-content-wrapper">
+            <header class="header-content">
+                <h1 id="screen-title">Create Your <span style="color: var(--primary-burgundy);">Account</span></h1>
+                <p id="referrer-label">Enter your details to get started with BirrGo.</p>
+            </header>
 
-        <div class="step-indicator">
-            <span id="stepDot1" class="step-dot-active"></span>
-            <span id="stepText1">1. Details</span>
-            <span id="stepDot2" class="step-dot"></span>
-            <span id="stepText2">2. Verify</span>
-            <span class="step-dot"></span>
-            <span class="step-dot"></span>
-        </div>
-
-        <form class="registration-form" id="signupForm">
-            <div class="input-group">
-                <span class="field-label">Full Name <span class="label-required">*</span></span>
-                <input type="text" id="regName" class="input-box" placeholder="First Middle Last" required autocomplete="off">
-                <div class="input-icon-right">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                        <circle cx="12" cy="7" r="4"></circle>
-                    </svg>
-                </div>
+            <div class="step-indicator">
+                <span id="stepDot1" class="step-dot-active"></span>
+                <span id="stepText1">1. Details</span>
+                <span id="stepDot2" class="step-dot"></span>
+                <span id="stepText2">2. Verify</span>
+                <span class="step-dot"></span>
+                <span class="step-dot"></span>
             </div>
 
-            <div>
+            <form class="registration-form" id="signupForm">
+                <div class="input-group">
+                    <label class="field-label" for="regName">Full Name <span class="label-highlight">*</span></label>
+                    <input type="text" id="regName" class="input-box" placeholder="First Middle Last" required autocomplete="off">
+                    <div class="input-icon-right">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                </div>
+
                 <div class="input-group phone-input-wrapper">
-                    <span class="field-label">Phone Number <span class="label-required">*</span></span>
+                    <label class="field-label" for="regPhone">Phone Number <span class="label-highlight">*</span></label>
                     
                     <div class="country-trigger" id="countryTriggerBtn">
                         <span class="trigger-flag" id="currentFlag">🇪🇹</span>
@@ -126,69 +130,74 @@
                         <span class="trigger-arrow">▼</span>
                     </div>
 
-                    <input type="tel" id="regPhone" class="input-box phone-indent" placeholder="Phone number" required autocomplete="off">
+                    <input type="tel" id="regPhone" class="input-box phone-indent" placeholder="9xxxxxxxx" required autocomplete="off">
                     <div class="input-icon-right">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                         </svg>
                     </div>
                 </div>
-                <p class="input-helper-text">Tap code field to select your country prefix.</p>
-            </div>
 
-            <div class="input-group">
-                <span class="field-label">Email Address <span class="label-required">*</span></span>
-                <input type="email" id="regEmail" class="input-box" placeholder="example@mail.com" required autocomplete="off">
-                <div class="input-icon-right">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-                        <polyline points="22,6 12,13 2,6"></polyline>
-                    </svg>
+                <div class="input-group">
+                    <label class="field-label" for="regEmail">Email Address <span class="label-highlight">*</span></label>
+                    <input type="email" id="regEmail" class="input-box" placeholder="example@mail.com" required autocomplete="off">
+                    <div class="input-icon-right">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                            <polyline points="22,6 12,13 2,6"></polyline>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="regPin">Create Pin (6-digits) <span class="label-highlight">*</span></label>
+                    <input type="password" id="regPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
+                    <div class="input-icon-right">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="field-label" for="regConfirmPin">Confirm Pin <span class="label-highlight">*</span></label>
+                    <input type="password" id="regConfirmPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
+                    <div class="input-icon-right">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="form-action-area">
+                    <button type="submit" id="submitBtn" class="btn-submit">Continue to Verification</button>
+                    
+                    <div class="login-redirect-footer">
+                        Already have an account? <a href="new2.html"><span>Log In</span></a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="verification-view" id="otpView">
+                <div class="otp-container" id="otpInputsWrapper">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                    <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+                </div>
+
+                <p class="resend-text">Didn't receive the email? <span id="resendCodeBtn" class="resend-link disabled">Resend in (30s)</span></p>
+
+                <div class="form-action-area" style="margin-top:20px;">
+                    <button type="button" id="verifyOtpBtn" class="btn-submit">Verify OTP & Create Account</button>
                 </div>
             </div>
-
-            <div class="input-group">
-                <span class="field-label">Create Pin (6-digits) <span class="label-required">*</span></span>
-                <input type="password" id="regPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
-                <div class="input-icon-right">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="input-group">
-                <span class="field-label">Confirm Pin <span class="label-required">*</span></span>
-                <input type="password" id="regConfirmPin" maxlength="6" pattern="[0-9]{6}" inputmode="numeric" class="input-box" placeholder="••••••" required autocomplete="off">
-            </div>
-
-            <div class="form-action-area">
-                <button type="submit" id="submitBtn" class="btn-submit">Continue to Verification</button>
-            </div>
-        </form>
-
-        <div class="verification-view" id="otpView" style="display: none;">
-            <div class="otp-container" id="otpInputsWrapper">
-                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-                <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
-            </div>
-
-            <p class="resend-text">Didn't receive the email? <span id="resendCodeBtn" class="resend-link disabled">Resend in (30s)</span></p>
-
-            <div class="form-action-area" style="margin-top:20px;">
-                <button type="button" id="verifyOtpBtn" class="btn-submit">Verify OTP & Create Account</button>
-            </div>
         </div>
-
-        <div class="login-redirect-footer">
-            Already have an account? <a href="new2.html">Log In</a>
-        </div>
-    </div>
+    </main>
 
     <script type="module" src="register.js"></script>
 </body>
