@@ -11,15 +11,18 @@
     <style>
         :root {
             --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #9b0026 0%, #4a0000 100%);
+            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
+            
+            /* Modern Digital White & Tech Gradient Palette */
+            --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
+            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
+            
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --card-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
-            --success-green: #10b981;
-            --warning-amber: #f59e0b;
-            --border-radius-lg: 24px;
+            --success-green: #059669;
+            --warning-amber: #d97706;
+            --border-radius-lg: 20px;
             --border-radius-md: 16px;
         }
 
@@ -35,7 +38,6 @@
         html, body {
             width: 100%;
             height: 100dvh;
-            overflow: hidden;
             background-color: #f1f5f9;
         }
 
@@ -43,6 +45,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            perspective: 1000px;
         }
 
         .app-view {
@@ -53,175 +56,309 @@
             display: flex;
             flex-direction: column;
             position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(128, 0, 32, 0.08);
             overflow: hidden;
+            transition: filter 0.3s ease;
+            transform-style: preserve-3d;
         }
 
-        .bg-wave {
+        /* Tech Circuit Pattern on Clean White Background */
+        .tech-bg-pattern {
             position: absolute;
-            left: 0;
-            width: 100%;
+            inset: 0;
             z-index: 0;
             pointer-events: none;
-        }
-        .bg-wave-top {
-            top: 0;
-            height: 12vh;
-            min-height: 80px;
-        }
-        .bg-wave-bottom {
-            bottom: 0;
-            height: 10vh;
-            min-height: 70px;
+            opacity: 0.6;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
+                radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 16px 16px;
         }
 
+        .app-view.network-offline-blur {
+            filter: blur(6px);
+            pointer-events: none;
+        }
+
+        /* Top Red Wave Header Container */
+        .top-wave-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: calc(82px + env(safe-area-inset-top));
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .top-wave-header svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
+        }
+
+        .bottom-wave-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 65px;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bottom-wave-footer svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Brand Header positioned strictly ON TOP of the Red Wave */
+        .brand-header {
+            position: absolute;
+            top: calc(10px + env(safe-area-inset-top));
+            left: 16px;
+            right: 16px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* 3D Glossy White Glass Back Button directly on Red Wave */
+        .back-btn {
+            position: relative;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            font-weight: 900;
+            color: var(--primary-burgundy);
+            cursor: pointer;
+            outline: none;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
+            transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s ease;
+        }
+
+        .back-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 70%);
+            transform: rotate(30deg);
+            animation: gloss-shine 4s infinite;
+            pointer-events: none;
+        }
+
+        @keyframes gloss-shine {
+            0% { transform: translateX(-100%) rotate(30deg); }
+            20% { transform: translateX(100%) rotate(30deg); }
+            100% { transform: translateX(100%) rotate(30deg); }
+        }
+
+        .back-btn:active {
+            transform: translateY(2px) scale(0.94);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Logo positioned directly inside the Red Wave Header */
+        .logo-image {
+            height: 30px;
+            width: auto;
+            object-fit: contain;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
+        }
+
+        .img-blur-loading {
+            filter: blur(8px);
+            opacity: 0.5;
+        }
+
+        .img-blur-loaded {
+            filter: blur(0);
+            opacity: 1;
+        }
+
+        /* Adjusted padding & moved section upward */
         .app-content {
             flex: 1;
             overflow-y: auto;
-            padding: calc(16px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom)) 20px;
+            padding: calc(78px + env(safe-area-inset-top)) 16px calc(70px + env(safe-area-inset-bottom)) 16px;
             scrollbar-width: none;
             position: relative;
-            z-index: 1;
+            z-index: 2;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        .brand-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 32px;
-            padding: 4px 2px;
-        }
-
-        .logo-image {
-            height: 45px;
-            width: auto;
-            object-fit: contain;
-        }
-
-        .back-btn {
-            background: rgba(255, 255, 255, 0.85);
-            border: 1px solid var(--border-light);
-            padding: 8px 14px;
-            border-radius: 100px;
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-dark);
-            cursor: pointer;
-            box-shadow: var(--card-shadow);
-        }
-
         .section-heading {
-            font-size: 18px;
+            font-size: 15px;
             font-weight: 800;
             color: var(--text-dark);
-            margin-bottom: 16px;
+            margin-top: 4px;
+            margin-bottom: 10px;
+            letter-spacing: -0.3px;
         }
 
+        /* Moved container higher up with refined compact layout */
         .task-container {
             display: flex;
             flex-direction: column;
-            gap: 12px;
-            margin-bottom: 24px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
+        /* High Visibility Modern Tech White Boxes with Motion */
         .task-card {
-            background: #ffffff;
-            border: 1px solid var(--border-light);
+            background: var(--card-tech-bg);
+            border: 1.5px solid #e2e8f0;
             border-radius: var(--border-radius-md);
-            padding: 16px;
-            box-shadow: var(--card-shadow);
+            padding: 10px 12px;
+            box-shadow: var(--blue-glow-shadow);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 12px;
-            transition: all 0.3s ease;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        /* Smooth Light Sweeping Motion */
+        .task-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 70%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.25), rgba(255, 255, 255, 0.8), transparent);
+            transform: skewX(-20deg);
+            animation: card-light-sweep 4.5s infinite;
+        }
+
+        @keyframes card-light-sweep {
+            0% { left: -100%; }
+            25% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        /* Subtle Floating Hover Effect */
+        .task-card:hover {
+            border-color: #38bdf8;
+            box-shadow: 0 10px 24px -4px rgba(37, 99, 235, 0.18), 0 0 16px rgba(56, 189, 248, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .task-card:active {
+            transform: translateY(2px) scale(0.98);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
         }
 
         .task-card.completed {
-            border-color: var(--success-green);
-            background: #f0fdf4;
+            border-color: #a7f3d0;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
         }
 
         .task-left {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .task-icon-badge {
-            background: #fdf2f4;
-            width: 44px;
-            height: 44px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            width: 38px;
+            height: 38px;
             border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            transition: all 0.3s;
+            flex-shrink: 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
         }
 
         .task-logo-img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            border-radius: 12px;
-        }
-
-        .task-card.completed .task-icon-badge {
-            background: #dcfce7;
+            border-radius: 10px;
+            transition: filter 0.3s ease, opacity 0.3s ease;
         }
 
         .task-details h4 {
-            font-size: 14px;
+            font-size: 12.5px;
             font-weight: 700;
             color: var(--text-dark);
             margin-bottom: 2px;
+            line-height: 1.2;
         }
 
         .task-details p {
-            font-size: 12px;
-            color: var(--success-green);
-            font-weight: 700;
+            font-size: 11px;
+            color: #2563eb;
+            font-weight: 800;
         }
 
+        /* Smooth Animated Action Buttons */
         .task-btn {
             border: none;
             border-radius: 100px;
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 700;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 800;
             cursor: pointer;
             text-decoration: none;
             text-align: center;
-            transition: transform 0.1s;
-        }
-        .task-btn:active {
-            transform: scale(0.96);
+            white-space: nowrap;
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .btn-follow {
-            background: var(--primary-gradient);
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             color: #ffffff;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-follow:hover {
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.45);
+            transform: translateY(-1px);
         }
 
         .btn-verify {
-            background: var(--warning-amber);
+            background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
             color: #ffffff;
+            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
         }
 
         .status-checking {
-            color: var(--warning-amber);
-            font-size: 12px;
+            color: #d97706;
+            font-size: 11px;
             font-weight: 700;
         }
 
         .status-verified {
             color: #64748b;
-            font-size: 13px;
+            font-size: 11px;
             font-weight: 800;
             background: #e2e8f0;
-            padding: 6px 14px;
+            border: 1px solid #cbd5e1;
+            padding: 5px 12px;
             border-radius: 100px;
             display: inline-block;
         }
@@ -232,7 +369,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+            background-color: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             display: none;
@@ -240,70 +377,81 @@
             align-items: center;
             z-index: 6000;
         }
+
         .popup-card {
-            background-color: #ffffff;
-            border-radius: 32px;
-            padding: 32px 24px 24px 24px;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 24px 20px;
             width: 88%;
             max-width: 320px;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
         }
+
         .popup-btn {
             width: 100%;
             background: var(--primary-gradient);
             border: none;
             border-radius: 100px;
-            padding: 14px;
-            font-size: 15px;
+            padding: 12px;
+            font-size: 13px;
             font-weight: 700;
             color: white;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 16px;
+            box-shadow: 0 4px 12px rgba(128, 0, 32, 0.3);
         }
     </style>
 </head>
 <body>
 
-    <div class="app-view">
+    <div class="app-view" id="appView">
         
-        <!-- Background Assets -->
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V80C375 80 280 200 0 120V0Z" fill="url(#paint0_linear)"/>
-            <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
-                    <stop stop-color="#9A0019"/>
-                    <stop offset="1" stop-color="#700010"/>
-                </linearGradient>
-            </defs>
-        </svg>
+        <div class="tech-bg-pattern"></div>
 
-        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V60C0 60 120 -20 375 40V150Z" fill="#9A0019"/>
-        </svg>
+        <div class="brand-header">
+            <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
+            <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
+        </div>
         
+        <div class="top-wave-header">
+            <svg viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0H375V55C250 85 125 40 0 65V0Z" fill="url(#brandGradientTop)"/>
+                <defs>
+                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="90" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#800020"/>
+                        <stop offset="1" stop-color="#5a0016"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
         <div class="app-content">
-            
-            <!-- Identity Header -->
-            <div class="brand-header">
-                <img class="logo-image" src="birrgo-logo.png" alt="BirrGo Logo">
-                <button class="back-btn" id="backToGiveBtn">← Back</button>
-            </div>
 
-            <h2 class="section-heading">Social Media Verification</h2>
+            <h2 class="section-heading">Social Media Follow Challenge </h2>
             
-            <!-- Tasks Placement Node -->
             <div class="task-container" id="socialTasksContainer">
-                <!-- Programmatically generated by JavaScript Configurations -->
             </div>
 
         </div>
 
-        <!-- Notification / Confirmation Feedback System -->
+        <div class="bottom-wave-footer">
+            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
+                <defs>
+                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#800020"/>
+                        <stop offset="1" stop-color="#5a0016"/>
+                    </linearGradient>
+                </defs>
+            </svg>
+        </div>
+
         <div class="popup-backdrop" id="completionPopup">
             <div class="popup-card">
-                <h3 style="font-size:22px; font-weight:800; color:#10b981; margin-bottom:12px;">Congratulations!</h3>
-                <p style="font-size:15px; color:#334155; font-weight:600; line-height:1.5;"><span id="popupRewardDisplay">20</span> Birr is added to your wallet.</p>
+                <h3 style="font-size:18px; font-weight:800; color:#059669; margin-bottom:8px;">Congratulations!</h3>
+                <p style="font-size:13px; color:#334155; font-weight:600; line-height:1.4;"><span id="popupRewardDisplay">20</span> Birr is added to your wallet.</p>
                 <button class="popup-btn" id="popupCloseBtn">Great!</button>
             </div>
         </div>
@@ -315,14 +463,38 @@
         import { getDatabase, ref, get, runTransaction, push, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         document.addEventListener('DOMContentLoaded', async () => {
-            // Security Gate
             const activeUserPhone = localStorage.getItem('auth_session_phone');
             if (!activeUserPhone) {
                 window.location.replace("new2.html");
                 return;
             }
 
-            // Firebase Integration Configs
+            const mainLogo = document.getElementById('mainLogo');
+            if (mainLogo) {
+                if (mainLogo.complete) {
+                    mainLogo.classList.remove('img-blur-loading');
+                    mainLogo.classList.add('img-blur-loaded');
+                } else {
+                    mainLogo.addEventListener('load', () => {
+                        mainLogo.classList.remove('img-blur-loading');
+                        mainLogo.classList.add('img-blur-loaded');
+                    });
+                }
+            }
+
+            const appView = document.getElementById('appView');
+            const handleNetworkChange = () => {
+                if (!navigator.onLine) {
+                    appView.classList.add('network-offline-blur');
+                } else {
+                    appView.classList.remove('network-offline-blur');
+                }
+            };
+
+            window.addEventListener('offline', handleNetworkChange);
+            window.addEventListener('online', handleNetworkChange);
+            handleNetworkChange();
+
             const firebaseConfig = {
                 apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
                 authDomain: "birrgo-fdf7e.firebaseapp.com",
@@ -337,7 +509,6 @@
             const app = initializeApp(firebaseConfig);
             const db = getDatabase(app);
 
-            // Default fallback configurations using HTTPS universal web links instead of custom deep schemes
             let adminSocialChannels = [
                 { id: "tg", name: "Join Telegram Channel", logoPath: "te.jpg", link: "https://t.me/your_channel_username", prize: 20 },
                 { id: "fb", name: "Follow Facebook Channel", logoPath: "f.jpg", link: "https://facebook.com/your_page_username", prize: 20 },
@@ -353,7 +524,6 @@
                     const data = snapshot.val();
                     if (data.version) matrixVersion = String(data.version);
                     
-                    // Safely parse deep schemes to reliable HTTPS formats if they match standard input protocols
                     if (data.tg) adminSocialChannels[0].link = data.tg.startsWith('tg://') ? data.tg.replace('tg://resolve?domain=', 'https://t.me/') : data.tg;
                     if (data.fb) adminSocialChannels[1].link = data.fb.startsWith('fb://') ? 'https://facebook.com/' : data.fb;
                     if (data.ig) adminSocialChannels[2].link = data.ig.startsWith('instagram://') ? data.ig.replace('instagram://user?username=', 'https://instagram.com/') : data.ig;
@@ -367,7 +537,6 @@
             const taskTracker = {}; 
             const container = document.getElementById('socialTasksContainer');
 
-            // Construct Cards Dynamically
             function initSocialCampaign() {
                 container.innerHTML = '';
                 adminSocialChannels.forEach(item => {
@@ -385,7 +554,7 @@
                         card.innerHTML = `
                             <div class="task-left">
                                 <div class="task-icon-badge" id="badge-${item.id}">
-                                    <img class="task-logo-img" src="${item.logoPath}" alt="${item.id}">
+                                    <img class="task-logo-img img-blur-loading" src="${item.logoPath}" alt="${item.id}" id="img-task-${item.id}">
                                 </div>
                                 <div class="task-details">
                                     <h4>${item.name}</h4>
@@ -401,7 +570,7 @@
                         card.innerHTML = `
                             <div class="task-left">
                                 <div class="task-icon-badge" id="badge-${item.id}">
-                                    <img class="task-logo-img" src="${item.logoPath}" alt="${item.id}">
+                                    <img class="task-logo-img img-blur-loading" src="${item.logoPath}" alt="${item.id}" id="img-task-${item.id}">
                                 </div>
                                 <div class="task-details">
                                     <h4>${item.name}</h4>
@@ -416,6 +585,19 @@
                     
                     container.appendChild(card);
 
+                    const taskImg = document.getElementById(`img-task-${item.id}`);
+                    if (taskImg) {
+                        if (taskImg.complete) {
+                            taskImg.classList.remove('img-blur-loading');
+                            taskImg.classList.add('img-blur-loaded');
+                        } else {
+                            taskImg.addEventListener('load', () => {
+                                taskImg.classList.remove('img-blur-loading');
+                                taskImg.classList.add('img-blur-loaded');
+                            });
+                        }
+                    }
+
                     if (isAlreadyClaimed !== 'true') {
                         document.getElementById(`link-click-${item.id}`).addEventListener('click', () => {
                             processFollowInitialization(item.id);
@@ -424,7 +606,6 @@
                 });
             }
 
-            // Move to Verify state after user follows link
             function processFollowInitialization(id) {
                 if (taskTracker[id] !== 'unvisited') return;
                 taskTracker[id] = 'followed';
@@ -440,7 +621,6 @@
                 }, 1200);
             }
 
-            // Server-simulation validation checkpoint with a live 3-minute checking sequence
             function executeLedgerConfirmation(id) {
                 const node = document.getElementById('control-' + id);
                 const targetedChannel = adminSocialChannels.find(c => c.id === id);
@@ -510,7 +690,6 @@
                 node.innerHTML = `<span class="status-checking">Checking (3:00)...</span>`;
             }
 
-            // UI Actions
             document.getElementById('backToGiveBtn').addEventListener('click', () => window.location.replace('give.html'));
             document.getElementById('popupCloseBtn').addEventListener('click', () => document.getElementById('completionPopup').style.display = 'none');
 
