@@ -162,7 +162,7 @@
         <!-- Global Verification Field -->
         <div class="form-group">
             <label class="form-label">Current Admin Verification Token</label>
-            <input type="password" id="adminToken" class="form-input" autocomplete="current-password" placeholder="Enter current token to authorize changes">
+            <input type="password" id="adminToken" class="form-input" autocomplete="current-password" placeholder="Enter current token (e.g., 808080)">
         </div>
 
         <hr>
@@ -204,8 +204,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fallback token if none exists in the database yet
-        const DEFAULT_MASTER_TOKEN = "YOUR_INITIAL_SECRET_TOKEN"; 
+        // Fallback hardcoded token matching your existing database value
+        const DEFAULT_MASTER_TOKEN = "808080"; 
 
         const tokenInput = document.getElementById('adminToken');
         const keyInput = document.getElementById('geminiKey');
@@ -221,15 +221,14 @@
             statusMessage.style.display = "block";
         }
 
-        // Helper to verify current token against the database
+        // Dynamically verifies entered token against the current database node
         async function verifyCurrentToken(enteredToken) {
             if (!enteredToken) return false;
             try {
-                const snapshot = await get(ref(db, 'secrets/admin_token'));
+                const snapshot = await get(ref(db, 'settings/premium_gate_password'));
                 const activeToken = snapshot.exists() ? snapshot.val() : DEFAULT_MASTER_TOKEN;
-                return enteredToken === activeToken;
+                return enteredToken === String(activeToken);
             } catch (e) {
-                // If database read rules block reading the token directly, falls back to structural attempt
                 return enteredToken === DEFAULT_MASTER_TOKEN;
             }
         }
@@ -255,12 +254,13 @@
             }
 
             try {
-                await set(ref(db, 'secrets/gemini_api_key'), geminiKey);
+                // Saves the Gemini key securely in the configuration structure
+                await set(ref(db, 'config/gemini/api_key'), geminiKey);
                 showMessage("Gemini API Key successfully updated in live database.", false);
                 keyInput.value = "";
             } catch (error) {
                 console.error(error);
-                showMessage("Database rejected write. Verify your rules permit updating 'secrets/gemini_api_key'.", true);
+                showMessage("Database rejected write. Verify your rules permit updating database entries.", true);
             } finally {
                 saveKeyBtn.disabled = false;
             }
@@ -287,13 +287,14 @@
             }
 
             try {
-                await set(ref(db, 'secrets/admin_token'), newToken);
+                // Overwrites your target password path directly
+                await set(ref(db, 'settings/premium_gate_password'), newToken);
                 showMessage("Admin Verification Token updated successfully! Use the new token for future updates.", false);
                 tokenInput.value = "";
                 newTokenInput.value = "";
             } catch (error) {
                 console.error(error);
-                showMessage("Database rejected write. Verify your rules permit updating 'secrets/admin_token'.", true);
+                showMessage("Database rejected write. Verify your database security parameters.", true);
             } finally {
                 saveTokenBtn.disabled = false;
             }
