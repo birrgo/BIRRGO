@@ -204,7 +204,7 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Fallback hardcoded token matching your existing database value
+        // Fallback token matching your current active database value
         const DEFAULT_MASTER_TOKEN = "808080"; 
 
         const tokenInput = document.getElementById('adminToken');
@@ -221,7 +221,7 @@
             statusMessage.style.display = "block";
         }
 
-        // Dynamically verifies entered token against the current database node
+        // Dynamically verifies entered token against your database password node
         async function verifyCurrentToken(enteredToken) {
             if (!enteredToken) return false;
             try {
@@ -233,7 +233,7 @@
             }
         }
 
-        // Action 1: Save Gemini Key
+        // Action 1: Save Gemini Key (Synchronizes both paths to fix the chat interface)
         saveKeyBtn.addEventListener('click', async () => {
             const currentToken = tokenInput.value.trim();
             const geminiKey = keyInput.value.trim();
@@ -254,9 +254,13 @@
             }
 
             try {
-                // Saves the Gemini key securely in the configuration structure
+                // Write 1: Main configuration target path
                 await set(ref(db, 'config/gemini/api_key'), geminiKey);
-                showMessage("Gemini API Key successfully updated in live database.", false);
+                
+                // Write 2: Chat system fallback path to resolve network disconnects
+                await set(ref(db, 'secrets/gemini_api_key'), geminiKey);
+                
+                showMessage("Gemini API Key successfully synchronized across live database paths.", false);
                 keyInput.value = "";
             } catch (error) {
                 console.error(error);
@@ -287,7 +291,7 @@
             }
 
             try {
-                // Overwrites your target password path directly
+                // Direct updates to premium_gate_password
                 await set(ref(db, 'settings/premium_gate_password'), newToken);
                 showMessage("Admin Verification Token updated successfully! Use the new token for future updates.", false);
                 tokenInput.value = "";
