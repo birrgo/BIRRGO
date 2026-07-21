@@ -128,15 +128,15 @@
           return;
       }
 
-      // Ensure imageUrl is a valid non-empty string or null
+      // Format image URL cleanly
       const imageUrl = (rawImageUrl && rawImageUrl.startsWith('http')) ? rawImageUrl : null;
 
-      // Disable inputs during network request
       toggleFormState(true);
-      showStatus('Broadcasting via backend microservice...', '#f59e0b');
+      showStatus('Broadcasting via Vercel microservice...', '#f59e0b');
 
       try {
-          const response = await fetch("/api/send-push", {
+          // Direct request to your Vercel project domain (bypasses GitHub Pages 405 error)
+          const response = await fetch("https://birrgo-birrgo-online.vercel.app/api/send-push", {
               method: "POST",
               headers: {
                   "Content-Type": "application/json"
@@ -149,10 +149,10 @@
               })
           });
 
-          // Safeguard: Verify response is JSON (catches Vercel 404/500 HTML pages)
+          // Check if response is valid JSON
           const contentType = response.headers.get("content-type");
           if (!contentType || !contentType.includes("application/json")) {
-              throw new Error(`Server returned non-JSON response (HTTP ${response.status}). Verify /api/send-push deployment.`);
+              throw new Error(`Server returned non-JSON response (HTTP ${response.status}).`);
           }
 
           const responseData = await response.json();
