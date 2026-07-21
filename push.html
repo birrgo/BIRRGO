@@ -5,178 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BirrGo - Push Notification Dashboard</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; padding: 20px; display: flex; flex-direction: column; align-items: center; }
         .top-nav { width: 100%; max-width: 400px; display: flex; justify-content: flex-start; margin-bottom: 15px; box-sizing: border-box; }
         .back-btn { background: #555; color: white; text-decoration: none; padding: 8px 14px; border-radius: 6px; font-size: 14px; font-weight: bold; display: inline-flex; align-items: center; transition: background 0.2s; }
         .back-btn:hover { background: #333; }
         .card { background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); width: 100%; max-width: 400px; border-top: 5px solid #8B0000; margin-bottom: 20px; box-sizing: border-box; }
         h2 { color: #8B0000; margin-top: 0; font-size: 22px; }
-        h3 { color: #333; margin-top: 0; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 8px; }
         label { font-weight: bold; display: block; margin: 12px 0 5px; color: #333; font-size: 14px; }
         input, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 6px; font-size: 15px; margin-bottom: 5px;}
         button { background: #8B0000; color: white; width: 100%; padding: 12px; border: none; border-radius: 6px; font-size: 15px; font-weight: bold; margin-top: 15px; cursor: pointer; transition: background 0.2s;}
         button:hover { background: #660000; }
-        .btn-danger { background: #d9534f; }
-        .btn-danger:hover { background: #c9302c; }
-        #status, #config-status { margin-top: 12px; font-weight: bold; text-align: center; font-size: 14px; }
-        .loading { color: #f59e0b; font-style: italic; text-align: center; }
+        button:disabled { background: #999; cursor: not-allowed; }
+        #status { margin-top: 12px; font-weight: bold; text-align: center; font-size: 14px; word-break: break-word; }
     </style>
 </head>
 <body>
 
-<!-- TOP NAVIGATION BAR -->
 <div class="top-nav">
     <a href="new.html" class="back-btn">← Back to Dashboard</a>
 </div>
 
-<!-- CARD 1: SENDER PANEL -->
 <div class="card">
     <h2>BirrGo Notification Panel</h2>
-    <div id="setup-status" class="loading">Connecting to secure storage...</div>
+    <p style="font-size: 14px; color: #555;">Broadcast a live message to your active subscribers:</p>
     
-    <div id="admin-form" style="display:none;">
-        <p style="font-size: 14px; color: #555;">Broadcast a live message to your active subscribers:</p>
+    <form id="push-form" onsubmit="sendPush(event)">
         <label for="title">Notification Title</label>
-        <input type="text" id="title" placeholder="e.g., Cash Received! 💰">
+        <input type="text" id="title" placeholder="e.g., Cash Received! 💰" required>
 
         <label for="message">Message Body</label>
-        <textarea id="message" rows="3" placeholder="e.g., You received 500 Birr."></textarea>
+        <textarea id="message" rows="3" placeholder="e.g., You received 500 Birr." required></textarea>
 
         <label for="imageUrl">Image URL (Optional)</label>
-        <input type="text" id="imageUrl" placeholder="https://birrgo.online/banner.jpg">
+        <input type="url" id="imageUrl" placeholder="https://birrgo.online/banner.jpg">
 
-        <button onclick="sendPush()">Broadcast Notification</button>
-        <div id="status"></div>
-    </div>
+        <button type="submit" id="send-btn">Broadcast Notification</button>
+    </form>
+    
+    <div id="status"></div>
 </div>
 
-<!-- CARD 2: DYNAMIC ONESIGNAL CONFIGURATION MANAGER -->
-<div class="card" id="settings-card" style="display: none;">
-    <h3>OneSignal Credentials Manager</h3>
-    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">Update or clear your keys directly in your Firebase cloud config node anytime:</p>
+<script>
+  async function sendPush(event) {
+      event.preventDefault();
 
-    <label for="db-app-id">OneSignal App ID</label>
-    <input type="text" id="db-app-id" placeholder="Paste App ID">
-
-    <label for="db-rest-key">REST API Key (Secret)</label>
-    <input type="password" id="db-rest-key" placeholder="Paste REST API Key">
-
-    <button onclick="updateFirebaseConfig()">Save / Update Keys</button>
-    <button onclick="deleteFirebaseConfig()" class="btn-danger">Delete Current Configuration</button>
-    <div id="config-status"></div>
-</div>
-
-<!-- Firebase App SDKs -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
-    authDomain: "birrgo-fdf7e.firebaseapp.com",
-    databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
-    projectId: "birrgo-fdf7e",
-    storageBucket: "birrgo-fdf7e.firebasestorage.app",
-    messagingSenderId: "2317445154",
-    appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
-    measurementId: "G-24X13TZ43D"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
-  
-  const configRef = ref(database, 'config/onesignal');
-
-  let secureAppId = "";
-  let secureRestKey = "";
-
-  function loadConfig() {
-      get(configRef).then((snapshot) => {
-          document.getElementById('setup-status').style.display = 'none';
-          document.getElementById('settings-card').style.display = 'block';
-          
-          if (snapshot.exists()) {
-              const keys = snapshot.val();
-              secureAppId = keys.appId || "";
-              secureRestKey = keys.restApiKey || "";
-              
-              document.getElementById('db-app-id').value = secureAppId;
-              document.getElementById('db-rest-key').value = secureRestKey;
-              
-              document.getElementById('admin-form').style.display = 'block';
-          } else {
-              document.getElementById('db-app-id').value = "";
-              document.getElementById('db-rest-key').value = "";
-              document.getElementById('admin-form').style.display = 'block';
-              document.getElementById('status').innerText = '';
-          }
-      }).catch((error) => {
-          document.getElementById('setup-status').style.color = '#d9534f';
-          document.getElementById('setup-status').innerText = 'Database Link Error: ' + error.message;
-      });
-  }
-
-  loadConfig();
-
-  window.updateFirebaseConfig = function() {
-      const appIdInput = document.getElementById('db-app-id').value.trim();
-      const restKeyInput = document.getElementById('db-rest-key').value.trim();
-      const configStatus = document.getElementById('config-status');
-
-      if(!appIdInput || !restKeyInput) {
-          configStatus.style.color = '#d9534f';
-          configStatus.innerText = 'Both key fields are required!';
-          return;
-      }
-
-      configStatus.style.color = '#f59e0b';
-      configStatus.innerText = 'Saving to Firebase...';
-
-      set(configRef, {
-          appId: appIdInput,
-          restApiKey: restKeyInput
-      }).then(() => {
-          configStatus.style.color = '#10b981';
-          configStatus.innerText = '✔️ Credentials saved successfully!';
-          loadConfig(); 
-      }).catch((err) => {
-          configStatus.style.color = '#d9534f';
-          configStatus.innerText = 'Save failed: ' + err.message;
-      });
-  }
-
-  window.deleteFirebaseConfig = function() {
-      if(!confirm("Are you sure you want to completely delete your active OneSignal credentials?")) return;
-      
-      const configStatus = document.getElementById('config-status');
-      
-      remove(configRef).then(() => {
-          configStatus.style.color = '#d9534f';
-          configStatus.innerText = '🗑️ Configuration deleted from database.';
-          loadConfig(); 
-      }).catch((err) => {
-          configStatus.style.color = '#d9534f';
-          configStatus.innerText = 'Delete failed: ' + err.message;
-      });
-  }
-
-  window.sendPush = async function() {
       const title = document.getElementById('title').value.trim();
       const message = document.getElementById('message').value.trim();
       const imageUrl = document.getElementById('imageUrl').value.trim();
       const statusDiv = document.getElementById('status');
+      const sendBtn = document.getElementById('send-btn');
 
-      if(!title || !message) {
+      if (!title || !message) {
           statusDiv.style.color = '#d9534f';
-          statusDiv.innerText = 'Fields cannot be blank!';
+          statusDiv.innerText = 'Title and Message are required!';
           return;
       }
 
       statusDiv.style.color = '#f59e0b';
-      statusDiv.innerText = 'Broadcasting via Push Microservice...';
+      statusDiv.innerText = 'Broadcasting via Vercel Microservice...';
+      sendBtn.disabled = true;
 
       try {
-          // Points directly to the push microservice endpoint (/api/send-push)
           const response = await fetch("/api/send-push", {
               method: "POST",
               headers: {
@@ -185,7 +74,7 @@
               body: JSON.stringify({
                   title: title,
                   message: message,
-                  imageUrl: imageUrl || undefined,
+                  imageUrl: imageUrl || null,
                   url: "https://birrgo.online"
               })
           });
@@ -194,19 +83,19 @@
 
           if (response.ok && responseData.success) {
               statusDiv.style.color = '#10b981';
-              statusDiv.innerText = '🚀 Notification deployed successfully!';
-              document.getElementById('title').value = '';
-              document.getElementById('message').value = '';
-              document.getElementById('imageUrl').value = '';
+              statusDiv.innerText = `🚀 Success! Sent to ${responseData.recipients || 0} recipients.`;
+              document.getElementById('push-form').reset();
           } else {
-              let errorMsg = responseData.error || `Status ${response.status} (${response.statusText})`;
+              let errorMsg = responseData.error || responseData.message || `Status ${response.status}`;
               statusDiv.style.color = '#d9534f';
-              statusDiv.innerText = 'Push Microservice Error: ' + errorMsg;
+              statusDiv.innerText = 'Error: ' + errorMsg;
           }
       } catch (error) {
-          console.error("Push Microservice Error:", error);
+          console.error("Push Service Error:", error);
           statusDiv.style.color = '#d9534f';
           statusDiv.innerText = 'Network error: ' + error.message;
+      } finally {
+          sendBtn.disabled = false;
       }
   }
 </script>
