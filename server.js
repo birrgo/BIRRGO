@@ -202,7 +202,7 @@ app.post('/api/admin/apikey', async (req, res) => {
 
 // Endpoint for user client assistant to chat securely via Groq
 app.post('/api/chat', async (req, res) => {
-  const userMessage = req.body.prompt || req.body.userMessage;
+  const userMessage = req.body.prompt || req.body.userMessage || req.body.message;
 
   if (!userMessage) {
     return res.status(400).json({ error: 'Prompt text is required.' });
@@ -528,7 +528,7 @@ KNOWLEDGE BASE:
   * iPhone 17 Raffle -> iPhone Raffle Portal / iPhone Metrics Hub
   * Samsung S26 Raffle -> Samsung Raffle Portal / Samsung Metrics Hub
   * Motorcycle Raffle -> Motorcycle Raffle Portal / Motorcycle Metrics Hub
-  * Electric Bajaj Raffle -> Bajaj Raffle Portal / Bajaj Metrics Hub
+  * Electric Bajaj Raffle -> Electric Bajaj Raffle Portal / Bajaj Metrics Hub
   * Wallet -> Wallet Hub
   * Today Giveaway -> Giveaway Hub
   * Social Tasks -> Social Challenge Hub
@@ -550,7 +550,7 @@ KNOWLEDGE BASE:
           content: userMessage 
         }
       ],
-      model: "llama-3.3-70b-versatile",
+      model: "llama-3.1-8b-instant", // Updated to high-capacity instant model
       temperature: 0.3,
       max_tokens: 350
     });
@@ -559,7 +559,13 @@ KNOWLEDGE BASE:
     return res.status(200).json({ reply });
 
   } catch (error) {
-    console.error("Groq AI Chat execution error:", error.message);
+    console.error("Groq AI Chat execution error:", error.message || error);
+
+    // Handle Groq rate limit explicitly
+    if (error.status === 429) {
+      return res.status(429).json({ error: 'AI service rate limit reached. Please wait a moment and try again.' });
+    }
+
     return res.status(500).json({ error: 'Failed to process assistant request.' });
   }
 });
