@@ -1,3 +1,16 @@
+<script>
+  atOptions = {
+    'key' : 'd2f535e8108b02e972de2d20b1d66e98',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -198,7 +211,6 @@
                         localCachedBroadcasts.push({ id: key, ...data[key] });
                     });
                     
-                    // Sort Order: Newest updates first (Top) -> Oldest (Bottom)
                     localCachedBroadcasts.sort((a, b) => {
                         let timeA = a.updatedAt || a.createdAtTimestamp || a.timestamp || 0;
                         let timeB = b.updatedAt || b.createdAtTimestamp || b.timestamp || 0;
@@ -275,14 +287,14 @@
                 <body>
                     <script type="text/javascript">
                         var atOptions = {
-                            'key' : '13b3ec570952c54b1d86d1063081641d',
+                            'key' : 'd2f535e8108b02e972de2d20b1d66e98',
                             'format' : 'iframe',
                             'height' : 250,
                             'width' : 300,
                             'params' : {}
                         };
                     <\/script>
-                    <script type="text/javascript" src="https://www.highperformanceformat.com/13b3ec570952c54b1d86d1063081641d/invoke.js?cb=${cacheBuster}" async="async"><\/script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}" async="async"><\/script>
                 </body>
                 </html>
             `);
@@ -551,7 +563,7 @@
 
             const enteredCode = inputField.value.trim().toUpperCase();
             if (!enteredCode) {
-                triggerUiPopup("⚠️", "Input Empty", "Please enter a valid code voucher string to process.");
+                triggerUiPopup("⚠️", "Input Empty", "Please enter a valid promo code to process.");
                 return;
             }
 
@@ -559,39 +571,78 @@
             claimBtn.innerText = "Checking...";
 
             try {
-                const campaignRef = ref(db, 'globalPromoCampaign');
-                const campaignSnap = await get(campaignRef);
+                let matchedPromoData = null;
+                let matchedNodePath = null;
+                let isLegacySingleFormat = false;
 
-                if (!campaignSnap.exists()) {
-                    triggerUiPopup("❌", "No Active Promo", "There are no ongoing promotional rewards events active at this time.");
-                    return;
+                // 1. Search under primary "promoCodes" collection
+                const promoCodesRef = ref(db, 'promoCodes');
+                const promoCodesSnap = await get(promoCodesRef);
+
+                if (promoCodesSnap.exists()) {
+                    const promoCodesData = promoCodesSnap.val();
+                    Object.keys(promoCodesData).forEach(key => {
+                        const item = promoCodesData[key];
+                        if (item && item.code && String(item.code).trim().toUpperCase() === enteredCode) {
+                            matchedPromoData = item;
+                            matchedNodePath = `promoCodes/${key}`;
+                        }
+                    });
                 }
 
-                const campaignData = campaignSnap.val();
-                if (enteredCode !== String(campaignData.code).trim().toUpperCase()) {
+                // 2. Fallback check under "globalPromoCampaign"
+                if (!matchedPromoData) {
+                    const campaignRef = ref(db, 'globalPromoCampaign');
+                    const campaignSnap = await get(campaignRef);
+
+                    if (campaignSnap.exists()) {
+                        const campaignData = campaignSnap.val();
+                        
+                        if (campaignData.code && String(campaignData.code).trim().toUpperCase() === enteredCode) {
+                            matchedPromoData = campaignData;
+                            matchedNodePath = 'globalPromoCampaign';
+                            isLegacySingleFormat = true;
+                        } else {
+                            Object.keys(campaignData).forEach(key => {
+                                const item = campaignData[key];
+                                if (item && item.code && String(item.code).trim().toUpperCase() === enteredCode) {
+                                    matchedPromoData = item;
+                                    matchedNodePath = `globalPromoCampaign/${key}`;
+                                }
+                            });
+                        }
+                    }
+                }
+
+                if (!matchedPromoData || !matchedNodePath) {
                     triggerUiPopup("❌", "Wrong Promo Code", "The code you entered is invalid. Please try again with a correct code.");
-                    return;
-                }
-
-                const currentCount = parseInt(campaignData.currentClaimCount) || 0;
-                const maxClaims = parseInt(campaignData.maxClaims) || 0;
-                if (currentCount >= maxClaims) {
-                    triggerUiPopup("🚫", "Promo Expired", "This promotional campaign has expired! Limit cap allocations are complete.");
                     return;
                 }
 
                 const userHistoryRef = ref(db, `users/${activeUserPhone}/claimedPromos/${enteredCode}`);
                 const historySnap = await get(userHistoryRef);
                 if (historySnap.exists()) {
-                    triggerUiPopup("⚠️", "Already Claimed", "You have already collected this voucher bonus value to your account balance.");
+                    triggerUiPopup("⚠️", "Already Claimed", "You have already collected this voucher bonus to your account balance.");
                     return;
                 }
 
-                const counterRef = ref(db, 'globalPromoCampaign/currentClaimCount');
+                const maxClaims = parseInt(matchedPromoData.maxClaims) || 0;
+                const currentCount = parseInt(matchedPromoData.currentClaimCount) || 0;
+
+                if (maxClaims > 0 && currentCount >= maxClaims) {
+                    triggerUiPopup("🚫", "Promo Expired", "This promotional campaign has expired! Limit cap allocations are complete.");
+                    return;
+                }
+
+                const counterPath = isLegacySingleFormat 
+                    ? 'globalPromoCampaign/currentClaimCount' 
+                    : `${matchedNodePath}/currentClaimCount`;
+
+                const counterRef = ref(db, counterPath);
                 const transactionResult = await runTransaction(counterRef, (currentValue) => {
                     let val = parseInt(currentValue);
                     if (currentValue === null || isNaN(val)) val = 0;
-                    if (val >= maxClaims) return; 
+                    if (maxClaims > 0 && val >= maxClaims) return; 
                     return val + 1;
                 });
 
@@ -602,7 +653,8 @@
 
                 const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
                 const currentBalanceSnap = await get(balanceRef);
-                let reward = parseFloat(campaignData.rewardAmount) || 0;
+                
+                let reward = parseFloat(matchedPromoData.rewardAmount || matchedPromoData.winAmount || matchedPromoData.reward || 0);
                 let currentBalance = 0;
                 
                 if (currentBalanceSnap.exists() && currentBalanceSnap.val() !== null) {
@@ -610,10 +662,15 @@
                 }
                 
                 await set(balanceRef, currentBalance + reward);
-                await set(userHistoryRef, { claimedAt: Date.now(), amountClaimed: reward });
+                await set(userHistoryRef, { 
+                    claimedAt: Date.now(), 
+                    amountClaimed: reward,
+                    code: enteredCode 
+                });
 
                 triggerUiPopup("", "Voucher Redeemed!", "Successfully updated onto your wallet balance.", `+${reward} Birr`);
                 inputField.value = "";
+
             } catch (error) {
                 console.error("Voucher operation pipeline fail:", error);
                 triggerUiPopup("❌", "Network Error", "Secure server connection failure. Please try again.");
