@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
-const Groq = require('groq-sdk'); 
 const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
@@ -172,7 +171,7 @@ app.post('/verify-otp', async (req, res) => {
 });
 
 // ==========================================
-// 5. GROQ AI CHAT & MANAGEMENT ENDPOINTS
+// 5. OPENROUTER AI CHAT & MANAGEMENT ENDPOINTS
 // ==========================================
 
 // Endpoint for admin dashboard to securely update key inside the closed 'secrets' node
@@ -192,7 +191,7 @@ app.post('/api/admin/apikey', async (req, res) => {
   try {
     const db = getDatabase();
     // Written into locked secrets node path
-    await db.ref('secrets/groq_api_key').set(apiKey);
+    await db.ref('secrets/openrouter_api_key').set(apiKey);
     return res.status(200).json({ success: true, message: 'API Key saved securely to Firebase.' });
   } catch (error) {
     console.error("Firebase admin key sync error:", error);
@@ -200,7 +199,7 @@ app.post('/api/admin/apikey', async (req, res) => {
   }
 });
 
-// Endpoint for user client assistant to chat securely via Groq
+// Endpoint for user client assistant to chat securely via OpenRouter AI
 app.post('/api/chat', async (req, res) => {
   const userMessage = req.body.prompt || req.body.userMessage || req.body.message;
 
@@ -210,14 +209,12 @@ app.post('/api/chat', async (req, res) => {
 
   try {
     const db = getDatabase();
-    const snapshot = await db.ref('secrets/groq_api_key').once('value');
-    const activeApiKey = snapshot.val() || process.env.GROQ_API_KEY;
+    const snapshot = await db.ref('secrets/openrouter_api_key').once('value');
+    const activeApiKey = snapshot.val() || process.env.OPENROUTER_API_KEY;
 
     if (!activeApiKey) {
       return res.status(503).json({ error: 'The AI assistant configuration is pending setup.' });
     }
-
-    const groq = new Groq({ apiKey: activeApiKey });
 
     // Custom System Instruction specifically restricting answers to BirrGo platform
     const systemPrompt = `
@@ -539,33 +536,46 @@ KNOWLEDGE BASE:
 - Account Issues & Support: Contact customer support via the support ticket form in Support Hub, reach out to mail@birrgo.online / birrgo@gmail.com, or join @birrgo.online on Telegram.
 `;
 
-    const chatCompletion = await groq.chat.completions.create({
-      messages: [
-        { 
-          role: "system", 
-          content: systemPrompt 
-        },
-        { 
-          role: "user", 
-          content: userMessage 
-        }
-      ],
-      model: "llama-3.1-8b-instant", // Updated to high-capacity instant model
-      temperature: 0.3,
-      max_tokens: 350
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${activeApiKey}`,
+        "Content-Type": "application/json",
+        "HTTP-Referer": "https://birrgo.online",
+        "X-Title": "BirrGo Assistant"
+      },
+      body: JSON.stringify({
+        model: "meta-llama/llama-3.3-70b-instruct:free",
+        messages: [
+          { 
+            role: "system", 
+            content: systemPrompt 
+          },
+          { 
+            role: "user", 
+            content: userMessage 
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 350
+      })
     });
 
-    const reply = chatCompletion.choices[0]?.message?.content || "";
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("OpenRouter API Error:", data);
+      if (response.status === 429) {
+        return res.status(429).json({ error: 'AI service rate limit reached. Please wait a moment and try again.' });
+      }
+      return res.status(response.status).json({ error: data.error?.message || 'AI service error.' });
+    }
+
+    const reply = data.choices[0]?.message?.content || "";
     return res.status(200).json({ reply });
 
   } catch (error) {
-    console.error("Groq AI Chat execution error:", error.message || error);
-
-    // Handle Groq rate limit explicitly
-    if (error.status === 429) {
-      return res.status(429).json({ error: 'AI service rate limit reached. Please wait a moment and try again.' });
-    }
-
+    console.error("OpenRouter AI Chat execution error:", error.message || error);
     return res.status(500).json({ error: 'Failed to process assistant request.' });
   }
 });
