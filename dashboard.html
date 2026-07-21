@@ -23,9 +23,6 @@
             --warning-amber: #f59e0b;
             --border-radius-lg: 20px;
             --border-radius-md: 14px;
-            
-            /* AI Button Specific Gloss Variables */
-            --ai-glow: 0 0 20px rgba(128, 0, 32, 0.6), inset 0 2px 4px rgba(255, 255, 255, 0.3);
         }
 
         * {
@@ -396,46 +393,25 @@
             text-align: center;
         }
 
-        /* 3D FLOATING PREMIUM AI CHAT INTERFACE */
+        /* FLOATING PREMIUM AI CHAT INTERFACE */
         .premium-ai-trigger {
             position: fixed;
             bottom: calc(84px + env(safe-area-inset-bottom));
             right: 20px;
             width: 62px;
             height: 62px;
-            border-radius: 50%;
-            background: var(--primary-burgundy-gradient);
-            box-shadow: 0 12px 24px rgba(74, 0, 18, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+            background: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 4000;
             text-decoration: none;
-            border: 1.5px solid rgba(255, 255, 255, 0.2);
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: floatingBounce 3s ease-in-out infinite, auraPulse 2.5s infinite;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            overflow: hidden; /* Cleans image alignment boundaries */
         }
 
         .premium-ai-trigger:active {
             transform: scale(0.9) rotate(-10deg);
-            box-shadow: 0 6px 12px rgba(74, 0, 18, 0.6);
-        }
-
-        /* Pure CSS 3D Depth Rings */
-        .premium-ai-trigger::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #800020, #ff4d79);
-            z-index: -1;
-            opacity: 0.4;
-            filter: blur(6px);
-            animation: rotationalSpin 6s linear infinite;
         }
 
         /* Image configuration substituting the old layout vector structure */
@@ -444,33 +420,14 @@
             height: 100%;
             object-fit: cover;
             display: block;
-            transform: translateZ(15px); /* Pinpoint visual positioning across the 3D grid layout plane */
             pointer-events: none;
-        }
-
-        /* Interactive Gloss Sheen Effect */
-        .ai-glass-sheen {
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%);
-            pointer-events: none;
-            z-index: 2; /* Keeps sleek sheen on top of custom art background elements */
+            animation: floatingBounce 3s ease-in-out infinite;
         }
 
         /* Modern 3D/Glow Keyframes */
         @keyframes floatingBounce {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-12px) rotate(4deg); }
-        }
-        @keyframes auraPulse {
-            0% { box-shadow: 0 12px 24px rgba(74, 0, 18, 0.4), 0 0 0 0 rgba(128, 0, 32, 0.5); }
-            70% { box-shadow: 0 16px 28px rgba(74, 0, 18, 0.2), 0 0 0 14px rgba(128, 0, 32, 0); }
-            100% { box-shadow: 0 12px 24px rgba(74, 0, 18, 0.4), 0 0 0 0 rgba(128, 0, 32, 0); }
-        }
-        @keyframes rotationalSpin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
         }
 
         .bottom-nav-bar {
@@ -859,9 +816,8 @@
 
         </div>
 
-        <!-- 3D FLOATING ANIMATED AI ASSISTANT TRIGGER LINKS TO AI.HTML -->
+        <!-- FLOATING ANIMATED AI ASSISTANT TRIGGER LINKS TO AI.HTML -->
         <a href="ai.html" class="premium-ai-trigger" id="aiChatBotNode" aria-label="Open AI Assistant">
-            <div class="ai-glass-sheen"></div>
             <!-- Dynamic high-performance fitting image replacement asset -->
             <img src="ai.png" alt="AI Assistant" class="ai-button-img">
         </a>
