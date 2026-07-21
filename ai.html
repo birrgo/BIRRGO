@@ -49,50 +49,79 @@
     .popup-header { 
       background: var(--burgundy-gradient); 
       color: #ffffff; 
-      padding: 18px 20px; 
-      display: flex; 
+      padding: 16px 20px; 
+      display: grid;
+      grid-template-columns: auto 1fr auto;
       align-items: center; 
-      justify-content: space-between; 
+      gap: 12px;
     }
     
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-    }
-
-    .header-title { font-weight: 700; display: flex; align-items: center; gap: 8px; font-size: 1.1rem; }
-    
-    .dashboard-link {
-      color: rgba(255, 255, 255, 0.75);
-      text-decoration: none;
-      font-size: 0.8rem;
-      font-weight: 500;
-      transition: color 0.2s ease;
-      width: max-content;
-    }
-
-    .dashboard-link:hover {
-      color: #ffffff;
-      text-decoration: underline;
-    }
-
-    .close-btn { 
-      background: rgba(255, 255, 255, 0.15); 
-      border: none; 
-      color: #ffffff; 
-      width: 30px; 
-      height: 30px; 
-      border-radius: 50%; 
-      cursor: pointer; 
+    /* 3D Back Button Styling */
+    .back-btn-3d {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
-      transition: background 0.2s;
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.05));
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 50%;
+      color: #ffffff;
+      text-decoration: none;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.5);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .back-btn-3d:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+    }
+
+    .back-btn-3d:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 1px 3px rgba(0, 0, 0, 0.4);
+    }
+
+    .back-btn-3d svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
+    }
+
+    .header-title { 
+      font-weight: 700; 
+      font-size: 1.1rem; 
+      text-align: center;
+    }
+
+    .support-btn { 
+      background: rgba(255, 255, 255, 0.2); 
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff; 
+      padding: 6px 12px;
+      border-radius: 16px; 
+      cursor: pointer; 
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.1s;
+      white-space: nowrap;
     }
     
-    .close-btn:hover { background: rgba(255, 255, 255, 0.3); }
+    .support-btn:hover { 
+      background: rgba(255, 255, 255, 0.3); 
+    }
+
+    .support-btn:active {
+      transform: scale(0.96);
+    }
     
     .chat-messages { 
       flex: 1; 
@@ -126,11 +155,13 @@
 <body>
   <div class="popup-container">
     <div class="popup-header">
-      <div class="header-left">
-        <div class="header-title">🤖 BirrGo AI Support</div>
-        <a href="Dashboard.html" class="dashboard-link">⬅ Return to Dashboard</a>
-      </div>
-      <button class="close-btn" id="close-window-btn">✕</button>
+      <a href="Dashboard.html" class="back-btn-3d" title="Return to Dashboard">
+        <svg viewBox="0 0 24 24">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+      </a>
+      <div class="header-title">BirrGo AI Support</div>
+      <a href="support.html" class="support-btn">Manual Support</a>
     </div>
     <div class="chat-messages" id="chat-messages">
       <div class="message ai-message">👋 Hello! How can I assist you with BirrGo today?</div>
@@ -145,7 +176,6 @@
     const inputField = document.getElementById('user-input');
     const sendBtn = document.getElementById('send-btn');
     const messagesContainer = document.getElementById('chat-messages');
-    const closeBtn = document.getElementById('close-window-btn');
 
     // Render Backend Service Base Domain
     const BACKEND_BASE_URL = 'https://birrgo-otp-backend.onrender.com';
@@ -154,14 +184,6 @@
     const API_ENDPOINT = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:3000/api/chat'
       : `${BACKEND_BASE_URL}/api/chat`;
-
-    closeBtn.addEventListener('click', () => {
-      if (window.history.length > 1) {
-        window.history.back();
-      } else {
-        window.location.href = 'Dashboard.html';
-      }
-    });
 
     inputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
     sendBtn.addEventListener('click', sendMessage);
