@@ -1,4 +1,4 @@
-const express = require('express');
+const Express = require('express');
 const cors = require('cors');
 const { BrevoClient } = require('@getbrevo/brevo');
 const Groq = require('groq-sdk'); 
@@ -6,7 +6,7 @@ const admin = require('firebase-admin');
 const { cert } = require('firebase-admin/app'); 
 const { getDatabase } = require('firebase-admin/database'); 
 
-const app = express();
+const app = Express();
 const PORT = process.env.PORT || 3000;
 
 // Set Admin Authorization Secret Token (Default: '808080')
@@ -19,7 +19,7 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-app.use(express.json());
+app.use(Express.json());
 
 // 2. Initialize Firebase Admin securely using Render Environment Variables
 if (process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -615,7 +615,7 @@ KNOWLEDGE BASE:
           content: userMessage 
         }
       ],
-      model: "llama-3.1-8b-instant",
+      model: "llama-3.3-70b-versatile", // UPDATED: Replaced retired llama-3.1-8b-instant model
       temperature: 0.3,
       max_tokens: 400
     });
