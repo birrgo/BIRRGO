@@ -18,6 +18,16 @@
     <platform name="android">
         <!-- Main launcher icon mapping -->
         <icon src="icon.png" />
+
+        <!-- Notification status bar icon -->
+        <resource-file src="badge-icon.png" target="app/src/main/res/drawable/ic_stat_notification.png" />
+
+        <!-- Firebase / Push Plugin default notification icon fallback -->
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <meta-data 
+                android:name="com.google.firebase.messaging.default_notification_icon" 
+                android:resource="@drawable/ic_stat_notification" />
+        </config-file>
     </platform>
 
     <!-- Security Rules: Allow your app to load external resources and navigate -->
