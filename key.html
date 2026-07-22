@@ -10,565 +10,225 @@
     
     <style>
         :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
+            --primary-burgundy: #500614;
+            --primary-gradient: linear-gradient(135deg, #500614 0%, #2a0005 100%);
             --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            --blue-glow-shadow: 0 8px 20px -4px rgba(37, 99, 235, 0.12), 0 0 12px rgba(56, 189, 248, 0.18);
+            --blue-glow-shadow: 0 6px 16px -4px rgba(37, 99, 235, 0.1), 0 0 10px rgba(56, 189, 248, 0.12);
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
             --text-dark: #0f172a;
             --text-muted: #64748b;
             --bg-light: #f8fafc;
-            --success-green: #059669;
-            --warning-amber: #d97706;
-            --error-red: #dc2626;
-            --border-radius-lg: 20px;
-            --border-radius-md: 16px;
+            --border-light: #e2e8f0;
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+            --nav-bar-height: 70px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            letter-spacing: -0.2px;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.15px; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; height: 100%; height: 100dvh; background-color: var(--bg-light); overflow: hidden; font-size: 12px; }
 
-        html {
-            width: 100%;
-            height: 100%;
-            background-color: #f1f5f9;
-        }
-
-        body {
-            width: 100%;
-            min-height: 100vh;
-            min-height: 100dvh;
-            background-color: #f1f5f9;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            perspective: 1000px;
-        }
-
+        /* PWA Shell Structure */
         .app-view {
-            width: 100%;
-            height: 100vh;
-            height: 100dvh;
-            max-width: 450px;
-            background-color: var(--bg-light);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 40px rgba(128, 0, 32, 0.08);
-            overflow: hidden;
-            transition: filter 0.3s ease;
-            transform-style: preserve-3d;
+            width: 100%; height: 100vh; height: 100dvh; max-width: 450px; margin: 0 auto;
+            background-color: var(--bg-light); display: flex; flex-direction: column;
+            position: relative; overflow: hidden; transition: filter 0.3s ease;
         }
 
         .tech-bg-pattern {
-            position: absolute;
-            inset: 0;
-            z-index: 0;
-            pointer-events: none;
-            opacity: 0.6;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
-                radial-gradient(#cbd5e1 1px, transparent 1px);
+            position: absolute; inset: 0; z-index: 0; pointer-events: none; opacity: 0.6;
+            background-image: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%), radial-gradient(circle at 90% 80%, rgba(80, 6, 20, 0.05) 0%, transparent 20%), radial-gradient(#cbd5e1 1px, transparent 1px);
             background-size: 100% 100%, 100% 100%, 16px 16px;
         }
 
-        .app-view.network-offline-blur {
-            filter: blur(6px);
-            pointer-events: none;
+        /* Network Blur State */
+        .app-view.network-offline-blur { filter: blur(10px) grayscale(20%); pointer-events: none; }
+        .offline-banner { position: absolute; top: env(safe-area-inset-top, 10px); left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.9); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; z-index: 1000; display: none; backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .app-view.network-offline-blur .offline-banner { display: block; }
+
+        /* Liquid Wave Decorations */
+        .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 90px; }
+        .bg-wave-bottom { bottom: 0; height: 35px; }
+
+        /* Header Layout - Centered Title & Matching Clear Icon-Only Back Button */
+        .brand-header { 
+            display: grid; 
+            grid-template-columns: 32px 1fr 32px; 
+            align-items: center; 
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            position: relative; 
+            z-index: 5; 
+            flex-shrink: 0; 
         }
 
-        /* Reduced Curve Header Height */
-        .top-wave-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: calc(60px + env(safe-area-inset-top, 0px));
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .top-wave-header svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-            filter: drop-shadow(0 4px 10px rgba(128, 0, 32, 0.3));
-        }
-
-        .bottom-wave-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: calc(65px + env(safe-area-inset-bottom, 0px));
-            z-index: 10;
-            pointer-events: none;
-        }
-
-        .bottom-wave-footer svg {
-            width: 100%;
-            height: 100%;
-            display: block;
-        }
-
-        .brand-header {
-            position: absolute;
-            top: calc(8px + env(safe-area-inset-top, 0px));
-            left: 16px;
-            right: 16px;
-            z-index: 20;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        /* Center Title on Curve */
-        .header-title {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #ffffff;
-            font-size: 14px;
-            font-weight: 800;
-            letter-spacing: 0.2px;
-            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            white-space: nowrap;
-        }
-
-        .back-btn {
-            position: relative;
-            width: 34px;
-            height: 34px;
+        .back-btn-icon {
+            width: 30px; 
+            height: 30px; 
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            display: flex;
-            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            border: none; 
+            display: flex; 
+            align-items: center; 
             justify-content: center;
-            font-size: 16px;
-            font-weight: 900;
-            color: var(--primary-burgundy);
-            cursor: pointer;
+            cursor: pointer; 
             outline: none;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 1);
-            transition: transform 0.15s, box-shadow 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+            transition: transform 0.15s ease, background-color 0.15s ease;
         }
-        .back-btn:active {
-            transform: translateY(2px) scale(0.94);
+        .back-btn-icon:active { transform: scale(0.90); }
+        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
+
+        .header-center-title {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        .logo-image {
-            height: 28px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)) brightness(1.1);
-            transition: filter 0.3s ease, opacity 0.3s ease;
-        }
+        .logo-image { height: 22px; width: auto; object-fit: contain; justify-self: end; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); transition: filter 0.3s ease, opacity 0.3s ease; }
+        .img-blur-loading { filter: blur(8px); opacity: 0.4; }
+        .img-blur-loaded { filter: blur(0); opacity: 1; }
 
-        .img-blur-loading {
-            filter: blur(8px);
-            opacity: 0.5;
-        }
-
-        .img-blur-loaded {
-            filter: blur(0);
-            opacity: 1;
-        }
-
-        /* Adjusted Top/Bottom Padding for Scroll Content */
+        /* Content Container with Navigation Safe Areas */
         .app-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-top: calc(68px + env(safe-area-inset-top, 0px));
-            padding-left: 16px;
-            padding-right: 16px;
-            padding-bottom: calc(115px + env(safe-area-inset-bottom, 16px));
-            scrollbar-width: none;
-            position: relative;
-            z-index: 2;
-            -webkit-overflow-scrolling: touch;
+            flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column;
+            padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px;
+            position: relative; z-index: 2; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none;
         }
         .app-content::-webkit-scrollbar { display: none; }
 
-        .section-heading {
-            font-size: 15px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-top: 4px;
-            margin-bottom: 12px;
-            text-align: center;
-        }
+        .task-container { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; }
 
-        .task-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 14px;
-        }
-
+        /* Task Card Styling */
         .task-card {
-            width: 92%;
-            max-width: 360px;
-            background: var(--card-tech-bg);
-            border: 1.5px solid #e2e8f0;
-            border-radius: var(--border-radius-md);
-            padding: 12px 14px;
-            box-shadow: var(--blue-glow-shadow);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.25s, box-shadow 0.25s;
+            width: 100%; background: var(--card-tech-bg); border: 1px solid var(--border-light);
+            border-radius: var(--border-radius-lg); padding: 10px 12px; box-shadow: var(--card-shadow);
+            display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; transition: transform 0.2s, border-color 0.2s;
         }
+        .task-card:hover { border-color: #cbd5e1; }
+        .task-card.completed { border-color: #a7f3d0; background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%); }
 
-        .task-card:hover {
-            border-color: #cbd5e1;
-            transform: translateY(-2px);
-        }
-
-        .task-card.completed {
-            border-color: #a7f3d0;
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-        }
-
-        .task-top-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .task-top-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .task-left { display: flex; align-items: center; gap: 8px; }
 
         .task-icon-badge {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-            font-size: 16px;
+            background: #ffffff; border: 1px solid var(--border-light); width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 6px rgba(0,0,0,0.04); overflow: hidden;
         }
+        .task-icon-badge img { width: 22px; height: 22px; object-fit: contain; }
 
-        .task-details h4 {
-            font-size: 13px;
-            font-weight: 800;
-            color: var(--text-dark);
-            margin-bottom: 2px;
-        }
+        .task-details h4 { font-size: 0.78rem; font-weight: 800; color: var(--text-dark); line-height: 1.2; }
+        .task-details p { font-size: 0.68rem; color: var(--primary-burgundy); font-weight: 800; }
 
-        .task-details p {
-            font-size: 11px;
-            color: var(--primary-burgundy);
-            font-weight: 800;
-        }
-
-        /* Reduced Width Watch Video Container */
-        .btn-watch-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-        }
+        /* Compact Action Row */
+        .compact-action-row { display: flex; align-items: center; gap: 6px; width: 100%; margin-top: 2px; }
 
         .btn-watch {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            width: 60%;
-            max-width: 200px;
-            padding: 7px 12px;
-            font-size: 12px;
-            font-weight: 800;
-            color: #ffffff;
-            text-decoration: none;
-            border-radius: 10px;
-            border: none;
-            background: var(--primary-burgundy);
-            cursor: pointer;
-            transition: background-color 0.15s ease, transform 0.1s ease;
+            display: flex; align-items: center; justify-content: center; gap: 4px; 
+            padding: 6px 12px; min-width: 82px; font-size: 0.68rem; font-weight: 800;
+            color: #ffffff; text-decoration: none; border-radius: var(--border-radius-md); border: none; background: var(--primary-burgundy);
+            cursor: pointer; flex-shrink: 0; white-space: nowrap; transition: background-color 0.15s ease;
         }
-
-        .btn-watch:active {
-            transform: scale(0.98);
-            background: #5a0016;
-        }
-
-        .action-row {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-            width: 100%;
-        }
+        .btn-watch:active { background: #2a0005; }
 
         .key-input {
-            flex: 1;
-            padding: 8px 10px;
-            border: 1.5px solid #cbd5e1;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 700;
-            outline: none;
-            text-align: center;
-            color: var(--text-dark);
-            background: #ffffff;
-            transition: all 0.2s ease;
+            flex: 1; min-width: 0; padding: 6px 8px; border: 1.2px solid #cbd5e1; border-radius: var(--border-radius-md);
+            font-size: 0.7rem; font-weight: 700; outline: none; text-align: center; color: var(--text-dark);
+            background: #ffffff; transition: border-color 0.2s ease;
         }
-
-        .key-input:focus {
-            border-color: var(--primary-burgundy);
-            box-shadow: 0 0 0 3px rgba(128, 0, 32, 0.12);
-        }
+        .key-input:focus { border-color: var(--primary-burgundy); }
 
         .btn-claim {
-            border: none;
-            border-radius: 10px;
-            padding: 8px 14px;
-            font-size: 12px;
-            font-weight: 800;
-            cursor: pointer;
-            color: #ffffff;
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
-            transition: transform 0.15s ease;
-            white-space: nowrap;
+            border: none; border-radius: var(--border-radius-md); padding: 6px 10px; font-size: 0.7rem; font-weight: 800; cursor: pointer;
+            color: #ffffff; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2); transition: transform 0.15s ease; white-space: nowrap; flex-shrink: 0;
         }
-
-        .btn-claim:active {
-            transform: scale(0.95);
-        }
+        .btn-claim:active { transform: scale(0.95); }
 
         .status-verified {
-            color: #059669;
-            font-size: 11px;
-            font-weight: 800;
-            background: #dcfce7;
-            border: 1px solid #a7f3d0;
-            padding: 6px 12px;
-            border-radius: 100px;
-            display: inline-block;
+            color: #059669; font-size: 0.62rem; font-weight: 800; background: #dcfce7; border: 1px solid #a7f3d0;
+            padding: 4px 10px; border-radius: 100px; display: inline-block;
         }
 
-        /* Fixed Non-Movable Bottom Ad Wrapper with Safe Area Padding */
-        .ad-container-fixed {
-            position: absolute;
-            bottom: calc(12px + env(safe-area-inset-bottom, 12px));
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 15;
-            pointer-events: auto;
-        }
+        /* Fixed Bottom Ad Wrapper */
+        .bottom-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; flex-shrink: 0; z-index: 30; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; background: rgba(248, 250, 252, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border-light); }
+        .ad-container { position: relative; z-index: 2; background: var(--card-tech-bg); border: 1px dashed #cbd5e1; border-radius: 10px; padding: 5px 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; min-height: 38px; box-shadow: var(--card-shadow); user-select: none; }
+        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
+        .ad-icon { font-size: 12px; }
+        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
 
-        .ad-box {
-            width: 92%;
-            max-width: 360px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.96);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            border: 1.5px dashed #cbd5e1;
-            border-radius: var(--border-radius-md);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.1);
-        }
-
-        .ad-badge {
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 9px;
-            font-weight: 800;
-            color: #94a3b8;
-            background: #f1f5f9;
-            padding: 2px 6px;
-            border-radius: 4px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-        }
-
-        .ad-content-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            color: #94a3b8;
-            font-size: 11px;
-            font-weight: 700;
-        }
-
-        .popup-backdrop {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 6000;
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .popup-card {
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 24px 20px;
-            width: 88%;
-            max-width: 320px;
-            text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            transform: scale(0.95);
-            animation: popIn 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-
-        @keyframes popIn {
-            to { transform: scale(1); }
-        }
-
-        .popup-icon-circle {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 12px auto;
-            font-size: 24px;
-        }
-
+        /* Modal Dialog */
+        .popup-backdrop { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s ease; }
+        .popup-backdrop.active { display: flex; opacity: 1; }
+        .popup-card { background-color: #ffffff; border-radius: var(--border-radius-lg); padding: 16px 14px; width: 84%; max-width: 290px; text-align: center; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); }
+        .popup-icon-circle { width: 38px; height: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-size: 18px; }
         .popup-icon-circle.success { background: #dcfce7; color: #059669; }
         .popup-icon-circle.error { background: #fee2e2; color: #dc2626; }
         .popup-icon-circle.warning { background: #fef3c7; color: #d97706; }
-
-        .popup-title {
-            font-size: 17px;
-            font-weight: 800;
-            margin-bottom: 6px;
-        }
-
+        .popup-title { font-size: 0.88rem; font-weight: 800; margin-bottom: 4px; }
         .popup-title.success { color: #059669; }
         .popup-title.error { color: #dc2626; }
         .popup-title.warning { color: #d97706; }
-
-        .popup-message {
-            font-size: 13px;
-            color: #334155;
-            font-weight: 600;
-            line-height: 1.45;
-            margin-bottom: 16px;
-        }
-
-        .popup-btn {
-            width: 100%;
-            border: none;
-            border-radius: 100px;
-            padding: 12px;
-            font-size: 13px;
-            font-weight: 800;
-            color: white;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            transition: transform 0.10s ease;
-        }
-
-        .popup-btn:active {
-            transform: scale(0.97);
-        }
-
+        .popup-message { font-size: 0.72rem; color: #334155; font-weight: 500; line-height: 1.4; margin-bottom: 12px; }
+        .popup-btn { width: 100%; border: none; border-radius: var(--border-radius-md); padding: 9px; font-size: 0.72rem; font-weight: 700; color: white; cursor: pointer; box-shadow: 0 3px 8px rgba(0,0,0,0.12); }
         .popup-btn.btn-success { background: linear-gradient(135deg, #059669 0%, #047857 100%); }
         .popup-btn.btn-error { background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); }
         .popup-btn.btn-warning { background: linear-gradient(135deg, #d97706 0%, #b45309 100%); }
-        .popup-btn.btn-brand { background: var(--primary-gradient); }
     </style>
 </head>
 <body>
 
     <div class="app-view" id="appView">
         <div class="tech-bg-pattern"></div>
+        <div class="offline-banner">📡 Weak Connection - Reconnecting...</div>
 
+        <!-- Top Wave Decoration -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V40 C 240 80, 130 30, 0 40 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Bottom Wave Decoration -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 35" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Header with Centered Title & Icon-Only Back Button -->
         <div class="brand-header">
-            <button class="back-btn" id="backToGiveBtn" aria-label="Back">←</button>
-            <span class="header-title">Video Key Challenge</span>
+            <button class="back-btn-icon" id="backToGiveBtn" aria-label="Back">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
+            <h1 class="header-center-title">Video Key Challenge</h1>
             <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
         </div>
-        
-        <!-- Reduced Height Curve Header -->
-        <div class="top-wave-header">
-            <svg viewBox="0 0 375 60" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0H375V38C250 58 125 28 0 45V0Z" fill="url(#brandGradientTop)"/>
-                <defs>
-                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="60" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
 
-        <!-- Scrollable Task Content -->
+        <!-- Scrollable Content Container -->
         <div class="app-content">
             <div class="task-container" id="videoTasksContainer">
-                <div style="text-align: center; padding: 20px; color: #64748b; font-size: 13px;">
+                <div style="text-align: center; padding: 20px; color: #64748b; font-size: 0.75rem;">
                     Loading video tasks...
                 </div>
             </div>
         </div>
 
-        <!-- FIXED (NON-MOVABLE) AD CONTAINER -->
-        <div class="ad-container-fixed">
-            <div class="ad-box" id="bottomAdBox">
+        <!-- Bottom Fixed Ad Banner -->
+        <div class="bottom-wrapper">
+            <div class="ad-container">
                 <span class="ad-badge">AD</span>
-                <div class="ad-content-placeholder">
-                    <span style="font-size: 16px;">📢</span>
-                    <span>Advertisement Space</span>
-                </div>
+                <span class="ad-icon">📢</span>
+                <span class="ad-label">Advertisement Space</span>
             </div>
         </div>
 
-        <div class="bottom-wave-footer">
-            <svg viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
-                <defs>
-                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
+        <!-- Modal Dialog -->
         <div class="popup-backdrop" id="customPopup">
             <div class="popup-card">
                 <div class="popup-icon-circle" id="popupIconCircle"></div>
@@ -593,19 +253,26 @@
 
             const activeUserPhone = rawPhone.replace(/[^0-9]/g, '');
 
-            const mainLogo = document.getElementById('mainLogo');
-            if (mainLogo) {
-                if (mainLogo.complete) {
-                    mainLogo.classList.remove('img-blur-loading');
-                    mainLogo.classList.add('img-blur-loaded');
+            /* Progressive Image Blur Loader */
+            const setupBlurImage = (imgEl) => {
+                if (!imgEl) return;
+                if (imgEl.complete) {
+                    imgEl.classList.remove('img-blur-loading');
+                    imgEl.classList.add('img-blur-loaded');
                 } else {
-                    mainLogo.addEventListener('load', () => {
-                        mainLogo.classList.remove('img-blur-loading');
-                        mainLogo.classList.add('img-blur-loaded');
+                    imgEl.addEventListener('load', () => {
+                        imgEl.classList.remove('img-blur-loading');
+                        imgEl.classList.add('img-blur-loaded');
+                    });
+                    imgEl.addEventListener('error', () => {
+                        imgEl.classList.add('img-blur-loading');
                     });
                 }
-            }
+            };
 
+            setupBlurImage(document.getElementById('mainLogo'));
+
+            /* Page-wide network detection */
             const appView = document.getElementById('appView');
             const handleNetworkChange = () => {
                 if (!navigator.onLine) appView.classList.add('network-offline-blur');
@@ -626,26 +293,15 @@
                 popupTitle.className = `popup-title ${type}`;
                 popupActionBtn.className = `popup-btn btn-${type}`;
 
-                if (type === 'success') {
-                    popupIconCircle.innerHTML = "✔";
-                } else if (type === 'error') {
-                    popupIconCircle.innerHTML = "✖";
-                } else if (type === 'warning') {
-                    popupIconCircle.innerHTML = "⚠️";
-                } else {
-                    popupIconCircle.innerHTML = "ℹ️";
-                    popupActionBtn.className = "popup-btn btn-brand";
-                }
-
+                popupIconCircle.innerHTML = type === 'success' ? "✔" : type === 'error' ? "✖" : "⚠️";
                 popupTitle.innerText = title;
                 popupMessage.innerText = message;
                 popupActionBtn.innerText = btnText;
-
-                customPopup.style.display = 'flex';
+                customPopup.classList.add('active');
             }
 
             popupActionBtn.addEventListener('click', () => {
-                customPopup.style.display = 'none';
+                customPopup.classList.remove('active');
             });
 
             const firebaseConfig = {
@@ -661,7 +317,6 @@
 
             const app = initializeApp(firebaseConfig);
             const db = getDatabase(app);
-
             const container = document.getElementById('videoTasksContainer');
 
             onValue(ref(db, 'video_tasks'), async (snapshot) => {
@@ -673,7 +328,7 @@
                         activeVideos.push({
                             id: `v${i}`,
                             name: `Video Task ${i}`,
-                            icon: "🎬",
+                            iconSrc: "30.png",
                             url: data[`v${i}_url`],
                             key: String(data[`v${i}_key`] || "0000"),
                             limit: data[`v${i}_limit`] || 100,
@@ -684,7 +339,7 @@
 
                 if (activeVideos.length === 0) {
                     container.innerHTML = `
-                        <div style="text-align: center; padding: 30px; color: #64748b; font-size: 13px;">
+                        <div style="text-align: center; padding: 24px; color: #64748b; font-size: 0.72rem;">
                             No active video tasks at the moment. Check back soon!
                         </div>
                     `;
@@ -694,7 +349,7 @@
                 await renderVideoCampaign(activeVideos);
             }, (error) => {
                 console.error("Firebase fetch error:", error);
-                container.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444; font-size:13px;">Failed to load tasks. Check connection.</div>`;
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:#ef4444; font-size:0.72rem;">Failed to load tasks. Check connection.</div>`;
             });
 
             async function renderVideoCampaign(taskList) {
@@ -727,7 +382,9 @@
                         card.innerHTML = `
                             <div class="task-top-row">
                                 <div class="task-left">
-                                    <div class="task-icon-badge">${item.icon}</div>
+                                    <div class="task-icon-badge">
+                                        <img src="${item.iconSrc}" class="img-blur-loading" alt="30 Birr">
+                                    </div>
                                     <div class="task-details">
                                         <h4>${item.name}</h4>
                                         <p style="color:#64748b;">Reward Claimed</p>
@@ -742,7 +399,9 @@
                         card.innerHTML = `
                             <div class="task-top-row">
                                 <div class="task-left">
-                                    <div class="task-icon-badge">${item.icon}</div>
+                                    <div class="task-icon-badge">
+                                        <img src="${item.iconSrc}" class="img-blur-loading" alt="30 Birr">
+                                    </div>
                                     <div class="task-details">
                                         <h4>${item.name}</h4>
                                         <p>+${item.prize} Birr</p>
@@ -750,19 +409,19 @@
                                 </div>
                             </div>
 
-                            <div class="btn-watch-container">
+                            <div class="compact-action-row">
                                 <a href="${item.url}" target="_blank" class="btn-watch">
-                                    <span>▶ Watch Video</span>
+                                    ▶ Watch
                                 </a>
-                            </div>
-
-                            <div class="action-row">
-                                <input type="text" class="key-input" id="input-${item.id}" placeholder="Enter Secret Key">
+                                <input type="text" class="key-input" id="input-${item.id}" placeholder="Secret Key">
                                 <button class="btn-claim" id="claim-btn-${item.id}">Claim</button>
                             </div>
                         `;
                     }
                     container.appendChild(card);
+
+                    const cardImg = card.querySelector('.task-icon-badge img');
+                    setupBlurImage(cardImg);
 
                     if (!isAlreadyClaimed) {
                         document.getElementById(`claim-btn-${item.id}`).addEventListener('click', () => {
@@ -790,12 +449,12 @@
 
                 if (enteredKey !== item.key) {
                     inputField.style.borderColor = "#ef4444";
-                    showCustomPopup('error', 'Wrong Secret Key', 'Wrong Key! No money added. Pay close attention to the video and try again.');
+                    showCustomPopup('error', 'Wrong Secret Key', 'Wrong Key! Pay close attention to the video and try again.');
                     return;
                 }
 
                 btn.disabled = true;
-                btn.innerText = "Adding...";
+                btn.innerText = "...";
                 inputField.style.borderColor = "#059669";
 
                 try {
@@ -825,7 +484,9 @@
                     card.innerHTML = `
                         <div class="task-top-row">
                             <div class="task-left">
-                                <div class="task-icon-badge">${item.icon}</div>
+                                <div class="task-icon-badge">
+                                    <img src="${item.iconSrc}" class="img-blur-loading" alt="30 Birr">
+                                </div>
                                 <div class="task-details">
                                     <h4>${item.name}</h4>
                                     <p style="color:#64748b;">Reward Claimed</p>
@@ -836,6 +497,7 @@
                             </div>
                         </div>
                     `;
+                    setupBlurImage(card.querySelector('.task-icon-badge img'));
 
                     showCustomPopup('success', 'Valid Key!', `${item.prize} Birr has been successfully added to your wallet.`, 'Awesome!');
 
