@@ -59,7 +59,7 @@ app.post('/api/send-push', async (req, res) => {
   try {
     const db = getDatabase();
     
-    // Fetch live OneSignal credentials and default icon configs from Firebase 'config/onesignal' path
+    // Fetch live OneSignal credentials and default icon configs from Firebase
     const configSnapshot = await db.ref('config/onesignal').once('value');
     const configData = configSnapshot.val() || {};
 
@@ -70,9 +70,12 @@ app.post('/api/send-push', async (req, res) => {
       return res.status(500).json({ error: 'OneSignal API credentials not configured in Firebase.' });
     }
 
-    // Determine icons using payload parameters first, then Firebase config, then env variables
-    const finalIcon = imageUrl || iconUrl || configData.defaultIcon || process.env.ONESIGNAL_DEFAULT_ICON || undefined;
-    const finalBadge = badgeUrl || badge || configData.defaultBadge || process.env.ONESIGNAL_DEFAULT_BADGE || undefined;
+    // Determine final icons with explicit fallback to hardcoded domain defaults if empty
+    const defaultIconFallback = 'https://birrgo.online/icon.png';
+    const defaultBadgeFallback = 'https://birrgo.online/badge-icon.png';
+
+    const finalIcon = imageUrl || iconUrl || configData.defaultIcon || process.env.ONESIGNAL_DEFAULT_ICON || defaultIconFallback;
+    const finalBadge = badgeUrl || badge || configData.defaultBadge || process.env.ONESIGNAL_DEFAULT_BADGE || defaultBadgeFallback;
 
     const payload = {
       app_id: appId,
@@ -84,14 +87,14 @@ app.post('/api/send-push', async (req, res) => {
       ttl: 86400,
       priority: 10,
       
-      // Large preview image inside the notification panel
+      // Large preview image inside notification panel
       big_picture: imageUrl || undefined,
       
-      // Main app logo icon inside the notification panel
+      // Main app logo icon inside notification drawer
       chrome_web_icon: finalIcon,
       firefox_icon: finalIcon,
       
-      // ANDROID STATUS BAR ICON (White-on-transparent PNG)
+      // Android status bar small icon (Monochrome white PNG)
       chrome_web_badge: finalBadge
     };
 
