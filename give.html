@@ -3,369 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo - Today Giveaway</title>
+    <title>BirrGo - Daily Birrgo Giveaway</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-burgundy: #800020;
-            --primary-gradient: linear-gradient(135deg, #800020 0%, #4a0000 100%);
-            --social-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            --primary-burgundy: #500614;
+            --primary-gradient: linear-gradient(135deg, #500614 0%, #2a0005 100%);
             --card-tech-bg: linear-gradient(135deg, #ffffff 0%, #f1f5f9 100%);
-            --blue-glow-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.1), 0 0 8px rgba(56, 189, 248, 0.12);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
             --bg-light: #f8fafc;
-            --border-radius-lg: 14px;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.06), 0 2px 8px -2px rgba(0, 0, 0, 0.04);
+            --border-radius-lg: 12px;
+            --border-radius-md: 8px;
+            --nav-bar-height: 70px;
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            letter-spacing: -0.15px; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif; letter-spacing: -0.15px; -webkit-tap-highlight-color: transparent; }
+        html, body { width: 100%; height: 100%; min-height: 100vh; background-color: var(--bg-light); overflow: hidden; font-size: 12px; }
 
-        html, body { 
-            width: 100%; 
-            height: 100%; 
-            background-color: #f1f5f9; 
-        }
+        /* PWA Shell Structure */
+        .app-view { width: 100%; height: 100vh; height: 100dvh; background-color: var(--bg-light); display: flex; flex-direction: column; position: relative; overflow: hidden; transition: filter 0.3s ease; }
+        .app-view.network-offline-blur { filter: blur(10px) grayscale(20%); pointer-events: none; }
 
-        body { 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-        }
+        /* Offline Banner */
+        .offline-banner { position: absolute; top: env(safe-area-inset-top, 10px); left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.9); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.65rem; font-weight: 700; z-index: 1000; display: none; backdrop-filter: blur(8px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .app-view.network-offline-blur .offline-banner { display: block; }
 
-        /* Mobile App Container */
-        .app-view {
-            width: 100%; 
-            height: 100dvh; 
-            max-width: 450px;
-            background-color: var(--bg-light); 
-            display: flex; 
-            flex-direction: column;
-            position: relative; 
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
-            overflow: hidden; 
-            transition: filter 0.3s ease;
-        }
+        /* Liquid Wave Decorations */
+        .bg-wave { position: absolute; left: 0; right: 0; width: 100%; z-index: 0; pointer-events: none; }
+        .bg-wave-top { top: 0; height: 90px; }
+        .bg-wave-bottom { bottom: 0; height: 35px; }
 
-        /* Network Disconnection Blur Effect */
-        .app-view.network-offline-blur { 
-            filter: blur(8px); 
-            pointer-events: none; 
-        }
-
-        .tech-bg-pattern {
-            position: absolute; 
-            inset: 0; 
-            z-index: 0; 
-            pointer-events: none; 
-            opacity: 0.5;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(128, 0, 32, 0.05) 0%, transparent 20%),
-                radial-gradient(#cbd5e1 1px, transparent 1px);
-            background-size: 100% 100%, 100% 100%, 14px 14px;
-        }
-
-        /* Top Header Wrapper */
-        .header-wrapper {
-            position: relative;
-            width: 100%;
-            height: calc(68px + env(safe-area-inset-top, 0px));
-            flex-shrink: 0;
-            z-index: 20;
-        }
-
-        .top-wave-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            filter: drop-shadow(0 3px 6px rgba(128, 0, 32, 0.25));
-        }
-
+        /* Header Layout - Centered Title & Clear Icon-Only Back Button */
         .brand-header { 
-            position: relative; 
-            z-index: 2; 
-            padding-top: calc(8px + env(safe-area-inset-top, 0px)); 
-            padding-left: 14px; 
-            padding-right: 14px; 
-            display: flex; 
+            display: grid; 
+            grid-template-columns: 32px 1fr 32px; 
             align-items: center; 
-            justify-content: space-between; 
-        }
-        
-        .top-curve-title {
-            position: absolute; 
-            top: calc(14px + env(safe-area-inset-top, 0px)); 
-            left: 50%; 
-            transform: translateX(-50%);
-            z-index: 3; 
-            color: #ffffff; 
-            font-size: 11px; 
-            font-weight: 800; 
-            text-transform: uppercase; 
-            letter-spacing: 0.8px;
-            white-space: nowrap; 
-            pointer-events: none;
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.4));
+            padding: calc(10px + env(safe-area-inset-top, 0px)) 12px 6px 12px; 
+            position: relative; 
+            z-index: 5; 
+            flex-shrink: 0; 
         }
 
-        .back-btn {
-            width: 32px; 
-            height: 32px; 
+        .back-btn-icon {
+            width: 30px; 
+            height: 30px; 
             border-radius: 50%;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.75) 100%);
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.9); 
+            background: rgba(255, 255, 255, 0.95);
+            border: none; 
             display: flex; 
             align-items: center; 
             justify-content: center;
-            font-size: 14px; 
-            font-weight: 900; 
-            color: var(--primary-burgundy); 
             cursor: pointer; 
             outline: none;
-            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2); 
-            transition: transform 0.15s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12); 
+            transition: transform 0.15s ease, background-color 0.15s ease;
         }
-        .back-btn:active { transform: translateY(1px) scale(0.94); }
+        .back-btn-icon:active { transform: scale(0.90); }
+        .back-btn-icon svg { width: 16px; height: 16px; stroke: var(--primary-burgundy); }
 
-        .logo-image { height: 24px; width: auto; object-fit: contain; transition: filter 0.4s ease, opacity 0.4s ease; }
-        .img-blur-loading { filter: blur(8px); opacity: 0.3; }
-        .img-blur-loaded { filter: blur(0); opacity: 1; }
-
-        /* Main Scrollable Area */
-        .app-content {
-            flex: 1; 
-            display: flex; 
-            flex-direction: column; 
-            padding: 12px 14px;
-            position: relative; 
-            z-index: 2; 
-            gap: 10px; 
-            overflow-y: auto; 
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .giveaway-hero-card {
-            border-radius: var(--border-radius-lg); 
-            padding: 10px 12px; 
+        .header-center-title {
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 800;
             color: #ffffff;
-            position: relative; 
-            overflow: hidden; 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            text-align: left;
-            min-height: 58px; 
-            cursor: pointer; 
-            box-shadow: var(--blue-glow-shadow);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-        .giveaway-hero-card:active { transform: scale(0.98); }
-
-        .premium-pool { background: var(--primary-gradient); }
-        .social-pool, .video-pool, .like-pool { background: var(--social-gradient); }
-
-        .giveaway-icon { font-size: 18px; flex-shrink: 0; filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2)); }
-
-        .card-body { flex: 1; display: flex; flex-direction: column; justify-content: center; }
-        .giveaway-title { font-size: 11.5px; font-weight: 700; margin-bottom: 1px; line-height: 1.15; }
-        .giveaway-desc { font-size: 9px; color: rgba(255, 255, 255, 0.88); line-height: 1.2; }
-
-        .btn-claim {
-            background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
-            border: 1px solid rgba(255, 255, 255, 0.8); 
-            border-radius: 100px;
-            padding: 5px 12px; 
-            font-size: 10px; 
-            font-weight: 800; 
-            cursor: pointer;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); 
-            flex-shrink: 0; 
-            transition: transform 0.15s ease;
-        }
-        .premium-pool .btn-claim { color: var(--primary-burgundy); }
-        .social-pool .btn-claim, .video-pool .btn-claim, .like-pool .btn-claim { color: #1d4ed8; }
-        .btn-claim:active { transform: scale(0.92); }
-
-        /* Bottom Wrapper: Positioned above system bar with bottom margin space */
-        .bottom-wrapper {
-            position: relative;
-            width: 100%;
-            margin-top: auto;
-            flex-shrink: 0;
-            z-index: 30;
-            padding: 8px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
-        .bottom-wave-svg {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
+        .logo-image { height: 22px; width: auto; object-fit: contain; justify-self: end; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15)); }
 
-        .ad-container {
-            position: relative;
-            z-index: 2;
-            background: var(--card-tech-bg); 
-            border: 1.2px dashed #cbd5e1;
-            border-radius: 12px; 
-            padding: 8px 12px; 
-            display: flex; 
-            flex-direction: column;
-            align-items: center; 
-            justify-content: center; 
-            min-height: 52px;
-            box-shadow: var(--blue-glow-shadow); 
-            user-select: none;
-        }
-        .ad-badge { position: absolute; top: 4px; right: 8px; font-size: 8px; font-weight: 800; color: #94a3b8; }
-        .ad-icon { font-size: 15px; margin-bottom: 1px; }
-        .ad-label { font-size: 9.5px; font-weight: 700; color: #94a3b8; }
+        /* Content Container with Navigation Safe Areas */
+        .app-content { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; padding: 12px 10px calc(var(--nav-bar-height) + env(safe-area-inset-bottom, 12px)) 10px; position: relative; z-index: 2; gap: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Premium Card Component */
+        .featured-card { width: 100%; min-height: 88px; border-radius: var(--border-radius-lg); overflow: hidden; background: var(--primary-gradient); color: #ffffff; position: relative; border: 1px solid rgba(255, 255, 255, 0.1); box-shadow: var(--card-shadow); cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease; display: flex; align-items: stretch; flex-shrink: 0; }
+        .featured-card:active { transform: scale(0.98); }
+
+        .shine-glow::after { content: ''; position: absolute; top: -50%; left: -60%; width: 30%; height: 200%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0) 100%); transform: rotate(25deg); animation: shimmerEffect 4.5s infinite ease-in-out; pointer-events: none; z-index: 4; }
+        @keyframes shimmerEffect { 0% { left: -60%; } 30% { left: 140%; } 100% { left: 140%; } }
+
+        .card-img-wrapper { width: 26%; background-color: #1e293b; position: relative; display: flex; align-items: center; justify-content: center; overflow: hidden; flex-shrink: 0; }
+        .image-lazy-blur { width: 100%; height: 100%; object-fit: cover; filter: blur(12px); opacity: 0.6; transition: filter 0.4s ease, opacity 0.4s ease; position: absolute; top: 0; left: 0; z-index: 2; }
+        .image-lazy-blur.loaded { filter: blur(0); opacity: 1; }
+        
+        .badge-premium { position: absolute; top: 5px; right: 6px; background: linear-gradient(90deg, #ffd700, #ffa500); color: #000000; padding: 1.5px 6px; border-radius: 6px; font-size: 0.5rem; font-weight: 800; text-transform: uppercase; z-index: 3; box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+
+        .featured-card-body { flex: 1; padding: 8px 10px; display: flex; flex-direction: column; justify-content: space-between; gap: 3px; min-width: 0; }
+        .featured-title { font-size: 0.78rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 50px; color: #ffffff; }
+        .featured-meta { font-size: 0.65rem; color: rgba(255, 255, 255, 0.82); line-height: 1.3; font-weight: 500; }
+        .featured-meta span { color: #ffd700; font-weight: 800; }
+
+        .card-footer-row { display: flex; align-items: center; justify-content: space-between; margin-top: 2px; }
+        .countdown-pill { background: rgba(255, 255, 255, 0.15); color: #ffffff; padding: 2px 7px; border-radius: 16px; font-size: 0.55rem; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; }
+        .btn-card-action { background: #ffffff; color: var(--primary-burgundy); border: none; border-radius: 16px; padding: 3px 10px; font-size: 0.6rem; font-weight: 800; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.12); }
+
+        /* Fixed Bottom Ad Wrapper */
+        .bottom-wrapper { position: fixed; bottom: 0; left: 0; width: 100%; flex-shrink: 0; z-index: 30; padding: 6px 10px calc(8px + env(safe-area-inset-bottom, 0px)) 10px; background: rgba(248, 250, 252, 0.94); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-top: 1px solid var(--border-light); }
+        .ad-container { position: relative; z-index: 2; background: var(--card-tech-bg); border: 1px dashed #cbd5e1; border-radius: 10px; padding: 5px 10px; display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 6px; min-height: 38px; box-shadow: var(--card-shadow); user-select: none; }
+        .ad-badge { position: absolute; top: 2px; right: 6px; font-size: 7px; font-weight: 800; color: #94a3b8; }
+        .ad-icon { font-size: 12px; }
+        .ad-label { font-size: 8.5px; font-weight: 700; color: #94a3b8; }
 
         /* Modal Dialog */
-        .popup-backdrop {
-            position: absolute; 
-            inset: 0; 
-            background-color: rgba(15, 23, 42, 0.55);
-            backdrop-filter: blur(6px); 
-            -webkit-backdrop-filter: blur(6px);
-            display: none; 
-            justify-content: center; 
-            align-items: center; 
-            z-index: 6000;
-        }
-        .popup-card {
-            background-color: #ffffff; 
-            border: 1px solid #e2e8f0; 
-            border-radius: 16px;
-            padding: 20px 16px; 
-            width: 85%; 
-            max-width: 300px; 
-            text-align: center;
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.18);
-        }
-        .popup-btn {
-            width: 100%; 
-            background: var(--primary-gradient); 
-            border: none;
-            border-radius: 100px; 
-            padding: 10px; 
-            font-size: 11px; 
-            font-weight: 700;
-            color: white; 
-            cursor: pointer; 
-            margin-top: 12px; 
-            box-shadow: 0 3px 8px rgba(128, 0, 32, 0.25);
-        }
+        .popup-backdrop { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.55); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); display: none; justify-content: center; align-items: center; z-index: 2000; opacity: 0; transition: opacity 0.2s ease; }
+        .popup-backdrop.active { display: flex; opacity: 1; }
+        .popup-card { background-color: #ffffff; border-radius: var(--border-radius-lg); padding: 16px 14px; width: 84%; max-width: 290px; text-align: center; box-shadow: 0 16px 32px rgba(0, 0, 0, 0.16); }
+        .popup-btn { width: 100%; background: var(--primary-gradient); border: none; border-radius: var(--border-radius-md); padding: 9px; font-size: 0.72rem; font-weight: 700; color: white; cursor: pointer; margin-top: 10px; box-shadow: 0 3px 8px rgba(80, 6, 20, 0.22); }
     </style>
 </head>
 <body>
 
     <div class="app-view" id="appView">
-        <div class="tech-bg-pattern"></div>
+        <div class="offline-banner">📡 Weak Connection - Reconnecting...</div>
 
-        <!-- Top Header Area -->
-        <div class="header-wrapper">
-            <svg class="top-wave-svg" viewBox="0 0 375 85" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0H375V55C250 75 125 45 0 65V0Z" fill="url(#brandGradientTop)"/>
-                <defs>
-                    <linearGradient id="brandGradientTop" x1="0" y1="0" x2="375" y2="85" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-            <div class="brand-header">
-                <button class="back-btn" id="backToWalletBtn" aria-label="Back to Wallet">←</button>
-                <img class="logo-image img-blur-loading" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
-            </div>
-            <h1 class="top-curve-title">Social Media Giveaway</h1>
-        </div>
+        <!-- Top Wave Decoration -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 90" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0 H375 V40 C 240 80, 130 30, 0 40 Z" fill="#500614"/>
+        </svg>
 
-        <!-- Scrollable Cards Body -->
-        <div class="app-content">
+        <!-- Bottom Wave Decoration -->
+        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 35" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M375 35 H0 V12 C 120 0, 260 20, 375 8 Z" fill="#500614"/>
+        </svg>
+
+        <!-- Header with Centered Title & Icon-Only Back Button -->
+        <div class="brand-header">
+            <button class="back-btn-icon" id="backToWalletBtn" aria-label="Back to Wallet">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+            </button>
             
-            <div class="giveaway-hero-card premium-pool">
-                <div class="giveaway-icon">🎁</div>
-                <div class="card-body">
-                    <h2 class="giveaway-title">Premium Pool</h2>
-                    <p class="giveaway-desc">Instant system matrix drops.</p>
+            <h1 class="header-center-title">Daily Birrgo Giveaway</h1>
+
+            <img class="logo-image" id="mainLogo" src="birrgo-logo.png" alt="BirrGo Logo">
+        </div>
+
+        <!-- Scrollable Content -->
+        <div class="app-content">
+
+            <!-- Card 1: Premium Pool -->
+            <div class="featured-card shine-glow" id="premiumPoolCard">
+                <span class="badge-premium">Instant Matrix</span>
+                <div class="card-img-wrapper">
+                    <img src="g.png" class="image-lazy-blur" alt="Premium Pool" />
                 </div>
-                <button class="btn-claim" id="claimRewardBtn">Claim</button>
+                <div class="featured-card-body">
+                    <h2 class="featured-title">Premium Pool</h2>
+                    <p class="featured-meta">Reward: <span>System Multipliers</span><br>Status: Dynamic Matrix Drops</p>
+                    <div class="card-footer-row">
+                        <span class="countdown-pill">⚡ Matrix Active</span>
+                        <button class="btn-card-action" id="claimRewardBtn">Claim</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="giveaway-hero-card social-pool" id="socialGiveawayCard">
-                <div class="giveaway-icon">📢</div>
-                <div class="card-body">
-                    <h2 class="giveaway-title">Social Media</h2>
-                    <p class="giveaway-desc">Complete simple community tasks.</p>
+            <!-- Card 2: Stop Timer (New Card #2) -->
+            <div class="featured-card shine-glow" id="timerGiveawayCard">
+                <span class="badge-premium">Timer Challenge</span>
+                <div class="card-img-wrapper">
+                    <img src="t3.jpg" class="image-lazy-blur" alt="Stop Timer Win 500 Birr" />
                 </div>
-                <button class="btn-claim" id="socialGiveawayBtn">Open</button>
+                <div class="featured-card-body">
+                    <h2 class="featured-title">Stop timer stach time win about 500 birr daily</h2>
+                    <p class="featured-meta">Task: <span>Exact Time Challenge</span><br>Reward: Win 500 Birr Daily</p>
+                    <div class="card-footer-row">
+                        <span class="countdown-pill">⏱️ Play Game</span>
+                        <button class="btn-card-action" id="timerGiveawayBtn">Start</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="giveaway-hero-card video-pool">
-                <div class="giveaway-icon">🎬</div>
-                <div class="card-body">
-                    <h2 class="giveaway-title">Watch Video & Fill Key</h2>
-                    <p class="giveaway-desc">Watch clips and enter secret keys.</p>
+            <!-- Card 3: Watch Video -->
+            <div class="featured-card shine-glow" id="videoGiveawayCard">
+                <span class="badge-premium">Secret Keys</span>
+                <div class="card-img-wrapper">
+                    <img src="qu.jpg" class="image-lazy-blur" alt="Watch Video" />
                 </div>
-                <button class="btn-claim" id="videoGiveawayBtn">Watch</button>
+                <div class="featured-card-body">
+                    <h2 class="featured-title">Watch Video & Fill Key</h2>
+                    <p class="featured-meta">Task: <span>Watch Short Clips</span><br>Reward: Unlock Secret Codes</p>
+                    <div class="card-footer-row">
+                        <span class="countdown-pill">🎬 Video Module</span>
+                        <button class="btn-card-action" id="videoGiveawayBtn">Watch</button>
+                    </div>
+                </div>
             </div>
 
-            <div class="giveaway-hero-card like-pool">
-                <div class="giveaway-icon">👍</div>
-                <div class="card-body">
-                    <h2 class="giveaway-title">Like Video & Get Bonus</h2>
-                    <p class="giveaway-desc">Like video tasks to earn extra bonus.</p>
+            <!-- Card 4: Social Media -->
+            <div class="featured-card shine-glow" id="socialGiveawayCard">
+                <span class="badge-premium">Community</span>
+                <div class="card-img-wrapper">
+                    <img src="33164.png" class="image-lazy-blur" alt="Social Media Community" />
                 </div>
-                <button class="btn-claim" id="likeGiveawayBtn">Like</button>
+                <div class="featured-card-body">
+                    <h2 class="featured-title">Social Media</h2>
+                    <p class="featured-meta">Task: <span>Community Engagement</span><br>Reward: Daily Bonus Drops</p>
+                    <div class="card-footer-row">
+                        <span class="countdown-pill">📢 Quick Open</span>
+                        <button class="btn-card-action" id="socialGiveawayBtn">Open</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 5: Like Video -->
+            <div class="featured-card shine-glow" id="likeGiveawayCard">
+                <span class="badge-premium">Bonus Task</span>
+                <div class="card-img-wrapper">
+                    <img src="i2.jpg" class="image-lazy-blur" alt="Like Video" />
+                </div>
+                <div class="featured-card-body">
+                    <h2 class="featured-title">Like Video & Get Bonus</h2>
+                    <p class="featured-meta">Task: <span>Like & Share Content</span><br>Reward: Extra Credit Multiplier</p>
+                    <div class="card-footer-row">
+                        <span class="countdown-pill">👍 Instant Bonus</span>
+                        <button class="btn-card-action" id="likeGiveawayBtn">Like</button>
+                    </div>
+                </div>
             </div>
 
         </div>
 
-        <!-- Bottom Section: Placed Above the System Navigation Bar -->
+        <!-- Bottom Fixed Ad Banner -->
         <div class="bottom-wrapper">
-            <svg class="bottom-wave-svg" viewBox="0 0 375 80" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 80H375V35C250 5 125 50 0 25V80Z" fill="url(#brandGradientBottom)"/>
-                <defs>
-                    <linearGradient id="brandGradientBottom" x1="0" y1="80" x2="375" y2="0" gradientUnits="userSpaceOnUse">
-                        <stop stop-color="#800020"/>
-                        <stop offset="1" stop-color="#5a0016"/>
-                    </linearGradient>
-                </defs>
-            </svg>
-
             <div class="ad-container">
                 <span class="ad-badge">AD</span>
-                <div class="ad-icon">📢</div>
+                <span class="ad-icon">📢</span>
                 <span class="ad-label">Advertisement Space</span>
             </div>
         </div>
 
-        <!-- Modal Popup Dialog -->
+        <!-- Modal Dialog -->
         <div class="popup-backdrop" id="giveawayPopup">
             <div class="popup-card">
-                <h3 id="popupTitle" style="font-size:14px; font-weight:800; color:#111827; margin-bottom:4px;">Matrix Dynamic Lock</h3>
-                <p id="popupDesc" style="font-size:10.5px; color:#6b7280; font-weight:500; line-height:1.35;">Daily promo metrics are currently distributed via active Task modules. Complete tasks to unlock premium balance multipliers.</p>
+                <h3 id="popupTitle" style="font-size:0.88rem; font-weight:800; color:var(--text-dark); margin-bottom:5px;">Matrix Dynamic Lock</h3>
+                <p id="popupDesc" style="font-size:0.72rem; color:var(--text-muted); font-weight:500; line-height:1.4;">Daily promo metrics are currently distributed via active Task modules. Complete tasks to unlock premium balance multipliers.</p>
                 <button class="popup-btn" id="popupCloseBtn">Acknowledge</button>
             </div>
         </div>
@@ -380,35 +264,34 @@
                 return;
             }
 
-            const mainLogo = document.getElementById('mainLogo');
-            if (mainLogo) {
-                if (mainLogo.complete && mainLogo.naturalHeight !== 0) {
-                    mainLogo.classList.remove('img-blur-loading');
-                    mainLogo.classList.add('img-blur-loaded');
+            // Progressive Blur Image Load Strategy
+            const lazyImages = document.querySelectorAll('.image-lazy-blur');
+            lazyImages.forEach(img => {
+                const onLoaded = () => img.classList.add('loaded');
+                if (img.complete) {
+                    onLoaded();
                 } else {
-                    mainLogo.addEventListener('load', () => {
-                        mainLogo.classList.remove('img-blur-loading');
-                        mainLogo.classList.add('img-blur-loaded');
-                    });
-                    mainLogo.addEventListener('error', () => {
-                        mainLogo.classList.add('img-blur-loading');
+                    img.addEventListener('load', onLoaded);
+                    img.addEventListener('error', () => {
+                        img.style.filter = 'blur(10px) opacity(0.4)';
                     });
                 }
-            }
+            });
 
+            // Network Connection Blur Protection
             const appView = document.getElementById('appView');
-            const handleNetworkChange = () => {
+            const handleNetworkStatus = () => {
                 if (!navigator.onLine) {
                     appView.classList.add('network-offline-blur');
                 } else {
                     appView.classList.remove('network-offline-blur');
                 }
             };
+            window.addEventListener('offline', handleNetworkStatus);
+            window.addEventListener('online', handleNetworkStatus);
+            handleNetworkStatus();
 
-            window.addEventListener('offline', handleNetworkChange);
-            window.addEventListener('online', handleNetworkChange);
-            handleNetworkChange();
-
+            // Modal Controls
             const modal = document.getElementById('giveawayPopup');
             const popupTitle = document.getElementById('popupTitle');
             const popupDesc = document.getElementById('popupDesc');
@@ -416,34 +299,40 @@
             const openPopup = (title, message) => {
                 popupTitle.innerText = title;
                 popupDesc.innerText = message;
-                modal.style.display = 'flex';
+                modal.classList.add('active');
             };
 
+            document.getElementById('popupCloseBtn').addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            // Navigation Route Actions
             document.getElementById('backToWalletBtn').addEventListener('click', () => {
                 window.location.replace('wallet.html');
             });
 
-            document.getElementById('claimRewardBtn').addEventListener('click', () => {
+            document.getElementById('premiumPoolCard').addEventListener('click', () => {
                 openPopup('Matrix Dynamic Lock', 'Daily promo metrics are currently distributed via active Task modules. Complete tasks to unlock premium balance multipliers.');
             });
 
-            const navigateToSocial = () => { window.location.replace('social.html'); };
-            document.getElementById('socialGiveawayCard').addEventListener('click', navigateToSocial);
-            document.getElementById('socialGiveawayBtn').addEventListener('click', (e) => {
+            document.getElementById('timerGiveawayCard').addEventListener('click', (e) => { 
                 e.stopPropagation();
-                navigateToSocial();
+                window.location.replace('time.html'); 
             });
 
-            document.getElementById('videoGiveawayBtn').addEventListener('click', () => {
-                window.location.replace('key.html');
+            document.getElementById('videoGiveawayCard').addEventListener('click', (e) => { 
+                e.stopPropagation();
+                window.location.replace('key.html'); 
             });
 
-            document.getElementById('likeGiveawayBtn').addEventListener('click', () => {
-                window.location.replace('like.html');
+            document.getElementById('socialGiveawayCard').addEventListener('click', (e) => { 
+                e.stopPropagation();
+                window.location.replace('social.html'); 
             });
 
-            document.getElementById('popupCloseBtn').addEventListener('click', () => {
-                modal.style.display = 'none';
+            document.getElementById('likeGiveawayCard').addEventListener('click', (e) => { 
+                e.stopPropagation();
+                window.location.replace('like.html'); 
             });
         });
     </script>
