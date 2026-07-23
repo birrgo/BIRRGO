@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - Admin News & Promo Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="new.css">
+    
+    <style>
+        :root {
+            --primary-burgundy: #800020;
+            --primary-gradient: linear-gradient(135deg, #4a0012 0%, #800020 50%, #2b000a 100%);
+            --accent-glow: rgba(128, 0, 32, 0.12);
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --card-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 4px 10px -2px rgba(0, 0, 0, 0.02);
+            --danger-gradient: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: #fafbfc;
+            background-image: radial-gradient(rgba(148, 163, 184, 0.15) 1px, transparent 1px);
+            background-size: 20px 20px;
+            padding: 20px;
+            min-height: 100vh;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 20px;
+            color: var(--primary-burgundy);
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 13.5px;
+            background: #ffffff;
+            padding: 8px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+            transition: transform 0.15s ease;
+        }
+        .back-link:active { transform: scale(0.96); }
+
+        .toast-banner {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 3000;
+            padding: 12px 20px;
+            border-radius: 12px;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 13px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.5);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 2500;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal-overlay.active { display: flex; }
+
+        .modal-box {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 24px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.12);
+        }
+
+        .modal-title { font-size: 17px; font-weight: 800; color: var(--text-dark); margin-bottom: 8px; }
+        .modal-data-row { display: flex; justify-content: space-between; margin: 10px 0; background: var(--bg-light); padding: 10px; border-radius: 8px; font-size: 13px; }
+        .modal-data-label { color: var(--text-muted); font-weight: 600; }
+        .modal-data-value { font-weight: 800; color: var(--primary-burgundy); word-break: break-all; }
+
+        /* Workspace Container */
+        .workspace-card {
+            width: 100%;
+            max-width: 720px;
+            background: #ffffff;
+            border-radius: 20px;
+            border: 1px solid var(--border-light);
+            padding: 24px;
+            box-shadow: var(--card-shadow);
+            margin: 0 auto;
+        }
+
+        .header-brand-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 16px;
+        }
+
+        .brand-title-group { display: flex; align-items: center; gap: 12px; }
+        .brand-logo-img { width: 32px; height: 32px; object-fit: contain; }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary-burgundy);
+        }
+
+        .editing-banner {
+            display: none;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px dashed #f59e0b;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #b45309;
+            margin-bottom: 16px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-field-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .input-field-wrapper label {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-select, .admin-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-select:focus, .admin-input:focus {
+            border-color: var(--primary-burgundy);
+            background-color: #ffffff;
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        textarea.admin-input {
+            min-height: 90px;
+            resize: vertical;
+        }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+
+        .btn-admin-action {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.2s;
+        }
+        .btn-admin-action:active { transform: scale(0.97); }
+
+        .btn-broadcast {
+            flex: 1;
+            background: var(--primary-gradient);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--accent-glow);
+        }
+
+        .btn-delete {
+            background: var(--danger-gradient);
+            color: #ffffff;
+        }
+
+        .btn-modal-close {
+            background: var(--bg-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+        }
+
+        .filter-btn-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 16px;
+        }
+
+        .filter-btn {
+            padding: 8px 4px;
+            font-size: 10.5px;
+            font-weight: 800;
+            border-radius: 10px;
+            border: 1px solid var(--border-light);
+            background: var(--bg-light);
+            color: var(--text-muted);
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn.active {
+            background: var(--primary-burgundy);
+            color: #ffffff;
+            border-color: var(--primary-burgundy);
+            box-shadow: 0 2px 8px var(--accent-glow);
+        }
+
+        .manage-news-card {
+            background: var(--bg-light);
+            border: 1px solid var(--border-light);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .manage-news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .manage-btn-group {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .btn-news-ctrl {
+            flex: 1;
+            padding: 8px 10px;
+            font-size: 12px;
+            border-radius: 8px;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            transition: opacity 0.2s;
+        }
+        .btn-news-ctrl:active { opacity: 0.8; }
+
+        .btn-ctrl-edit { background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .btn-ctrl-preview { background: rgba(59, 130, 246, 0.15); color: #2563eb; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .btn-ctrl-delete { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .cancel-edit-btn {
+            background: none;
+            border: none;
+            color: #b45309;
+            font-weight: 800;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 12px;
+        }
+
+        .code-badge {
+            background: #ffffff;
+            color: #475569;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 800;
+            font-size: 11px;
+            border: 1px solid var(--border-light);
+            display: inline-block;
+        }
+
+        .node-tag {
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        .node-tag-sports { background: #dbeafe; color: #1d4ed8; }
+        .node-tag-promo { background: #fef3c7; color: #b45309; }
+        
+        .hidden-fields { display: none !important; }
+    </style>
+</head>
+<body>
+
+    <div class="toast-banner" id="adminToast">Action Completed Successfully</div>
+
+    <div class="modal-overlay" id="customConfirmModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="modalTitleDisplay">Confirm Request</h3>
+            <p id="modalDescriptionDisplay" style="font-size:13px; color:var(--text-muted); margin-bottom: 12px;"></p>
+            <div id="modalDynamicDetails"></div>
+            <div class="btn-row" style="margin-top: 16px;">
+                <button class="btn-admin-action btn-modal-close" id="modalCancelBtn">Cancel</button>
+                <button class="btn-admin-action" id="modalConfirmBtn">Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="previewNewsModal">
+        <div class="modal-box">
+            <h3 class="modal-title" id="previewModalTitle">Article Preview</h3>
+            <div id="previewModalDetails" style="margin-top: 12px;"></div>
+            <div class="btn-row" style="margin-top: 16px;">
+                <button class="btn-admin-action btn-modal-close" style="width: 100%;" id="closePreviewBtn">Close Preview</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="workspace-card">
+        <a href="dashboard.html" class="back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to Dashboard
+        </a>
+
+        <div class="header-brand-row">
+            <div class="brand-title-group">
+                <img class="brand-logo-img" src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.style.display='none'">
+                <h3 class="section-title">Sports News & Promo Manager</h3>
+            </div>
+        </div>
+
+        <div class="editing-banner" id="editingBanner">
+            <span>✏️ Mode: Editing Post (<strong id="editingNewsCode"></strong>)</span>
+            <button class="cancel-edit-btn" id="cancelEditBtn">Cancel Edit</button>
+        </div>
+        
+        <!-- TARGET CATEGORIES CONNECTED TO REALTIME DATABASE -->
+        <div class="input-field-wrapper">
+            <label>Target Category</label>
+            <select class="form-select" id="postCategory">
+                <option value="Sports News">1. Sports News (newNews/sport)</option>
+                <option value="System Releases">2. System Releases (news/releases)</option>
+                <option value="Promo Rewards">3. Promo Rewards (Announcement News)</option>
+                <option value="Promo Code - Sport">4. Promo Code - Sport (promoCodes/sport)</option>
+            </select>
+        </div>
+
+        <!-- STANDARD NEWS FORM FIELDS -->
+        <div id="standardFormFields">
+            <div class="input-field-wrapper">
+                <label>Search Code</label>
+                <input class="admin-input" type="text" id="newsCustomCode" placeholder="e.g. SN-101 (Leave blank to auto-generate)" style="text-transform: uppercase;">
+            </div>
+
+            <div class="input-field-wrapper">
+                <label>Title / Headline</label>
+                <input class="admin-input" type="text" id="newsTitle" placeholder="e.g. Big Match Updates & Rewards">
+            </div>
+
+            <div class="input-field-wrapper">
+                <label>Header Image URL (Optional)</label>
+                <input class="admin-input" type="url" id="newsImageUrl" placeholder="https://example.com/image.jpg">
+            </div>
+
+            <div class="input-field-wrapper">
+                <label>Content / Message Body</label>
+                <textarea class="admin-input" id="newsMessage" placeholder="Type detailed news content..."></textarea>
+            </div>
+
+            <div style="background: var(--bg-light); border: 1px solid var(--border-light); padding: 14px; border-radius: 12px; margin-bottom: 16px;">
+                <p style="font-size: 11.5px; font-weight: 800; color: var(--primary-burgundy); text-transform: uppercase; margin-bottom: 10px;">
+                    🔗 Action Link & Button (Optional)
+                </p>
+                <div class="input-field-wrapper">
+                    <label>Target Redirect URL</label>
+                    <input class="admin-input" type="url" id="newsRedirectUrl" placeholder="https://example.com">
+                </div>
+                <div class="input-field-wrapper" style="margin-bottom: 0;">
+                    <label>Button Label</label>
+                    <input class="admin-input" type="text" id="newsButtonLabel" placeholder="e.g. Read Article / Claim Offer">
+                </div>
+            </div>
+        </div>
+
+        <!-- PROMO CODE FIELDS -->
+        <div id="promoFormFields" class="hidden-fields">
+            <div style="background: #fef3c7; border: 1px solid rgba(245, 158, 11, 0.3); padding: 16px; border-radius: 12px; margin-bottom: 16px;">
+                <p style="font-size: 12px; font-weight: 800; color: #b45309; text-transform: uppercase; margin-bottom: 12px;">
+                    🎁 Promo Code Setup (Saves under promoCodes/sport)
+                </p>
+                
+                <div class="input-field-wrapper">
+                    <label>Unique Promo Code Text</label>
+                    <input class="admin-input" type="text" id="promoCode" placeholder="e.g. BIRR2026, EXTRA50" style="text-transform: uppercase;">
+                </div>
+
+                <div class="input-field-wrapper">
+                    <label>Max Users Allowed to Claim</label>
+                    <input class="admin-input" type="number" id="promoMaxClaims" placeholder="e.g. 50">
+                </div>
+
+                <div class="input-field-wrapper" style="margin-bottom: 0;">
+                    <label>Reward Amount Per User (ETB / Birr)</label>
+                    <input class="admin-input" type="number" id="promoRewardAmount" placeholder="e.g. 100">
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-row" style="margin-bottom: 24px;">
+            <button class="btn-admin-action btn-broadcast" id="publishNewsBtn">
+                <span id="buttonText">Publish Feed Item</span>
+            </button>
+            <button class="btn-admin-action btn-delete" id="deleteAllCategoriesBtn" style="width: auto; padding: 0 16px;">Purge Sports Feed</button>
+        </div>
+
+        <div style="border-top: 1px dashed var(--border-light); padding-top:20px;">
+            <h3 class="section-title" style="font-size: 16px; color: var(--text-dark); margin-bottom: 12px;">Manage Articles & Sport Promo Codes</h3>
+            
+            <div class="filter-btn-grid">
+                <button class="filter-btn active" data-filter="ALL">All</button>
+                <button class="filter-btn" data-filter="Sports News">Sports</button>
+                <button class="filter-btn" data-filter="System Releases">Releases</button>
+                <button class="filter-btn" data-filter="Promo Rewards">Rewards</button>
+                <button class="filter-btn" data-filter="Promo Code News">Codes</button>
+            </div>
+
+            <div id="manageNewsCardsContainer"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, ref, onValue, push, set, remove, update } from "./db.js";
+
+        let res = null;
+        let sportsNewsState = {};
+        let generalNewsState = {};
+        let sportsPromoCodesState = {};
+        let currentEditingKey = null;
+        let currentEditingNode = null;
+        let activeCategoryFilter = 'ALL';
+
+        // Direct Firebase Node Paths
+        const SPORTS_NODE = 'newNews/sport';
+        const NEWS_NODE = 'news';
+        const SPORT_PROMO_NODE = 'promoCodes/sport';
+
+        const categorySelect = document.getElementById('postCategory');
+        categorySelect.addEventListener('change', (e) => {
+            const isPromoOption = e.target.value.startsWith('Promo Code');
+            document.getElementById('standardFormFields').classList.toggle('hidden-fields', isPromoOption);
+            document.getElementById('promoFormFields').classList.toggle('hidden-fields', !isPromoOption);
+        });
+
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                activeCategoryFilter = btn.getAttribute('data-filter');
+                render();
+            });
+        });
+
+        function openModal(t, d, m, c, tx) {
+            document.getElementById('modalTitleDisplay').innerText = t; 
+            document.getElementById('modalDescriptionDisplay').innerText = d;
+            document.getElementById('modalDynamicDetails').innerHTML = `<div class="modal-data-row"><span class="modal-data-label">${m[0].label}</span><span class="modal-data-value">${m[0].value}</span></div>`;
+            document.getElementById('modalConfirmBtn').className = "btn-admin-action " + c; 
+            document.getElementById('modalConfirmBtn').innerText = tx;
+            document.getElementById('customConfirmModal').classList.add('active'); 
+            return new Promise(r => res = r);
+        }
+        
+        document.getElementById('modalConfirmBtn').addEventListener('click', () => { if(res) res(true); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('modalCancelBtn').addEventListener('click', () => { if(res) res(false); document.getElementById('customConfirmModal').classList.remove('active'); });
+        document.getElementById('closePreviewBtn').addEventListener('click', () => { document.getElementById('previewNewsModal').classList.remove('active'); });
+
+        function triggerAdminAlert(m, s=true) {
+            const t = document.getElementById('adminToast'); 
+            t.innerText = m;
+            t.style.background = s ? 'linear-gradient(135deg, #10b981 0%, #059669 100%)' : 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            t.style.display = 'block'; 
+            setTimeout(() => t.style.display='none', 3500);
+        }
+
+        // Realtime Database Listeners - Reading ONLY Sport Promos & Sports News
+        onValue(ref(db, SPORTS_NODE), snapshot => { 
+            sportsNewsState = snapshot.val() || {}; 
+            render(); 
+        }, error => console.error(`Database '${SPORTS_NODE}' Error:`, error));
+
+        onValue(ref(db, NEWS_NODE), snapshot => { 
+            generalNewsState = snapshot.val() || {}; 
+            render(); 
+        }, error => console.error(`Database '${NEWS_NODE}' Error:`, error));
+
+        onValue(ref(db, SPORT_PROMO_NODE), snapshot => { 
+            sportsPromoCodesState = snapshot.val() || {}; 
+            render(); 
+        }, error => console.warn(`Database '${SPORT_PROMO_NODE}' Error:`, error));
+
+        function render() {
+            const container = document.getElementById('manageNewsCardsContainer'); 
+            container.innerHTML = ''; 
+            
+            const combined = [];
+
+            // Add entries from newNews/sport
+            Object.keys(sportsNewsState).forEach(k => {
+                combined.push({ key: k, node: SPORTS_NODE, data: sportsNewsState[k] });
+            });
+
+            // Add entries from news
+            Object.keys(generalNewsState).forEach(k => {
+                combined.push({ key: k, node: NEWS_NODE, data: generalNewsState[k] });
+            });
+
+            combined.sort((a, b) => (b.data.timestamp || b.data.updatedAt || 0) - (a.data.timestamp || a.data.updatedAt || 0));
+
+            let renderedItemsCount = 0;
+
+            // Render ONLY Sport Promo Codes from `promoCodes/sport`
+            if (activeCategoryFilter === 'ALL' || activeCategoryFilter === 'Promo Code News') {
+                if (typeof sportsPromoCodesState === 'object' && sportsPromoCodesState !== null) {
+                    Object.keys(sportsPromoCodesState).forEach(subKey => {
+                        const item = sportsPromoCodesState[subKey];
+                        if (item && item.code) {
+                            renderedItemsCount++;
+                            const keyPath = `${SPORT_PROMO_NODE}/${subKey}`;
+                            const claimedUsersCount = item.claimedUsers ? Object.keys(item.claimedUsers).length : (item.currentClaimCount || 0);
+                            
+                            container.innerHTML += `
+                                <div class="manage-news-card">
+                                    <div class="manage-news-header">
+                                        <div>
+                                            <span class="code-badge">${item.code}</span>
+                                            <strong style="margin-left:6px; font-size:14px; color:var(--text-dark);">Promo (${item.rewardAmount || 0} Birr)</strong>
+                                        </div>
+                                        <span class="node-tag node-tag-promo">${keyPath}</span>
+                                    </div>
+                                    <p style="font-size:12px; color:var(--text-muted);">
+                                        Claims: <strong>${claimedUsersCount} / ${item.maxClaims || 0} Users</strong> | Win: <strong>${item.rewardAmount || 0} ETB</strong>
+                                    </p>
+                                    <div class="manage-btn-group">
+                                        <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="${keyPath}" data-node="">Delete Promo Code</button>
+                                    </div>
+                                </div>`;
+                        }
+                    });
+                }
+            }
+
+            // Render Articles
+            combined.forEach(itemObj => { 
+                const item = itemObj.data; 
+                const k = itemObj.key;
+                const nodeName = itemObj.node;
+                const newsCode = item.code || item.newsCode || 'SN-NONE';
+                const itemCategory = item.category || (nodeName === SPORTS_NODE ? 'Sports News' : 'General');
+
+                let isMatch = false;
+                if (activeCategoryFilter === 'ALL') isMatch = true;
+                else if (itemCategory.toLowerCase() === activeCategoryFilter.toLowerCase()) isMatch = true;
+
+                if (isMatch) {
+                    renderedItemsCount++;
+                    container.innerHTML += `
+                        <div class="manage-news-card">
+                            <div class="manage-news-header">
+                                <div>
+                                    <span class="code-badge">${newsCode}</span>
+                                    <strong style="margin-left:6px; font-size:14px; color:var(--text-dark);">${item.title || 'Untitled Post'}</strong>
+                                </div>
+                                <span class="node-tag node-tag-sports">${nodeName}</span>
+                            </div>
+                            <div style="font-size:12px; color:var(--text-muted);">Category: <strong>${itemCategory}</strong></div>
+                            <div class="manage-btn-group">
+                                <button class="btn-news-ctrl btn-ctrl-edit edit-btn" data-key="${k}" data-node="${nodeName}">Edit Post</button>
+                                <button class="btn-news-ctrl btn-ctrl-preview preview-btn" data-key="${k}" data-node="${nodeName}">Preview</button>
+                                <button class="btn-news-ctrl btn-ctrl-delete del-btn" data-key="${k}" data-node="${nodeName}">Delete Post</button>
+                            </div>
+                        </div>`; 
+                }
+            });
+
+            if (renderedItemsCount === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px; font-weight:600; font-size:13px;">No entries found for '${activeCategoryFilter}'.</div>`;
+            }
+            
+            // Delete Handlers
+            container.querySelectorAll('.del-btn').forEach(btn => btn.addEventListener('click', async () => {
+                const k = btn.getAttribute('data-key');
+                const nodeName = btn.getAttribute('data-node');
+                const path = nodeName ? `${nodeName}/${k}` : k;
+
+                if(!await openModal("Confirm Deletion", `Permanently remove entry from '${path}'?`, [{label:"Target:", value:path}], "btn-delete", "Delete Now")) return;
+                try {
+                    await remove(ref(db, path)); 
+                    triggerAdminAlert("Entry deleted successfully!");
+                    if(currentEditingKey === k) resetFormState();
+                } catch(e) {
+                    triggerAdminAlert("Deletion failed: " + e.message, false);
+                }
+            }));
+
+            // Edit Handlers
+            container.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', () => {
+                const k = btn.getAttribute('data-key');
+                const nodeName = btn.getAttribute('data-node');
+                const item = nodeName === SPORTS_NODE ? sportsNewsState[k] : generalNewsState[k];
+                
+                if(!item) return;
+
+                currentEditingKey = k;
+                currentEditingNode = nodeName;
+                
+                document.getElementById('postCategory').value = item.category || 'Sports News';
+                document.getElementById('standardFormFields').classList.remove('hidden-fields');
+                document.getElementById('promoFormFields').classList.add('hidden-fields');
+
+                document.getElementById('newsCustomCode').value = item.code || item.newsCode || '';
+                document.getElementById('newsTitle').value = item.title || '';
+                document.getElementById('newsImageUrl').value = item.imageUrl || '';
+                document.getElementById('newsMessage').value = item.content || item.message || '';
+                document.getElementById('newsRedirectUrl').value = item.link || item.redirectUrl || '';
+                document.getElementById('newsButtonLabel').value = item.buttonLabel || item.actionButtonLabel || '';
+
+                document.getElementById('editingBanner').style.display = 'flex';
+                document.getElementById('editingNewsCode').innerText = `${item.code || k}`;
+                document.getElementById('buttonText').innerText = "Update Existing Post";
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }));
+
+            // Preview Handlers
+            container.querySelectorAll('.preview-btn').forEach(btn => btn.addEventListener('click', () => {
+                const k = btn.getAttribute('data-key');
+                const nodeName = btn.getAttribute('data-node');
+                const item = nodeName === SPORTS_NODE ? sportsNewsState[k] : generalNewsState[k];
+
+                if(!item) return;
+
+                document.getElementById('previewModalDetails').innerHTML = `
+                    <div class="modal-data-row"><span class="modal-data-label">Code:</span><span class="modal-data-value">${item.code || item.newsCode || 'N/A'}</span></div>
+                    <div class="modal-data-row"><span class="modal-data-label">Title:</span><span class="modal-data-value">${item.title || 'Untitled'}</span></div>
+                    <div class="modal-data-row"><span class="modal-data-label">Category:</span><span class="modal-data-value">${item.category || 'Sports News'}</span></div>
+                    <div class="modal-data-row"><span class="modal-data-label">Link:</span><span class="modal-data-value">${item.link || item.redirectUrl || 'None'}</span></div>
+                    <div style="background:var(--bg-light); padding:12px; border-radius:10px; margin-top:10px; font-size:13px; color:var(--text-dark); max-height:120px; overflow-y:auto; line-height:1.4;">
+                        ${item.content || item.message || 'No content description body provided.'}
+                    </div>
+                `;
+                document.getElementById('previewNewsModal').classList.add('active');
+            }));
+        }
+
+        document.getElementById('cancelEditBtn').addEventListener('click', resetFormState);
+
+        function resetFormState() {
+            currentEditingKey = null;
+            currentEditingNode = null;
+            document.getElementById('editingBanner').style.display = 'none';
+            document.getElementById('buttonText').innerText = "Publish Feed Item";
+            
+            document.getElementById('postCategory').value = 'Sports News';
+            document.getElementById('standardFormFields').classList.remove('hidden-fields');
+            document.getElementById('promoFormFields').classList.add('hidden-fields');
+
+            document.getElementById('newsCustomCode').value = '';
+            document.getElementById('newsTitle').value = '';
+            document.getElementById('newsImageUrl').value = '';
+            document.getElementById('newsMessage').value = '';
+            document.getElementById('newsRedirectUrl').value = '';
+            document.getElementById('newsButtonLabel').value = '';
+
+            document.getElementById('promoCode').value = '';
+            document.getElementById('promoMaxClaims').value = '';
+            document.getElementById('promoRewardAmount').value = '';
+        }
+
+        // Check duplicates strictly inside promoCodes/sport
+        function isCodeDuplicate(codeToTest) {
+            if (!sportsPromoCodesState || typeof sportsPromoCodesState !== 'object') return false;
+            return Object.values(sportsPromoCodesState).some(item => item && item.code === codeToTest);
+        }
+
+        // Publish Action Handler
+        document.getElementById('publishNewsBtn').addEventListener('click', async () => {
+            const cat = document.getElementById('postCategory').value;
+            const publishBtn = document.getElementById('publishNewsBtn');
+            const buttonText = document.getElementById('buttonText');
+
+            const nowEpoch = Date.now();
+            const timestampFormatted = new Date().toLocaleString('en-US', {
+                month: 'short', day: 'numeric', year: 'numeric',
+                hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true
+            });
+
+            publishBtn.disabled = true;
+
+            // Handle Promo Code Creation (Sports Only)
+            if (cat.startsWith('Promo Code')) {
+                const promoCode = document.getElementById('promoCode').value.trim().toUpperCase();
+                const maxClaims = parseInt(document.getElementById('promoMaxClaims').value, 10);
+                const rewardAmount = parseFloat(document.getElementById('promoRewardAmount').value);
+
+                if (!promoCode || isNaN(maxClaims) || isNaN(rewardAmount)) {
+                    publishBtn.disabled = false;
+                    return triggerAdminAlert("Please enter Promo Code, Max Limit, and Reward Amount.", false);
+                }
+
+                if (isCodeDuplicate(promoCode)) {
+                    publishBtn.disabled = false;
+                    return triggerAdminAlert(`Sports Promo Code [${promoCode}] already exists!`, false);
+                }
+
+                buttonText.innerText = "Saving Promo...";
+
+                const promoPayload = {
+                    code: promoCode,
+                    maxClaims: maxClaims,
+                    rewardAmount: rewardAmount,
+                    currentClaimCount: 0,
+                    claimedUsers: {},
+                    createdAt: timestampFormatted,
+                    timestamp: nowEpoch
+                };
+
+                try {
+                    await set(push(ref(db, SPORT_PROMO_NODE)), promoPayload);
+                    triggerAdminAlert(`Promo Code [${promoCode}] saved under '${SPORT_PROMO_NODE}'!`);
+                    resetFormState();
+                } catch(err) {
+                    console.error(err);
+                    triggerAdminAlert("Failed to save promo: " + err.message, false);
+                } finally {
+                    publishBtn.disabled = false;
+                }
+                return;
+            }
+
+            // Handle News Articles (Sports News routes to `newNews/sport`)
+            const title = document.getElementById('newsTitle').value.trim();
+            const imageUrl = document.getElementById('newsImageUrl').value.trim();
+            const message = document.getElementById('newsMessage').value.trim();
+            const redirectUrl = document.getElementById('newsRedirectUrl').value.trim();
+            const buttonLabel = document.getElementById('newsButtonLabel').value.trim();
+            let newsCode = document.getElementById('newsCustomCode').value.trim().toUpperCase();
+
+            if(!title || !message) {
+                publishBtn.disabled = false;
+                return triggerAdminAlert("Headline title and content message are required.", false);
+            }
+
+            if (!newsCode) {
+                newsCode = `SN-${Math.floor(1000 + Math.random() * 9000)}`;
+            }
+
+            const targetNode = cat === 'Sports News' ? SPORTS_NODE : NEWS_NODE;
+            
+            buttonText.innerText = currentEditingKey ? "Updating..." : "Publishing...";
+
+            const newsDataPayload = { 
+                code: newsCode,
+                newsCode: newsCode,
+                category: cat, 
+                title: title, 
+                imageUrl: imageUrl,
+                content: message, 
+                message: message,
+                link: redirectUrl,
+                redirectUrl: redirectUrl,
+                buttonLabel: buttonLabel,
+                actionButtonLabel: buttonLabel,
+                updatedAt: nowEpoch,
+                timestamp: nowEpoch,
+                date: timestampFormatted
+            };
+
+            try {
+                if (currentEditingKey) {
+                    const activeNode = currentEditingNode || targetNode;
+                    await update(ref(db, `${activeNode}/${currentEditingKey}`), newsDataPayload);
+                    triggerAdminAlert(`Updated [${newsCode}] in ${activeNode}!`);
+                } else {
+                    newsDataPayload.createdAtTimestamp = nowEpoch;
+                    await set(push(ref(db, targetNode)), newsDataPayload);
+                    triggerAdminAlert(`Published to ${targetNode}! Code: [${newsCode}]`);
+                }
+
+                resetFormState();
+
+            } catch (err) {
+                console.error("Database Save Error:", err);
+                triggerAdminAlert("Database save failed: " + err.message, false);
+            } finally {
+                publishBtn.disabled = false;
+            }
+        });
+
+        // Purge Action (Targeting Sports Feed Node)
+        document.getElementById('deleteAllCategoriesBtn').addEventListener('click', async () => {
+            if(!await openModal("CRITICAL PURGE", `Permanently delete ALL items from sports database node (${SPORTS_NODE})?`, [{label:"Target Node:", value:SPORTS_NODE}], "btn-delete", "Delete Sports Feed")) return;
+            try {
+                await remove(ref(db, SPORTS_NODE)); 
+                resetFormState();
+                triggerAdminAlert("Flushed all sports records successfully!");
+            } catch(e) {
+                triggerAdminAlert("Purge failed: " + e.message, false);
+            }
+        });
+    </script>
+</body>
+</html>

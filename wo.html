@@ -1,0 +1,732 @@
+<script>
+  atOptions = {
+    'key' : 'd2f535e8108b02e972de2d20b1d66e98',
+    'format' : 'iframe',
+    'height' : 250,
+    'width' : 300,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js"></script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>BirrGo - World Updates Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="news.css">
+</head>
+<body>
+
+    <div class="app-view">
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V75C375 75 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
+            <defs>
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4a0012"/>
+                    <stop offset="1" stop-color="#800020"/>
+                </linearGradient>
+            </defs>
+        </svg>
+
+        <div class="custom-popup-overlay" id="customPopupModule">
+            <div class="custom-popup-modal">
+                <span class="popup-status-icon" id="popupIconNode">🎁</span>
+                <span id="popupAmountNode" style="display: none;"></span>
+                <h3 class="popup-main-title" id="popupTitleNode">Status Alert</h3>
+                <p class="popup-body-desc" id="popupDescNode">Notification update context.</p>
+                <button class="popup-dismiss-action" id="closePopupBtn">Continue</button>
+            </div>
+        </div>
+
+        <div class="full-news-modal-overlay" id="fullNewsModalOverlay">
+            <div class="news-reader-header">
+                <h2 style="font-size: 15px; font-weight: 800;">Full Article Details</h2>
+                <button class="close-reader-btn" id="closeNewsReaderBtn" aria-label="Close Reader">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="news-reader-content" id="fullNewsReaderBody"></div>
+        </div>
+
+        <div class="search-modal-overlay" id="searchModalOverlay">
+            <div class="search-box-header">
+                <div class="search-input-wrapper">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter World News Code..." autocomplete="off">
+                </div>
+                <button class="close-search-btn" id="closeSearchDrawerBtn">Cancel</button>
+            </div>
+            <div class="search-results-area" id="searchResultsArea">
+                <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
+                    Type a news code above to find updates quickly.
+                </div>
+            </div>
+        </div>
+
+        <header class="nav-header">
+            <div class="header-left-group">
+                <a href="lottery.html" class="back-action-btn" aria-label="Navigate Back">
+                    <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </a>
+                <h1 class="header-title-text">World News</h1>
+            </div>
+            
+            <div class="header-live-clock-badge" id="topCornerLiveClock">00:00:00 AM</div>
+
+            <button class="search-action-btn" id="openSearchBtn" aria-label="Search News">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
+        </header>
+
+        <main class="app-content">
+            <div class="category-filter-row" id="filterPillsRow">
+                <span class="filter-pill active-pill" data-category="World News">World News</span>
+                <span class="filter-pill" data-category="System Releases">System Releases</span>
+                <span class="filter-pill" data-category="Promo Rewards">Promo Rewards</span>
+            </div>
+
+            <section class="promo-redeem-card" id="promoRedeemSection" style="display: none;">
+                <div class="promo-header-group">
+                    <span class="promo-gift-badge">🎁</span>
+                    <div>
+                        <h3 class="promo-header-title">Claim Reward Voucher</h3>
+                        <p class="promo-header-subtitle">Enter your official world promo code for instant bonus</p>
+                    </div>
+                </div>
+                <div class="promo-action-fields">
+                    <input type="text" class="promo-input-field" id="promoCodeInput" placeholder="ENTER PROMO CODE" maxlength="20" autocomplete="off">
+                    <button class="promo-submit-btn" id="claimPromoBtn">Claim</button>
+                </div>
+            </section>
+
+            <div class="broadcasts-container" id="broadcastsContainer">
+                <div class="featured-broadcast-card">
+                    <h2 class="broadcast-title" style="font-size:14px; text-align:center; color: var(--text-muted);">Connecting to Secure Node...</h2>
+                </div>
+            </div>
+
+            <footer class="verified-footer-shield">
+                <span class="footer-shield-text">Secure Matrix Verified</span>
+            </footer>
+        </main>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, get, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
+            authDomain: "birrgo-fdf7e.firebaseapp.com",
+            databaseURL: "https://birrgo-fdf7e-default-rtdb.firebaseio.com",
+            projectId: "birrgo-fdf7e",
+            storageBucket: "birrgo-fdf7e.firebasestorage.app",
+            messagingSenderId: "2317445154",
+            appId: "1:2317445154:web:4275cbb0f46b28f64f827b",
+            measurementId: "G-24X13TZ43D"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let activeUserPhone = "912345678"; 
+        let localCachedBroadcasts = [];
+        let currentActiveCategoryFilter = "World News";
+        let cardClockIntervalId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const activeUserPhoneSession = localStorage.getItem('auth_session_phone');
+            if (!activeUserPhoneSession) {
+                window.location.href = "new2.html";
+                return;
+            }
+            activeUserPhone = activeUserPhoneSession;
+
+            streamLiveAdminUpdatesLog();
+            bindVisualInterfaceControls();
+            setupSearchEngineControls();
+            setupNewsReaderModalControls();
+            
+            const claimBtn = document.getElementById('claimPromoBtn');
+            if (claimBtn) claimBtn.addEventListener('click', processPromoClaim);
+
+            const closeBtn = document.getElementById('closePopupBtn');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => {
+                    document.getElementById('customPopupModule').classList.remove('show-popup');
+                });
+            }
+            
+            initiateLiveInterfaceClocks();
+        });
+
+        function initiateLiveInterfaceClocks() {
+            const cornerClockNode = document.getElementById('topCornerLiveClock');
+            
+            if (cardClockIntervalId) clearInterval(cardClockIntervalId);
+            cardClockIntervalId = setInterval(() => {
+                const now = new Date();
+                
+                if (cornerClockNode) {
+                    cornerClockNode.innerText = now.toLocaleTimeString(undefined, {
+                        hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+                    });
+                }
+
+                const clockNodes = document.querySelectorAll('.timestamp-log-text[data-timestamp]');
+                clockNodes.forEach(node => {
+                    const rawTime = parseInt(node.getAttribute('data-timestamp'));
+                    if (rawTime && !isNaN(rawTime)) {
+                        node.innerText = formatExactTimestampWithSeconds(rawTime);
+                    }
+                });
+            }, 1000);
+        }
+
+        function formatExactTimestampWithSeconds(baseEpoch) {
+            const dateObj = new Date(baseEpoch);
+            if (isNaN(dateObj.getTime())) return "Recent";
+            return dateObj.toLocaleDateString(undefined, { 
+                month: 'short', day: 'numeric', year: 'numeric' 
+            }) + ' • ' + dateObj.toLocaleTimeString(undefined, { 
+                hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true
+            });
+        }
+
+        // WORLD NEWS DATABASE STREAMING (`newNews/wold` and fallback `newNews/world`)
+        function streamLiveAdminUpdatesLog() {
+            const worldNewsRef = ref(db, `newNews/wold`);
+            
+            onValue(worldNewsRef, (snapshot) => {
+                localCachedBroadcasts = [];
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    Object.keys(data).forEach(key => {
+                        localCachedBroadcasts.push({ id: key, ...data[key] });
+                    });
+                    
+                    localCachedBroadcasts.sort((a, b) => {
+                        let timeA = a.updatedAt || a.createdAtTimestamp || a.timestamp || 0;
+                        let timeB = b.updatedAt || b.createdAtTimestamp || b.timestamp || 0;
+                        
+                        if (!timeA && a.date) timeA = new Date(a.date).getTime() || 0;
+                        if (!timeB && b.date) timeB = new Date(b.date).getTime() || 0;
+
+                        if (timeA !== 0 || timeB !== 0) return timeB - timeA;
+                        return b.id.localeCompare(a.id);
+                    });
+
+                    renderFilteredBroadcasts();
+                } else {
+                    // Try fallback path if empty
+                    checkWorldNewsFallback();
+                }
+            }, (error) => {
+                console.error("Database Core Error:", error);
+                const container = document.getElementById('broadcastsContainer');
+                if(container) container.innerHTML = '<p style="text-align:center;color:red;font-size:12px;">Synchronization Halted</p>';
+            });
+        }
+
+        async function checkWorldNewsFallback() {
+            try {
+                const fallbackRef = ref(db, `newNews/world`);
+                const snap = await get(fallbackRef);
+                localCachedBroadcasts = [];
+                
+                if (snap.exists()) {
+                    const data = snap.val();
+                    Object.keys(data).forEach(key => {
+                        localCachedBroadcasts.push({ id: key, ...data[key] });
+                    });
+                    
+                    localCachedBroadcasts.sort((a, b) => {
+                        let timeA = a.updatedAt || a.createdAtTimestamp || a.timestamp || 0;
+                        let timeB = b.updatedAt || b.createdAtTimestamp || b.timestamp || 0;
+                        
+                        if (!timeA && a.date) timeA = new Date(a.date).getTime() || 0;
+                        if (!timeB && b.date) timeB = new Date(b.date).getTime() || 0;
+
+                        if (timeA !== 0 || timeB !== 0) return timeB - timeA;
+                        return b.id.localeCompare(a.id);
+                    });
+
+                    renderFilteredBroadcasts();
+                } else {
+                    renderEmptyState();
+                }
+            } catch (err) {
+                renderEmptyState();
+            }
+        }
+
+        function renderEmptyState() {
+            const container = document.getElementById('broadcastsContainer');
+            if (!container) return;
+            
+            if (currentActiveCategoryFilter === "Promo Rewards") {
+                container.innerHTML = `
+                    <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12.5px; font-weight:600;">
+                        Use the promo code box above to redeem active world reward vouchers.
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <article class="featured-broadcast-card">
+                        <div class="badge-meta-row"><span class="spotlight-pill">World OK</span></div>
+                        <h2 class="broadcast-title">No World Updates</h2>
+                        <p class="broadcast-body-text">There are currently no world news updates posted under this filter category today.</p>
+                        <div class="card-footer-branding-row"><div></div><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
+                    </article>
+                `;
+            }
+        }
+
+        function triggerNativeAdExecution(containerId) {
+            const target = document.getElementById(containerId);
+            if (!target) return;
+
+            target.innerHTML = '';
+
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '300px';
+            iframe.style.height = '250px';
+            iframe.style.border = 'none';
+            iframe.style.overflow = 'hidden';
+            iframe.style.display = 'block';
+            iframe.style.margin = '0 auto';
+            iframe.scrolling = 'no';
+
+            target.appendChild(iframe);
+
+            const cacheBuster = Date.now() + Math.floor(Math.random() * 100000);
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            
+            iframeDoc.open();
+            iframeDoc.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <style>
+                        body { margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; background: transparent; }
+                    </style>
+                </head>
+                <body>
+                    <script type="text/javascript">
+                        var atOptions = {
+                            'key' : 'd2f535e8108b02e972de2d20b1d66e98',
+                            'format' : 'iframe',
+                            'height' : 250,
+                            'width' : 300,
+                            'params' : {}
+                        };
+                    <\/script>
+                    <script type="text/javascript" src="https://www.highperformanceformat.com/d2f535e8108b02e972de2d20b1d66e98/invoke.js?cb=${cacheBuster}" async="async"><\/script>
+                </body>
+                </html>
+            `);
+            iframeDoc.close();
+        }
+
+        function buildSingleNewsCardHTML(item) {
+            const headline = item.title || "World News Update";
+            const fullContent = item.content || item.message || "";
+            const category = item.category || "World News";
+            const imageUrl = item.imageUrl || "";
+
+            const maxPreviewLen = 120;
+            const isLongText = fullContent.length > maxPreviewLen;
+            const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
+
+            let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
+
+            if (!numericalTime && item.date) {
+                const parsed = new Date(item.date).getTime();
+                if (!isNaN(parsed)) numericalTime = parsed;
+            }
+
+            if (!numericalTime) numericalTime = Date.now(); 
+
+            const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
+            const isSystem = category.trim().toLowerCase() === "system releases";
+            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+
+            let imageHTML = "";
+            if (imageUrl && imageUrl.trim().length > 0) {
+                imageHTML = `<div class="broadcast-image-frame" onclick="openFullNewsReader('${item.id}')"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
+            }
+
+            return `
+                <div class="badge-meta-row">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Global Headline'}</span>
+                    </div>
+                    <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
+                </div>
+                ${imageHTML}
+                <div class="clickable-news-content" onclick="openFullNewsReader('${item.id}')">
+                    <h2 class="broadcast-title">${headline}</h2>
+                    <p class="broadcast-body-text">${previewContent}</p>
+                </div>
+
+                <div class="card-footer-branding-row">
+                    <div></div>
+                    <img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token">
+                </div>
+            `;
+        }
+
+        window.openFullNewsReader = function(itemId) {
+            const item = localCachedBroadcasts.find(n => n.id === itemId);
+            if (!item) return;
+
+            const readerOverlay = document.getElementById('fullNewsModalOverlay');
+            const readerBody = document.getElementById('fullNewsReaderBody');
+
+            if (!readerOverlay || !readerBody) return;
+
+            const headline = item.title || "World News Update";
+            const fullContent = item.content || item.message || "";
+            const category = item.category || "World News";
+            const imageUrl = item.imageUrl || "";
+            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
+            
+            const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
+
+            let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
+            if (!numericalTime && item.date) {
+                const parsed = new Date(item.date).getTime();
+                if (!isNaN(parsed)) numericalTime = parsed;
+            }
+            if (!numericalTime) numericalTime = Date.now();
+
+            const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
+            const isSystem = category.trim().toLowerCase() === "system releases";
+            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+
+            let imageHTML = "";
+            if (imageUrl && imageUrl.trim().length > 0) {
+                imageHTML = `<div class="reader-image-frame"><img src="${imageUrl}"></div>`;
+            }
+
+            let redirectBtnHTML = "";
+            if (targetRedirectUrl && targetRedirectUrl.trim().length > 0) {
+                redirectBtnHTML = `
+                    <div style="margin-top:20px;">
+                        <a href="${targetRedirectUrl.trim()}" target="_blank" rel="noopener noreferrer" class="redirect-link-btn" style="width:100%; justify-content:center;">
+                            <span>${customActionLabel}</span>
+                            <svg viewBox="0 0 24 24"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        </a>
+                    </div>
+                `;
+            }
+
+            readerBody.innerHTML = `
+                <div class="reader-meta-bar">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Global Headline'}</span>
+                    </div>
+                    <span class="timestamp-log-text">${initialFormattedClock}</span>
+                </div>
+                <h1 class="reader-title">${headline}</h1>
+                ${imageHTML}
+                <div class="reader-full-body">${fullContent}</div>
+                ${redirectBtnHTML}
+            `;
+
+            readerOverlay.classList.add('active-reader');
+        };
+
+        function setupNewsReaderModalControls() {
+            const closeBtn = document.getElementById('closeNewsReaderBtn');
+            const readerOverlay = document.getElementById('fullNewsModalOverlay');
+
+            if (closeBtn && readerOverlay) {
+                closeBtn.addEventListener('click', () => {
+                    readerOverlay.classList.remove('active-reader');
+                });
+            }
+        }
+
+        function renderFilteredBroadcasts() {
+            const container = document.getElementById('broadcastsContainer');
+            const promoSection = document.getElementById('promoRedeemSection');
+            if (!container) return;
+            
+            container.innerHTML = "";
+
+            if (currentActiveCategoryFilter === "Promo Rewards") {
+                if (promoSection) promoSection.style.display = "block";
+            } else {
+                if (promoSection) promoSection.style.display = "none";
+            }
+
+            const filtered = localCachedBroadcasts.filter(item => {
+                const nodeCategory = (item.category || "World News").trim();
+                if (currentActiveCategoryFilter === "World News") {
+                    return nodeCategory.toLowerCase() === "world news" || nodeCategory.toLowerCase() !== "system releases";
+                }
+                return nodeCategory.toLowerCase() === currentActiveCategoryFilter.trim().toLowerCase();
+            });
+
+            if (filtered.length === 0) {
+                renderEmptyState();
+                return;
+            }
+
+            filtered.forEach((item, index) => {
+                const card = document.createElement('article');
+                card.className = "featured-broadcast-card";
+                card.innerHTML = buildSingleNewsCardHTML(item);
+                container.appendChild(card);
+
+                const adCard = document.createElement('article');
+                adCard.className = "featured-broadcast-card native-ad-card";
+                
+                const dynamicAdSlotId = `live-inline-ad-${index}-${Date.now()}`;
+                
+                adCard.innerHTML = `
+                    <div class="badge-meta-row" style="margin-bottom: 8px;">
+                        <span class="spotlight-pill inline-ad-badge">Our Partner</span>
+                        <span class="timestamp-log-text">Verified Partner Content</span>
+                    </div>
+                    <div class="ad-script-wrapper" id="${dynamicAdSlotId}"></div>
+                `;
+                container.appendChild(adCard);
+
+                setTimeout(() => {
+                    triggerNativeAdExecution(dynamicAdSlotId);
+                }, index * 100 + 20);
+            });
+        }
+
+        function bindVisualInterfaceControls() {
+            const pills = document.querySelectorAll('.filter-pill');
+            pills.forEach(pill => {
+                pill.addEventListener('click', function() {
+                    pills.forEach(p => p.classList.remove('active-pill'));
+                    this.classList.add('active-pill');
+                    currentActiveCategoryFilter = this.getAttribute('data-category') || this.innerText.trim();
+                    renderFilteredBroadcasts();
+                });
+            });
+        }
+
+        function setupSearchEngineControls() {
+            const openBtn = document.getElementById('openSearchBtn');
+            const closeBtn = document.getElementById('closeSearchDrawerBtn');
+            const searchOverlay = document.getElementById('searchModalOverlay');
+            const searchInput = document.getElementById('newsCodeSearchInput');
+
+            if (openBtn && searchOverlay) {
+                openBtn.addEventListener('click', () => {
+                    searchOverlay.classList.add('active-search');
+                    if (searchInput) {
+                        searchInput.value = '';
+                        searchInput.focus();
+                    }
+                    executeNewsSearchQuery('');
+                });
+            }
+
+            if (closeBtn && searchOverlay) {
+                closeBtn.addEventListener('click', () => {
+                    searchOverlay.classList.remove('active-search');
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', (e) => {
+                    executeNewsSearchQuery(e.target.value);
+                });
+            }
+        }
+
+        function executeNewsSearchQuery(query) {
+            const resultsArea = document.getElementById('searchResultsArea');
+            if (!resultsArea) return;
+
+            const cleanQuery = query.trim().toLowerCase();
+
+            if (!cleanQuery) {
+                resultsArea.innerHTML = `
+                    <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
+                        Type a news code above to find updates quickly.
+                    </div>
+                `;
+                return;
+            }
+
+            const matchedNews = localCachedBroadcasts.filter(item => {
+                const code = String(item.newsCode || item.code || item.id || '').toLowerCase();
+                const title = String(item.title || '').toLowerCase();
+                const content = String(item.content || item.message || '').toLowerCase();
+
+                return code.includes(cleanQuery) || title.includes(cleanQuery) || content.includes(cleanQuery);
+            });
+
+            if (matchedNews.length === 0) {
+                resultsArea.innerHTML = `
+                    <div style="text-align:center; padding:30px 20px; color:#ffffff; font-size:13px; font-weight:600;">
+                        No updates matching "<strong>${cleanQuery}</strong>" found.
+                    </div>
+                `;
+                return;
+            }
+
+            resultsArea.innerHTML = '';
+            matchedNews.forEach((item) => {
+                const card = document.createElement('article');
+                card.className = "featured-broadcast-card";
+                card.innerHTML = buildSingleNewsCardHTML(item);
+                resultsArea.appendChild(card);
+            });
+        }
+
+        // PROMO CLAIM: Strictly reads ONLY from `promoCodes/wold` (with `promoCodes/world` fallback)
+        async function processPromoClaim() {
+            const inputField = document.getElementById('promoCodeInput');
+            const claimBtn = document.getElementById('claimPromoBtn');
+            if (!inputField || !claimBtn) return;
+
+            const enteredCode = inputField.value.trim().toUpperCase();
+            if (!enteredCode) {
+                triggerUiPopup("⚠️", "Input Empty", "Please enter a valid promo code to process.");
+                return;
+            }
+
+            claimBtn.disabled = true;
+            claimBtn.innerText = "Checking...";
+
+            try {
+                let matchedPromoData = null;
+                let matchedNodePath = null;
+
+                // Check promoCodes/wold first
+                const woldPromoRef = ref(db, 'promoCodes/wold');
+                const woldPromoSnap = await get(woldPromoRef);
+
+                if (woldPromoSnap.exists()) {
+                    const woldPromos = woldPromoSnap.val();
+                    Object.keys(woldPromos).forEach(key => {
+                        const item = woldPromos[key];
+                        if (item && item.code && String(item.code).trim().toUpperCase() === enteredCode) {
+                            matchedPromoData = item;
+                            matchedNodePath = `promoCodes/wold/${key}`;
+                        }
+                    });
+                }
+
+                // Fallback check under promoCodes/world if not found
+                if (!matchedPromoData) {
+                    const worldPromoRef = ref(db, 'promoCodes/world');
+                    const worldPromoSnap = await get(worldPromoRef);
+
+                    if (worldPromoSnap.exists()) {
+                        const worldPromos = worldPromoSnap.val();
+                        Object.keys(worldPromos).forEach(key => {
+                            const item = worldPromos[key];
+                            if (item && item.code && String(item.code).trim().toUpperCase() === enteredCode) {
+                                matchedPromoData = item;
+                                matchedNodePath = `promoCodes/world/${key}`;
+                            }
+                        });
+                    }
+                }
+
+                if (!matchedPromoData || !matchedNodePath) {
+                    triggerUiPopup("❌", "Wrong Promo Code", "The code you entered is invalid. Please try again with a correct code.");
+                    return;
+                }
+
+                // Check user claim history
+                const userHistoryRef = ref(db, `users/${activeUserPhone}/claimedPromos/${enteredCode}`);
+                const historySnap = await get(userHistoryRef);
+                if (historySnap.exists()) {
+                    triggerUiPopup("⚠️", "Already Claimed", "You have already collected this voucher bonus to your account balance.");
+                    return;
+                }
+
+                const maxClaims = parseInt(matchedPromoData.maxClaims) || 0;
+                const currentCount = parseInt(matchedPromoData.currentClaimCount) || 0;
+
+                if (maxClaims > 0 && currentCount >= maxClaims) {
+                    triggerUiPopup("🚫", "Promo Expired", "This promotional campaign has expired! Limit cap allocations are complete.");
+                    return;
+                }
+
+                const counterPath = `${matchedNodePath}/currentClaimCount`;
+                const counterRef = ref(db, counterPath);
+                
+                const transactionResult = await runTransaction(counterRef, (currentValue) => {
+                    let val = parseInt(currentValue);
+                    if (currentValue === null || isNaN(val)) val = 0;
+                    if (maxClaims > 0 && val >= maxClaims) return; 
+                    return val + 1;
+                });
+
+                if (!transactionResult.committed) {
+                    triggerUiPopup("🚫", "Promo Expired", "This promotional campaign has expired! Limit cap allocations are complete.");
+                    return;
+                }
+
+                const balanceRef = ref(db, `users/${activeUserPhone}/walletBalance`);
+                const currentBalanceSnap = await get(balanceRef);
+                
+                let reward = parseFloat(matchedPromoData.rewardAmount || matchedPromoData.winAmount || matchedPromoData.reward || 0);
+                let currentBalance = 0;
+                
+                if (currentBalanceSnap.exists() && currentBalanceSnap.val() !== null) {
+                    currentBalance = parseFloat(currentBalanceSnap.val()) || 0;
+                }
+                
+                await set(balanceRef, currentBalance + reward);
+                await set(userHistoryRef, { 
+                    claimedAt: Date.now(), 
+                    amountClaimed: reward,
+                    code: enteredCode 
+                });
+
+                triggerUiPopup("", "Voucher Redeemed!", "Successfully updated onto your wallet balance.", `+${reward} Birr`);
+                inputField.value = "";
+
+            } catch (error) {
+                console.error("Voucher operation pipeline fail:", error);
+                triggerUiPopup("❌", "Network Error", "Secure server connection failure. Please try again.");
+            } finally {
+                claimBtn.disabled = false;
+                claimBtn.innerText = "Claim";
+            }
+        }
+
+        function triggerUiPopup(icon, title, desc, greenAmount = "") {
+            const overlay = document.getElementById('customPopupModule');
+            const iconNode = document.getElementById('popupIconNode');
+            const amountNode = document.getElementById('popupAmountNode');
+            const titleNode = document.getElementById('popupTitleNode');
+            const descNode = document.getElementById('popupDescNode');
+            
+            if (overlay && iconNode && titleNode && descNode && amountNode) {
+                if (greenAmount) {
+                    iconNode.style.display = "none";
+                    amountNode.innerText = greenAmount;
+                    amountNode.className = "popup-success-amount";
+                    amountNode.style.display = "block";
+                } else {
+                    iconNode.innerText = icon;
+                    iconNode.style.display = "inline-block";
+                    amountNode.style.display = "none";
+                }
+                titleNode.innerText = title;
+                descNode.innerText = desc;
+                overlay.classList.add('show-popup');
+            }
+        }
+    </script>
+</body>
+</html>

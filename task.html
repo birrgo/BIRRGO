@@ -8,13 +8,196 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="task.css">
+    <style>
+        /* Compact Clickable Badge - Reduced Box Width */
+        .whats-new-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            width: fit-content;
+            background-color: #ffffff;
+            color: #333333;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin: 12px 0 10px 16px;
+            border: 1px solid rgba(0,0,0,0.05);
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .whats-new-badge:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Animated Red Pulse Icon */
+        .whats-new-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #e53e3e;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 0 rgba(229, 62, 62, 0.7);
+            animation: pulse-red 1.5s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
+            }
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 8px rgba(229, 62, 62, 0);
+            }
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
+            }
+        }
+
+        /* Compact Segmented Control Menu Bar (Matched to Reference Image) */
+        .task-view-toggle-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #e2e8f0; /* Soft light gray/blue container background */
+            padding: 4px;
+            border-radius: 20px;
+            margin: 0 16px 16px 16px;
+            gap: 4px;
+            box-sizing: border-box;
+        }
+
+        .toggle-tab-btn {
+            flex: 1;
+            padding: 7px 10px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #64748b; /* Muted tab text */
+            background: transparent;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        /* Active Tab styling matching the image */
+        .toggle-tab-btn.active-view-tab {
+            background-color: #ffffff;
+            color: #4a0012; /* Theme burgundy text */
+            font-weight: 700;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Reduced Size Box Matched to Theme Burgundy */
+        .glass-image-box {
+            background: linear-gradient(145deg, #4a0012 0%, #800020 100%);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 18px;
+            padding: 0;
+            width: 100%;
+            max-width: 220px;
+            height: 200px;
+            margin: 10px auto 20px auto;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4), 
+                        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .glass-image-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.08),
+                transparent
+            );
+            transform: rotate(30deg);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .giveaway-3d-box {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: float3D 3.5s ease-in-out infinite;
+        }
+
+        .giveaway-3d-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 18px;
+        }
+
+        @keyframes float3D {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        .btn-open-giveaway {
+            width: 100%;
+            max-width: 280px;
+            display: block;
+            margin: 0 auto;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 14px;
+            background: linear-gradient(180deg, #a30029 0%, #660018 100%);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 6px 0px #3d000e, 
+                        0 10px 15px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.3);
+            transition: all 0.15s ease;
+            position: relative;
+            top: 0;
+        }
+
+        .btn-open-giveaway:active {
+            top: 4px;
+            box-shadow: 0 2px 0px #3d000e, 
+                        0 4px 8px rgba(0, 0, 0, 0.4),
+                        inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </head>
 <body>
 
     <div class="app-view">
         <div class="toast-container" id="toast">Invite Link Copied!</div>
         
-        <!-- ADJUSTED: Top Fluid Vector Curve brought higher up for sleek header styling -->
+        <!-- Top Fluid Vector Curve -->
         <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
             <defs>
@@ -40,18 +223,26 @@
             </button>
         </div>
 
-        <div class="app-content">
-            <!-- 3-Button Sub Menu Bar -->
-            <div class="task-view-toggle-bar">
-                <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
-                <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
-                <button class="toggle-tab-btn" id="tabBtnGiveaway" onclick="redirectToGiveaway()">Giveaway</button>
-            </div>
+        <!-- Today Sport News Badge -->
+        <a href="sp.html" class="whats-new-badge">
+            <span class="whats-new-dot"></span>
+            Today Sport News
+        </a>
 
+        <!-- Compact Segmented Sub Menu Bar -->
+        <div class="task-view-toggle-bar">
+            <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
+            <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
+            <button class="toggle-tab-btn" id="tabBtnGiveaway" onclick="switchTaskPanel('giveaway')">Giveaway</button>
+        </div>
+
+        <div class="app-content">
+            <!-- Panel 1: Watch & Earn -->
             <div id="panelWatchEarn" class="sub-view-panel panel-active">
                 <div class="active-list-stack" id="video-task-container"></div>
             </div>
 
+            <!-- Panel 2: Invitation -->
             <div id="panelInvitation" class="sub-view-panel">
                 <div class="invite-card">
                     <h3 class="invite-title">Invite Friends</h3>
@@ -69,6 +260,16 @@
                 <div class="referred-history-list" id="referredHistoryContainer">
                     <div class="empty-history-notice">You haven't invited anyone yet.</div>
                 </div>
+            </div>
+
+            <!-- Panel 3: Giveaway Panel -->
+            <div id="panelGiveaway" class="sub-view-panel">
+                <div class="glass-image-box">
+                    <div class="giveaway-3d-box">
+                        <img src="g.png" alt="Giveaway Graphic">
+                    </div>
+                </div>
+                <button class="btn-open-giveaway" onclick="redirectToGiveaway()">Open</button>
             </div>
         </div>
 
@@ -156,20 +357,32 @@
         window.switchTaskPanel = function(targetPanel) {
             const btnWatch = document.getElementById('tabBtnWatch');
             const btnInvite = document.getElementById('tabBtnInvite');
+            const btnGiveaway = document.getElementById('tabBtnGiveaway');
+
             const panelWatch = document.getElementById('panelWatchEarn');
             const panelInvite = document.getElementById('panelInvitation');
+            const panelGiveaway = document.getElementById('panelGiveaway');
+
+            // Reset tab highlights
+            btnWatch.classList.remove('active-view-tab');
+            btnInvite.classList.remove('active-view-tab');
+            btnGiveaway.classList.remove('active-view-tab');
+
+            // Reset panel displays
+            panelWatch.classList.remove('panel-active');
+            panelInvite.classList.remove('panel-active');
+            panelGiveaway.classList.remove('panel-active');
 
             if (targetPanel === 'watch') {
                 btnWatch.classList.add('active-view-tab');
-                btnInvite.classList.remove('active-view-tab');
                 panelWatch.classList.add('panel-active');
-                panelInvite.classList.remove('panel-active');
-            } else {
+            } else if (targetPanel === 'invite') {
                 btnInvite.classList.add('active-view-tab');
-                btnWatch.classList.remove('active-view-tab');
                 panelInvite.classList.add('panel-active');
-                panelWatch.classList.remove('panel-active');
                 loadReferredUsers();
+            } else if (targetPanel === 'giveaway') {
+                btnGiveaway.classList.add('active-view-tab');
+                panelGiveaway.classList.add('panel-active');
             }
         };
 
