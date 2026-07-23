@@ -70,7 +70,7 @@ app.post('/api/send-push', async (req, res) => {
       return res.status(500).json({ error: 'OneSignal API credentials not configured in Firebase.' });
     }
 
-    // Determine final icons with explicit fallback to hardcoded domain defaults if empty
+    // Determine final icons with explicit fallback to birrgo.online defaults
     const defaultIconFallback = 'https://birrgo.online/icon.png';
     const defaultBadgeFallback = 'https://birrgo.online/badge-icon.png';
 
@@ -95,14 +95,21 @@ app.post('/api/send-push', async (req, res) => {
       firefox_icon: finalIcon,
       
       // Android status bar small icon (Monochrome white PNG)
-      chrome_web_badge: finalBadge
+      chrome_web_badge: finalBadge,
+      small_icon: finalBadge,
+      chrome_stat_icon: finalBadge
     };
+
+    // Prepare auth header formatted for OneSignal REST API
+    const authHeader = restApiKey.startsWith('Key ') || restApiKey.startsWith('Basic ')
+      ? restApiKey 
+      : `Basic ${restApiKey}`;
 
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Basic ${restApiKey}`
+        'Authorization': authHeader
       },
       body: JSON.stringify(payload)
     });
