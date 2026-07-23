@@ -3,7 +3,9 @@ const admin = require('firebase-admin');
 // Initialize Firebase Admin safely (Singleton pattern for Vercel execution environment)
 if (!admin.apps.length && process.env.FIREBASE_SERVICE_ACCOUNT) {
   try {
-    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    const rawAccount = process.env.FIREBASE_SERVICE_ACCOUNT;
+    const serviceAccount = typeof rawAccount === 'string' ? JSON.parse(rawAccount) : rawAccount;
+    
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
       databaseURL: process.env.FIREBASE_DATABASE_URL
@@ -38,14 +40,13 @@ module.exports = async (req, res) => {
 
   try {
     const body = req.body || {};
-    // Extracted 'badgeUrl' and 'badge' for status bar customization
     const { title, message, segments, url, imageUrl, badgeUrl, badge } = body;
 
     if (!title || !message) {
       return res.status(400).json({ success: false, error: 'Notification title and message are required.' });
     }
 
-    // Default hardcoded fallbacks if environment variables or DB configs are omitted
+    // Default hardcoded fallbacks
     const fallbackIcon = 'https://birrgo.online/icon.png';
     const fallbackBadge = 'https://birrgo.online/badge-icon.png';
 
@@ -55,7 +56,7 @@ module.exports = async (req, res) => {
     let defaultBadge = process.env.ONESIGNAL_DEFAULT_BADGE || fallbackBadge;
     let defaultIcon = process.env.ONESIGNAL_DEFAULT_ICON || fallbackIcon;
 
-    // Fetch dynamic config from Firebase Realtime DB if missing or to augment defaults
+    // Fetch dynamic config from Firebase Realtime DB if available
     if (admin.apps.length) {
       try {
         const db = admin.database();
@@ -84,7 +85,7 @@ module.exports = async (req, res) => {
     // Target segments setup
     const targetSegments = (Array.isArray(segments) && segments.length > 0)
       ? segments
-      : ['Total Subscriptions'];
+      : ['Subscribed Users', 'Total Subscriptions', 'All'];
 
     // Construct OneSignal Payload
     const notificationPayload = {
@@ -103,16 +104,16 @@ module.exports = async (req, res) => {
     if (activeBadge && typeof activeBadge === 'string' && activeBadge.trim() !== '') {
       const cleanBadge = activeBadge.trim();
       
-      // Web / Chrome status bar badge
+      // Web PWA / Chrome / Firefox status bar badge
       notificationPayload.chrome_web_badge = cleanBadge;
-      notificationPayload.badge = cleanBadge;
+      notificationPayload.chrome_stat_icon = cleanBadge;
 
       // Android Native / Cordova Status Bar Icon reference (defined in config.xml)
-      notificationPayload.small_icon = 'ic_stat_notification'; 
+      notificationPayload.small_icon = 'ic_stat_onesignal_default'; 
       notificationPayload.android_accent_color = 'FF800000'; // Burgundy accent color
     }
 
-    // Attach large panel icon / images if valid URL provided
+    // Attach large panel icon / images
     const activeImage = (imageUrl && typeof imageUrl === 'string' && imageUrl.trim() !== '') 
       ? imageUrl.trim() 
       : defaultIcon;
@@ -125,12 +126,18 @@ module.exports = async (req, res) => {
       notificationPayload.large_icon = activeImage; // Drawer icon for Android
     }
 
+    // Universal OneSignal Auth Header (Handles legacy keys & v2 os_v2_app keys)
+    let authHeader = restApiKey;
+    if (!restApiKey.startsWith('Basic ') && !restApiKey.startsWith('Key ')) {
+      authHeader = restApiKey.startsWith('os_v2_') ? `Key ${restApiKey}` : `Basic ${restApiKey}`;
+    }
+
     // Call OneSignal API
     const response = await fetch('https://onesignal.com/api/v1/notifications', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
-        'Authorization': `Basic ${restApiKey}`
+        'Authorization': authHeader
       },
       body: JSON.stringify(notificationPayload)
     });
