@@ -42,6 +42,19 @@
             flex: 1;
             text-decoration: none;
         }
+        
+        /* Utility for 4-button grid inside nested podcast container */
+        .nested-btn-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            width: 100%;
+        }
+        .nested-btn-grid-4 a {
+            text-decoration: none;
+            width: 100%;
+        }
+
         .sub-nav-btn {
             width: 100%;
             padding: 0.85rem;
@@ -82,6 +95,20 @@
             background: linear-gradient(135deg, #d97706 0%, #78350f 100%);
         }
         
+        /* Podcast Section Styling */
+        .btn-pod-news {
+            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+        }
+        .btn-pod-sports {
+            background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+        }
+        .btn-pod-world {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+        }
+        .btn-pod-biz {
+            background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+        }
+
         /* Modernized split actions for notifications & AI settings portal */
         .btn-push-action {
             background: linear-gradient(135deg, #047857 0%, #022c22 100%);
@@ -196,6 +223,27 @@
                 </div>
             </div>
 
+            <!-- PODCAST MANAGEMENT MODULE (4 BUTTONS) -->
+            <div class="nested-box-container">
+                <div class="nested-title-header">
+                    <span>🎙️</span> Podcast Channels
+                </div>
+                <div class="nested-btn-grid-4">
+                    <a href="broadcast.html">
+                        <button class="sub-nav-btn btn-pod-news">📢 News</button>
+                    </a>
+                    <a href="sports.html">
+                        <button class="sub-nav-btn btn-pod-sports">⚽ Sports</button>
+                    </a>
+                    <a href="wos.html">
+                        <button class="sub-nav-btn btn-pod-world">🌍 World</button>
+                    </a>
+                    <a href="bus.html">
+                        <button class="sub-nav-btn btn-pod-biz">💼 Business</button>
+                    </a>
+                </div>
+            </div>
+
             <a href="ecosystem.html" style="text-decoration: none;">
                 <button class="role-nav-btn btn-role-ecosystem" style="width: 100%;">
                     <span class="icon">🌐</span> Ecosystem Matrix
@@ -204,11 +252,6 @@
             <a href="money.html" style="text-decoration: none;">
                 <button class="role-nav-btn btn-role-money" style="width: 100%;">
                     <span class="icon">💰</span> Money Controller
-                </button>
-            </a>
-            <a href="broadcast.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-news" style="width: 100%;">
-                    <span class="icon">📢</span> Broadcast & Promos
                 </button>
             </a>
             <a href="security.html" style="text-decoration: none;">
