@@ -4,338 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>BirrGo - Premium Tasks</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="task.css">
-    <style>
-        /* Compact Clickable Badge - Reduced Box Width */
-        .whats-new-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            width: fit-content;
-            background-color: #ffffff;
-            color: #333333;
-            font-size: 13px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-            margin: 12px 0 10px 16px;
-            border: 1px solid rgba(0,0,0,0.05);
-            text-decoration: none;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .whats-new-badge:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-        }
-
-        /* Animated Red Pulse Icon */
-        .whats-new-dot {
-            width: 8px;
-            height: 8px;
-            background-color: #e53e3e;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 0 rgba(229, 62, 62, 0.7);
-            animation: pulse-red 1.5s infinite;
-        }
-
-        @keyframes pulse-red {
-            0% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0.7);
-            }
-            70% {
-                transform: scale(1);
-                box-shadow: 0 0 0 8px rgba(229, 62, 62, 0);
-            }
-            100% {
-                transform: scale(0.95);
-                box-shadow: 0 0 0 0 rgba(229, 62, 62, 0);
-            }
-        }
-
-        /* Compact Segmented Control Menu Bar */
-        .task-view-toggle-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #e2e8f0;
-            padding: 4px;
-            border-radius: 20px;
-            margin: 0 16px 16px 16px;
-            gap: 4px;
-            box-sizing: border-box;
-        }
-
-        .toggle-tab-btn {
-            flex: 1;
-            padding: 7px 10px;
-            font-size: 11.5px;
-            font-weight: 600;
-            color: #64748b;
-            background: transparent;
-            border: none;
-            border-radius: 16px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
-            white-space: nowrap;
-        }
-
-        .toggle-tab-btn.active-view-tab {
-            background-color: #ffffff;
-            color: #4a0012;
-            font-weight: 700;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
-        }
-
-        /* GIVEAWAY HEADER TEXT STYLES */
-        .giveaway-header-block {
-            text-align: center;
-            padding: 6px 12px 10px 12px;
-        }
-
-        /* Updated Modern Burgundy Title Style */
-        .giveaway-main-title {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #660018; /* Modern Burgundy */
-            letter-spacing: -0.3px;
-            margin-bottom: 8px;
-            line-height: 1.25;
-            text-transform: none;
-        }
-
-        .giveaway-description-text {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.8rem;
-            color: #334155;
-            line-height: 1.45;
-            font-weight: 600;
-            max-width: 320px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 10px 12px;
-            border-radius: 12px;
-            border: 1px solid rgba(226, 232, 240, 0.8);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
-        }
-
-        .giveaway-description-text strong {
-            color: #800020;
-            font-weight: 800;
-        }
-
-        /* REDUCED SIZE BOX MATCHED TO THEME BURGUNDY */
-        .glass-image-box {
-            background: linear-gradient(145deg, #4a0012 0%, #800020 100%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 16px;
-            padding: 0;
-            width: 100%;
-            max-width: 180px;
-            height: 160px;
-            margin: 10px auto 16px auto;
-            text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), 
-                        inset 0 1px 1px rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .glass-image-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent,
-                rgba(255, 255, 255, 0.08),
-                transparent
-            );
-            transform: rotate(30deg);
-            pointer-events: none;
-            z-index: 2;
-        }
-
-        .giveaway-3d-box {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            animation: float3D 3.5s ease-in-out infinite;
-        }
-
-        .giveaway-3d-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-            border-radius: 16px;
-        }
-
-        @keyframes float3D {
-            0%, 100% {
-                transform: translateY(0px);
-            }
-            50% {
-                transform: translateY(-5px);
-            }
-        }
-
-        .btn-open-giveaway {
-            width: 100%;
-            max-width: 260px;
-            display: block;
-            margin: 0 auto;
-            padding: 13px 20px;
-            border: none;
-            border-radius: 14px;
-            background: linear-gradient(180deg, #a30029 0%, #660018 100%);
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 15px;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 6px 0px #3d000e, 
-                        0 10px 15px rgba(0, 0, 0, 0.35),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.3);
-            transition: all 0.15s ease;
-            position: relative;
-            top: 0;
-        }
-
-        .btn-open-giveaway:active {
-            top: 4px;
-            box-shadow: 0 2px 0px #3d000e, 
-                        0 4px 8px rgba(0, 0, 0, 0.35),
-                        inset 0 1px 1px rgba(255, 255, 255, 0.2);
-        }
-
-        /* Compact Clickable Level Bar (Inside Invitation Panel Only) */
-        .compact-level-bar {
-            background: linear-gradient(135deg, #4a0012 0%, #800020 100%);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-            padding: 6px 12px;
-            margin: 8px 0 14px 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            color: #ffffff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.15s ease;
-        }
-
-        .compact-level-bar:active {
-            transform: scale(0.98);
-        }
-
-        .compact-level-left {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .compact-level-icon {
-            font-size: 14px;
-        }
-
-        .compact-level-text h5 {
-            margin: 0;
-            font-size: 11.5px;
-            font-weight: 700;
-        }
-
-        .compact-level-text p {
-            margin: 0;
-            font-size: 10px;
-            color: #ffcad4;
-        }
-
-        .compact-level-right {
-            display: flex;
-            align-items: center;
-            gap: 3px;
-            font-size: 10.5px;
-            font-weight: 700;
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 3px 8px;
-            border-radius: 8px;
-        }
-
-        .compact-level-right svg {
-            width: 11px;
-            height: 11px;
-            stroke: #ffffff;
-            stroke-width: 2.5;
-            fill: none;
-        }
-    </style>
 </head>
 <body>
 
     <div class="app-view">
         <div class="toast-container" id="toast">Invite Link Copied!</div>
         
-        <!-- Top Fluid Vector Curve -->
-        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 200" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 0H375V65C375 65 280 155 0 95V0Z" fill="url(#paint0_linear)"/>
+        <!-- 100% Curve Match with Reduced Height -->
+        <svg class="bg-wave bg-wave-top" viewBox="0 0 375 100" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0 0H375V52C300 78 150 88 0 70V0Z" fill="url(#paint0_linear)"/>
             <defs>
-                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="200" gradientUnits="userSpaceOnUse">
+                <linearGradient id="paint0_linear" x1="187.5" y1="0" x2="187.5" y2="100" gradientUnits="userSpaceOnUse">
                     <stop stop-color="#4a0012"/>
                     <stop offset="1" stop-color="#800020"/>
                 </linearGradient>
             </defs>
         </svg>
 
-        <!-- Bottom Fluid Vector Layout Pattern -->
-        <svg class="bg-wave bg-wave-bottom" viewBox="0 0 375 150" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M375 150H0V70C0 70 120 -10 375 50V150Z" fill="#800020"/>
-        </svg>
+        <!-- White 3D Glass Sport Badge Overlay -->
+        <a href="sp.html" class="whats-new-badge">
+            <span class="whats-new-dot"></span>
+            Today Sport and Business   
+        </a>
 
+        <!-- Header Row with Logo and Profile Icon -->
         <div class="brand-header">
-            <img src="birrgo-logo.png" alt="BirrGo Logo" class="brand-logo">
-            
+            <img src="birrgo-logo.png" alt="BirrGo Logo" class="brand-logo" onload="this.classList.add('loaded')" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IxI2I3I0YTAwMTIiLz48L3N2Zz4=';">
             <button class="profile-btn" id="headerProfileBtn" aria-label="Profile" onclick="window.location.href='profile.html'">
                 <svg viewBox="0 0 24 24">
-                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"></path>
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"></path>
                 </svg>
             </button>
         </div>
 
-        <!-- Today Sport News Badge -->
-        <a href="sp.html" class="whats-new-badge">
-            <span class="whats-new-dot"></span>
-            Today Sport News
-        </a>
-
-        <!-- Compact Segmented Sub Menu Bar -->
+        <!-- Menu Bar Placed Under Reduced Top Wave -->
         <div class="task-view-toggle-bar">
             <button class="toggle-tab-btn active-view-tab" id="tabBtnWatch" onclick="switchTaskPanel('watch')">Watch & Earn</button>
             <button class="toggle-tab-btn" id="tabBtnInvite" onclick="switchTaskPanel('invite')">Invitation</button>
             <button class="toggle-tab-btn" id="tabBtnGiveaway" onclick="switchTaskPanel('giveaway')">Giveaway</button>
         </div>
 
+        <!-- App Body Content -->
         <div class="app-content">
             <!-- Panel 1: Watch & Earn -->
             <div id="panelWatchEarn" class="sub-view-panel panel-active">
@@ -352,23 +62,6 @@
                     </div>
                 </div>
 
-                <!-- Compact Level Display Button (Only under Invitation Tab) -->
-                <div class="compact-level-bar" onclick="window.location.href='level.html'">
-                    <div class="compact-level-left">
-                        <span class="compact-level-icon">🏆</span>
-                        <div class="compact-level-text">
-                            <h5 id="userCurrentLevelText">Your Level: Level 1</h5>
-                            <p id="userInviteProgressText">0 / 10 Users Invited</p>
-                        </div>
-                    </div>
-                    <div class="compact-level-right">
-                        <span>Details</span>
-                        <svg viewBox="0 0 24 24">
-                            <polyline points="9 18 15 12 9 6"></polyline>
-                        </svg>
-                    </div>
-                </div>
-
                 <div class="sub-header-row">
                     <h4 class="sub-title-text">Invited Friends</h4>
                     <span class="counter-badge" id="inviteCountLabel">0 Users</span>
@@ -377,51 +70,70 @@
                 <div class="referred-history-list" id="referredHistoryContainer">
                     <div class="empty-history-notice">You haven't invited anyone yet.</div>
                 </div>
+
+                <!-- Fixed Level Bar -->
+                <div class="fixed-invitation-level-bar" onclick="window.location.href='level.html'">
+                    <div class="fixed-level-left">
+                        <span class="fixed-level-icon">🏆</span>
+                        <h5 class="fixed-level-title">View Your Level & Get Additional Bonus</h5>
+                    </div>
+                    <div class="fixed-level-right">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </div>
+                </div>
             </div>
 
             <!-- Panel 3: Giveaway Panel -->
             <div id="panelGiveaway" class="sub-view-panel">
                 <div class="giveaway-header-block">
                     <h2 class="giveaway-main-title">Open Your Giveaway Box</h2>
-                    <p class="giveaway-description-text">
-                        Make <strong>thousands of Birr a day</strong> with simple & free tasks! Watch videos, like & follow, find hidden keys, and stop the timer at the exact time to claim daily giveaways from <strong>BirrGo</strong>.
-                    </p>
+                    
+                    <div class="giveaway-description-box">
+                        <p class="giveaway-description-text">
+                            <span class="burgundy-headline"> UNLOCK BIG DAILY REWARDS!</span><br>
+                            Earn <span class="burgundy-bold-highlight">thousands of Birr every day</span> through free & instant tasks! Watch short videos, like & follow, discover hidden keys, and pause the timer perfectly to claim your daily rewards from <span class="burgundy-bold-highlight">BirrGo</span>.
+                        </p>
+                    </div>
                 </div>
 
                 <div class="glass-image-box">
                     <div class="giveaway-3d-box">
-                        <img src="g.png" alt="Giveaway Graphic">
+                        <img src="g.png" alt="Giveaway Graphic" class="progressive-blur-img" onload="this.classList.add('loaded')" onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IxI2I3I0YTAwMTIiLz48L3N2Zz4=';">
                     </div>
                 </div>
+
                 <button class="btn-open-giveaway" onclick="redirectToGiveaway()">Open</button>
             </div>
         </div>
 
+        <!-- Matched Bottom Navigation Bar -->
         <nav class="bottom-nav-bar" id="bottomNavBar">
             <div id="navHome" class="nav-item">
-                <svg viewBox="0 0 24 24">
-                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9z"></path>
+                <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                     <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
                 Home
             </div>
             <div id="navTasks" class="nav-item active-tab">
                 <div class="tab-icon-wrapper">
-                    <svg viewBox="0 0 24 24">
+                    <svg viewBox="0 0 24 24" stroke-width="2">
                         <polyline points="9 11 12 14 22 4"></polyline>
                         <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
                     </svg>
                 </div>
                 Tasks
             </div>
-            <div id="navLottery" class="nav-item">
-                <svg viewBox="0 0 24 24">
+            <div id="navCampaign" class="nav-item">
+                <svg viewBox="0 0 24 24" stroke-width="2">
                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
-                Lottery
+                Campaign
             </div>
             <div id="navWallet" class="nav-item">
-                <svg viewBox="0 0 24 24">
+                <svg viewBox="0 0 24 24" stroke-width="2">
                     <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
                     <line x1="2" y1="10" x2="22" y2="10"></line>
                 </svg>
@@ -466,19 +178,6 @@
         let activeUserPhone = "";
         let activeAccountId = ""; 
 
-        const levelTiers = [
-            { level: 1, reqUsers: 10 },
-            { level: 2, reqUsers: 50 },
-            { level: 3, reqUsers: 100 },
-            { level: 4, reqUsers: 300 },
-            { level: 5, reqUsers: 500 },
-            { level: 6, reqUsers: 700 },
-            { level: 7, reqUsers: 1000 },
-            { level: 8, reqUsers: 3000 },
-            { level: 9, reqUsers: 5000 },
-            { level: 10, reqUsers: 10000 }
-        ];
-
         const customPopup = document.getElementById('customPopup');
         const popupBadge = document.getElementById('popupBadge');
         const popupIcon = document.getElementById('popupIcon');
@@ -486,7 +185,6 @@
         const popupMessage = document.getElementById('popupMessage');
         const popupConfirmBtn = document.getElementById('popupConfirmBtn');
 
-        // Giveaway Redirection
         window.redirectToGiveaway = function() {
             window.location.href = 'give.html';
         };
@@ -500,12 +198,10 @@
             const panelInvite = document.getElementById('panelInvitation');
             const panelGiveaway = document.getElementById('panelGiveaway');
 
-            // Reset tab highlights
             btnWatch.classList.remove('active-view-tab');
             btnInvite.classList.remove('active-view-tab');
             btnGiveaway.classList.remove('active-view-tab');
 
-            // Reset panel displays
             panelWatch.classList.remove('panel-active');
             panelInvite.classList.remove('panel-active');
             panelGiveaway.classList.remove('panel-active');
@@ -534,18 +230,12 @@
                 const snapshot = await get(ref(db, `users/${activeUserPhone}`));
                 if (snapshot.exists()) {
                     const userData = snapshot.val();
-
                     if (userData.accountId) {
                         activeAccountId = userData.accountId;
                         const shareBtn = document.getElementById('shareBtn');
                         shareBtn.innerText = "Share Invite Link";
                         shareBtn.disabled = false;
                     }
-
-                    // Calculate level & progress
-                    const referredObj = userData.referredUsers || {};
-                    const totalInvites = Object.keys(referredObj).length;
-                    updateLevelBar(totalInvites);
                 }
             } catch (err) {
                 console.error("Profile sync error: ", err);
@@ -555,24 +245,9 @@
             setupNavigationHandlers();
         });
 
-        function updateLevelBar(totalInvites) {
-            let currentTier = levelTiers[0];
-            for (let i = 0; i < levelTiers.length; i++) {
-                if (totalInvites >= levelTiers[i].reqUsers) {
-                    currentTier = levelTiers[i];
-                } else {
-                    currentTier = levelTiers[i];
-                    break;
-                }
-            }
-
-            document.getElementById('userCurrentLevelText').innerText = `Your Level: Level ${currentTier.level}`;
-            document.getElementById('userInviteProgressText').innerText = `${totalInvites} / ${currentTier.reqUsers} Users Invited`;
-        }
-
         function setupNavigationHandlers() {
             document.getElementById('navHome').addEventListener('click', () => window.location.href = 'dashboard.html');
-            document.getElementById('navLottery').addEventListener('click', () => window.location.href = 'lottery.html');
+            document.getElementById('navCampaign').addEventListener('click', () => window.location.href = 'lottery.html');
             document.getElementById('navWallet').addEventListener('click', () => window.location.href = 'wallet.html');
             document.getElementById('headerProfileBtn').addEventListener('click', () => window.location.href = 'profile.html');
         }
@@ -627,12 +302,13 @@
                     buttonHTML = `<button class="btn-task cooldown" id="btn-action-${currentId}">Locked (${remainingMinutes}m)</button>`;
                 }
 
+                /* Image with Blur placeholder -> Crisp HD onload & Fallback SVG on low connections */
                 card.innerHTML = `
                     <div class="list-item-left">
                         <div class="list-icon-box">
-                            <img src="33164.png" alt="20 Birr" class="img-blur-fallback" 
-                                 onload="this.classList.remove('img-blur-fallback')" 
-                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IjEiPjxyZWN0IHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9IiNlMmU4ZjAiLz48L3N2Zz4=';">
+                            <img src="33164.png" alt="20 Birr" class="progressive-blur-img" 
+                                 onload="this.classList.add('loaded')" 
+                                 onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxIiBoZWlnaHQ9IxI2I3I4MDAwMjAiLz48L3N2Zz4='; this.classList.add('loaded');">
                         </div>
                         <div class="list-item-info">
                             <h4>Task Video ${currentId}</h4>
