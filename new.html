@@ -3,118 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo - Premium Core Matrix</title>
+    <title>BirrGo - Admin Matrix</title>
+    
+    <!-- Fonts Preloads -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&family=Space+Grotesk:wght=500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="new.css">
     
     <style>
-        /* Hide the body initially to prevent unauthorized layout flashing */
+        /* ==========================================================================
+           1. DESIGN SYSTEM & BURGUNDY PALETTE
+           ========================================================================== */
+        :root {
+            /* Burgundy Theme */
+            --bg-deep-burgundy: #2e030e;
+            --burgundy-dark: #4a0011;
+            --burgundy-mid: #800020;
+            --burgundy-light: #bd0a36;
+            --burgundy-accent: #e6194b;
+            
+            --bg-page: #f1f3f7;
+            --card-bg: #ffffff;
+            --text-dark: #0f172a;
+            --text-muted: #64748b;
+            --border-light: #e2e8f0;
+
+            /* Gradients */
+            --burgundy-3d-gradient: linear-gradient(145deg, #800020 0%, #3d000e 100%);
+            --card-3d-gradient: linear-gradient(135deg, #800020 0%, #2b000a 100%);
+            --gold-gradient: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
+            --blue-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --green-gradient: linear-gradient(135deg, #10b981 0%, #047857 100%);
+            --purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            --cyan-gradient: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
+            --pink-gradient: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+
+            /* Shadows */
+            --shadow-3d-sm: 0 3px 5px -1px rgba(74, 0, 17, 0.12);
+            --shadow-3d-md: 0 8px 18px -4px rgba(74, 0, 17, 0.18);
+            --shadow-3d-lg: 0 16px 28px -6px rgba(74, 0, 17, 0.28);
+            --inner-glow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.25);
+            
+            --transition-smooth: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
         body { display: none; }
-        
-        /* Inline utility layout helpers for nested sub-buttons inside the grid */
-        .nested-box-container {
-            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-            border-radius: 1rem;
-            padding: 1rem;
-            grid-column: span 1;
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.2px;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(128, 0, 32, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(189, 10, 54, 0.05) 0px, transparent 50%);
+            color: var(--text-dark);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* ==========================================================================
+           2. HEADER BAR (CENTERED TITLE & TOP-LEFT 3-LINE MENU ICON)
+           ========================================================================== */
+        .top-navbar {
+            background: var(--burgundy-3d-gradient);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 10px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 40px 1fr 40px; /* Left button, centered title, right balance space */
+            align-items: center;
+        }
+
+        /* 3-Line Menu Trigger Button (Corner Left) */
+        .menu-trigger-btn {
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            width: 38px;
+            height: 38px;
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: var(--transition-smooth);
         }
-        .nested-title-header {
-            color: #f7fafc;
-            font-size: 0.95rem;
+
+        .menu-trigger-btn:hover {
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .menu-trigger-btn span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background-color: #ffffff;
+            border-radius: 2px;
+            transition: var(--transition-smooth);
+        }
+
+        /* Centered Reduced Title */
+        .brand-logo-title {
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 17px; /* Reduced font size */
+            font-weight: 700;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .brand-pill {
+            background: rgba(255, 255, 255, 0.18);
+            padding: 2px 7px;
+            border-radius: 12px;
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
+
+        /* Compact Logout Button */
+        .btn-logout {
+            background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 6px 10px;
+            font-weight: 700;
+            font-size: 11px;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(239, 68, 68, 0.3);
+            transition: var(--transition-smooth);
+            justify-self: end;
+        }
+
+        .btn-logout:hover {
+            transform: scale(1.03);
+        }
+
+        /* ==========================================================================
+           3. HIDDEN / EXPANDABLE CATEGORY CHOICE SELECTOR
+           ========================================================================== */
+        .category-selector-wrapper {
+            max-width: 1200px;
+            margin: 10px auto 0 auto;
+            padding: 0 16px;
+            display: none; /* Initially Hidden */
+            animation: fadeInDown 0.25s ease-out forwards;
+        }
+
+        .category-selector-wrapper.expanded {
+            display: block !important;
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .selector-box {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 14px 18px;
+            box-shadow: var(--shadow-3d-md);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .selector-header-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .lines-category-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .category-line-btn {
+            background: #f8fafc;
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+            font-weight: 700;
+            font-size: 13px; /* Reduced font size */
+            color: var(--text-dark);
+        }
+
+        .category-line-btn:hover {
+            background: #f1f5f9;
+        }
+
+        .category-line-btn.active {
+            background: var(--burgundy-3d-gradient);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: var(--shadow-3d-sm);
+        }
+
+        .category-line-btn .line-indicator {
+            font-size: 10px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .category-line-btn.active .line-indicator {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ==========================================================================
+           4. MAIN CONTENT CONTAINER (1-CATEGORY VIEW ENFORCED)
+           ========================================================================== */
+        .admin-container {
+            max-width: 1200px;
+            margin: 16px auto 0 auto;
+            padding: 0 16px;
+        }
+
+        .category-wrapper {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 22px;
+            box-shadow: var(--shadow-3d-md);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            display: none; /* Hidden by default */
+        }
+
+        .category-wrapper.active-view {
+            display: block !important; /* ONLY 1 CATEGORY RENDERED */
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 1.5px solid var(--border-light);
+        }
+
+        .category-header-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--burgundy-3d-gradient);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .category-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 18px; /* Reduced font size */
+            font-weight: 700;
+            color: var(--burgundy-dark);
+        }
+
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+
+        /* ==========================================================================
+           5. CARDS & BUTTONS (REDUCED SIZES)
+           ========================================================================== */
+        .card-btn-3d {
+            background: var(--card-3d-gradient);
+            border-radius: 16px;
+            padding: 18px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 110px;
+            box-shadow: var(--shadow-3d-md);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: var(--transition-smooth);
+        }
+
+        .card-btn-3d:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-3d-lg);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title-text {
+            font-size: 15px; /* Reduced font size */
+            font-weight: 800;
+        }
+
+        .card-badge-pill {
+            background: var(--burgundy-accent);
+            color: white;
+            font-size: 9px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 14px;
+            text-transform: uppercase;
+        }
+
+        .card-action-sub {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            border-radius: 10px;
+            padding: 6px 10px;
+            font-size: 11px;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            padding-left: 0.25rem;
+            gap: 5px;
+            width: fit-content;
+            margin-top: 10px;
         }
-        .nested-btn-split {
+
+        .split-card-container {
+            background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+            border-radius: 16px;
+            padding: 16px;
             display: flex;
-            gap: 0.5rem;
-            width: 100%;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: var(--shadow-3d-md);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
-        .nested-btn-split a {
+
+        .split-header {
+            color: #f8fafc;
+            font-size: 13px; /* Reduced font size */
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .split-btn-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .split-btn-row a {
             flex: 1;
             text-decoration: none;
-        }
-        
-        /* Utility for 4-button grid inside nested podcast container */
-        .nested-btn-grid-4 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.5rem;
-            width: 100%;
-        }
-        .nested-btn-grid-4 a {
-            text-decoration: none;
-            width: 100%;
         }
 
         .sub-nav-btn {
             width: 100%;
-            padding: 0.85rem;
-            border: none;
-            border-radius: 0.75rem;
+            padding: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 10px;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 11px; /* Reduced font size */
             color: white;
             cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
-        }
-        .sub-nav-btn:active {
-            transform: scale(0.96);
-        }
-        .btn-jet {
-            background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%);
-        }
-        .btn-lot {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        }
-        .btn-tasks {
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-        }
-        .btn-socials {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-        }
-        .btn-user {
-            background: linear-gradient(135deg, #6366f1 0%, #4338ca 100%);
-        }
-        .btn-support {
-            background: linear-gradient(135deg, #06b6d4 0%, #0e7490 100%);
-        }
-        .btn-likes {
-            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
-        }
-        .btn-keys {
-            background: linear-gradient(135deg, #d97706 0%, #78350f 100%);
-        }
-        
-        /* Podcast Section Styling */
-        .btn-pod-news {
-            background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%);
-        }
-        .btn-pod-sports {
-            background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
-        }
-        .btn-pod-world {
-            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
-        }
-        .btn-pod-biz {
-            background: linear-gradient(135deg, #10b981 0%, #065f46 100%);
+            transition: var(--transition-smooth);
+            text-align: center;
         }
 
-        /* Modernized split actions for notifications & AI settings portal */
-        .btn-push-action {
-            background: linear-gradient(135deg, #047857 0%, #022c22 100%);
+        .sub-nav-btn:hover {
+            filter: brightness(1.15);
+            transform: translateY(-2px);
         }
-        .btn-ai-action {
-            background: linear-gradient(135deg, #b91c1c 0%, #580016 100%);
+
+        .btn-push-action { background: var(--green-gradient); }
+        .btn-ai-action { background: var(--burgundy-3d-gradient); }
+        .btn-likes { background: var(--pink-gradient); }
+        .btn-keys { background: var(--gold-gradient); }
+        .btn-jet { background: var(--gold-gradient); }
+        .btn-lot { background: var(--blue-gradient); }
+        .btn-tasks { background: var(--green-gradient); }
+        .btn-socials { background: var(--purple-gradient); }
+        .btn-user { background: var(--blue-gradient); }
+        .btn-support { background: var(--cyan-gradient); }
+
+        .podcast-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+
+        /* ==========================================================================
+           6. METRICS PANEL (REDUCED SIZES)
+           ========================================================================== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: var(--shadow-3d-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--burgundy-3d-gradient);
+        }
+
+        .metric-card.vault::before { background: var(--gold-gradient); }
+        .metric-card.lottery::before { background: var(--green-gradient); }
+
+        .metric-card p {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .metric-card h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 24px; /* Reduced font size */
+            font-weight: 700;
+            color: var(--text-dark);
         }
     </style>
 
@@ -122,161 +473,256 @@
         document.documentElement.style.visibility = "visible";
         document.addEventListener("DOMContentLoaded", () => {
             document.body.style.display = "block";
+
+            const menuTriggerBtn = document.getElementById('menuTriggerBtn');
+            const categorySelectorWrapper = document.getElementById('categorySelectorWrapper');
+            const lineBtns = document.querySelectorAll('.category-line-btn');
+            const categories = document.querySelectorAll('.category-wrapper');
+
+            // Toggle Expand/Collapse Hidden Category Selector
+            menuTriggerBtn.addEventListener('click', () => {
+                categorySelectorWrapper.classList.toggle('expanded');
+            });
+
+            // Category Selection Logic
+            lineBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Update Active Button
+                    lineBtns.forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+
+                    // Show ONLY Selected Category Page
+                    const targetId = btn.getAttribute('data-target');
+                    categories.forEach(cat => {
+                        if (cat.id === targetId) {
+                            cat.classList.add('active-view');
+                        } else {
+                            cat.classList.remove('active-view');
+                        }
+                    });
+
+                    // Collapse menu after selection
+                    categorySelectorWrapper.classList.remove('expanded');
+                });
+            });
         });
     </script>
 </head>
 <body>
 
+    <!-- TOP NAVBAR: CENTERED TITLE & TOP-LEFT 3-LINE MENU ICON -->
+    <header class="top-navbar">
+        <div class="nav-container">
+            <!-- 3-Line Menu Trigger Button (Corner Left) -->
+            <button class="menu-trigger-btn" id="menuTriggerBtn" aria-label="Toggle Category Selector">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <!-- Centered Title -->
+            <div class="brand-logo-title">
+                <span>BirrGo Matrix</span>
+                <span class="brand-pill">v2.0</span>
+            </div>
+
+            <!-- Corner Logout -->
+            <button class="btn-logout" id="exitAdminBtn">Logout</button>
+        </div>
+    </header>
+
+    <!-- HIDDEN EXPANDABLE CATEGORY SELECTOR (Expands on 3-line click) -->
+    <section class="category-selector-wrapper" id="categorySelectorWrapper">
+        <div class="selector-box">
+            <div class="selector-header-title">Select Active Page Category</div>
+            <div class="lines-category-grid">
+                <div class="category-line-btn active" data-target="cat-engagement">
+                    <span>🎙️ Line 1: Engagement & Broadcasts</span>
+                    <span class="line-indicator">Active</span>
+                </div>
+                <div class="category-line-btn" data-target="cat-lottery">
+                    <span>🎟️ Line 2: Lottery & User Tasks</span>
+                    <span class="line-indicator">Switch</span>
+                </div>
+                <div class="category-line-btn" data-target="cat-finance">
+                    <span>💳 Line 3: Finance & Payments</span>
+                    <span class="line-indicator">Switch</span>
+                </div>
+                <div class="category-line-btn" data-target="cat-system">
+                    <span>🛡️ Line 4: System & Analytics</span>
+                    <span class="line-indicator">Switch</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTAINER (STRICTLY RENDERS 1 CATEGORY PAGE AT A TIME) -->
     <div class="admin-container">
-        <div class="admin-header">
-            <h1>BirrGo Admin Dashboard</h1>
-            <button class="btn-logout" id="exitAdminBtn">Logout Engine</button>
-        </div>
 
-        <div class="role-control-grid">
-            <!-- PAYMENT ADMIN ACTION LINK -->
-            <a href="deposits.html" style="text-decoration: none;">
-                <button class="role-nav-btn" style="background: linear-gradient(135deg, #059669 0%, #064e3b 100%); color: white; width: 100%;">
-                    <span class="icon">💳</span> Payment Admin
-                </button>
-            </a>
+        <!-- ================= CATEGORY 1: ENGAGEMENT & BROADCASTS ================= -->
+        <section class="category-wrapper active-view" id="cat-engagement">
+            <div class="category-header">
+                <div class="category-header-icon">🎙️</div>
+                <h2 class="category-title">Engagement & Broadcasts</h2>
+            </div>
+            <div class="category-grid">
+                
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>📣</span> Gateways & Support AI
+                    </div>
+                    <div class="split-btn-row">
+                        <a href="push.html"><button class="sub-nav-btn btn-push-action">Notification</button></a>
+                        <a href="ais.html"><button class="sub-nav-btn btn-ai-action">? AI</button></a>
+                    </div>
+                </div>
 
-            <!-- INTEGRATED NOTIFICATIONS & AI MANAGMENT CONTROL BOX -->
-            <div class="nested-box-container">
-                <div class="nested-title-header">
-                    <span>📣</span> Gateways & Support AI
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>👥</span> User Profiles & Support
+                    </div>
+                    <div class="split-btn-row">
+                        <a href="user-profile.html"><button class="sub-nav-btn btn-user">Profile</button></a>
+                        <a href="supports.html"><button class="sub-nav-btn btn-support">Support</button></a>
+                    </div>
                 </div>
-                <div class="nested-btn-split">
-                    <a href="push.html">
-                        <button class="sub-nav-btn btn-push-action">Push Info</button>
-                    </a>
-                    <a href="ais.html">
-                        <button class="sub-nav-btn btn-ai-action">🤖 Gemini</button>
-                    </a>
+
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>🎙️</span> Podcast Broadcast Hub
+                    </div>
+                    <div class="podcast-grid-4">
+                        <a href="broadcast.html"><button class="sub-nav-btn btn-jet">News</button></a>
+                        <a href="sports.html"><button class="sub-nav-btn btn-ai-action">Sports</button></a>
+                        <a href="wos.html"><button class="sub-nav-btn btn-lot">Entertainment </button></a>
+                        <a href="bus.html"><button class="sub-nav-btn btn-tasks">Tech Tips</button></a>
+                    </div>
                 </div>
+
+            </div>
+        </section>
+
+        <!-- ================= CATEGORY 2: LOTTERY & TASKS ================= -->
+        <section class="category-wrapper" id="cat-lottery">
+            <div class="category-header">
+                <div class="category-header-icon">🎟️</div>
+                <h2 class="category-title">Lottery Engines & Tasks</h2>
+            </div>
+            <div class="category-grid">
+                
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>🎟️</span> Lottery Engine Matrix
+                    </div>
+                    <div class="split-btn-row">
+                        <a href="jet.html"><button class="sub-nav-btn btn-jet">Real Password</button></a>
+                        <a href="lot.html"><button class="sub-nav-btn btn-lot">Lottery Management</button></a>
+                    </div>
+                </div>
+
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>⚡</span> Tasks & Social Linker
+                    </div>
+                    <div class="split-btn-row">
+                        <a href="tasks.html"><button class="sub-nav-btn btn-tasks">Tasks</button></a>
+                        <a href="socials.html"><button class="sub-nav-btn btn-socials">Socials</button></a>
+                    </div>
+                </div>
+
+                <div class="split-card-container">
+                    <div class="split-header">
+                        <span>🗝️</span> Likes & Security Keys
+                    </div>
+                    <div class="split-btn-row">
+                        <a href="likes.html"><button class="sub-nav-btn btn-likes">❤️ Likes</button></a>
+                        <a href="keys.html"><button class="sub-nav-btn btn-keys">🗝️ Keys</button></a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= CATEGORY 3: FINANCE & PAYMENTS ================= -->
+        <section class="category-wrapper" id="cat-finance">
+            <div class="category-header">
+                <div class="category-header-icon">💳</div>
+                <h2 class="category-title">Finance & Payments</h2>
+            </div>
+            <div class="category-grid">
+                
+                <a href="deposits.html" class="card-btn-3d">
+                    <div class="card-top">
+                        <span class="card-title-text">Payment Admin</span>
+                        <span class="card-badge-pill">Live</span>
+                    </div>
+                    <div class="card-action-sub">💳 Manage Vault Deposits</div>
+                </a>
+
+                <a href="verified.html" class="card-btn-3d">
+                    <div class="card-top">
+                        <span class="card-title-text">Verify & OTP Portal</span>
+                        <span class="card-badge-pill">Secure</span>
+                    </div>
+                    <div class="card-action-sub">🔑 User Email Approvals</div>
+                </a>
+
+                <a href="money.html" class="card-btn-3d">
+                    <div class="card-top">
+                        <span class="card-title-text">Money Controller</span>
+                        <span class="card-badge-pill">Capital</span>
+                    </div>
+                    <div class="card-action-sub">💰 Global Ledger & Balances</div>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- ================= CATEGORY 4: SYSTEM & ANALYTICS ================= -->
+        <section class="category-wrapper" id="cat-system">
+            <div class="category-header">
+                <div class="category-header-icon">🛡️</div>
+                <h2 class="category-title">System Ecosystem & Metrics</h2>
+            </div>
+            
+            <div class="category-grid" style="margin-bottom: 20px;">
+                <a href="ecosystem.html" class="card-btn-3d">
+                    <div class="card-top">
+                        <span class="card-title-text">Ecosystem Matrix</span>
+                        <span class="card-badge-pill">Core</span>
+                    </div>
+                    <div class="card-action-sub">🌐 System Architecture</div>
+                </a>
+
+                <a href="security.html" class="card-btn-3d">
+                    <div class="card-top">
+                        <span class="card-title-text">System Security</span>
+                        <span class="card-badge-pill">Protected</span>
+                    </div>
+                    <div class="card-action-sub">🛡️ Access & Firewall Logs</div>
+                </a>
             </div>
 
-            <!-- NEW VERIFIED EMAIL & OTP SYSTEM BUTTON -->
-            <a href="verified.html" style="text-decoration: none;">
-                <button class="role-nav-btn" style="background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); color: white; width: 100%;">
-                    <span class="icon">🔑</span> Verify & OTP Portal
-                </button>
-            </a>
+            <!-- Global Stats -->
+            <div id="stats-panel" class="metrics-grid">
+                <div class="metric-card">
+                    <p>Global Active Users</p>
+                    <h2 id="metric-total-users">0</h2>
+                </div>
+                <div class="metric-card vault">
+                    <p>Total User Liabilities</p>
+                    <h2><span id="metric-total-vault">0.00</span> ETB</h2>
+                </div>
+                <div class="metric-card lottery">
+                    <p>Admin Capital Pool</p>
+                    <h2><span id="metric-lottery-vault">0.00</span> ETB</h2>
+                </div>
+            </div>
+        </section>
 
-            <!-- COMBINED LIKES & KEYS CONTAINER -->
-            <div class="nested-box-container">
-                <div class="nested-title-header">
-                    <span>🗝️</span> Likes & Keys Manager
-                </div>
-                <div class="nested-btn-split">
-                    <a href="likes.html">
-                        <button class="sub-nav-btn btn-likes">❤️ Likes</button>
-                    </a>
-                    <a href="keys.html">
-                        <button class="sub-nav-btn btn-keys">🗝️ Keys</button>
-                    </a>
-                </div>
-            </div>
-
-            <!-- INTEGRATED LOTTERY CONTROL BOX WITH TWO BUTTONS -->
-            <div class="nested-box-container">
-                <div class="nested-title-header">
-                    <span>🎟️</span> Lottery Engine
-                </div>
-                <div class="nested-btn-split">
-                    <a href="jet.html">
-                        <button class="sub-nav-btn btn-jet">Jet</button>
-                    </a>
-                    <a href="lot.html">
-                        <button class="sub-nav-btn btn-lot">Lot</button>
-                    </a>
-                </div>
-            </div>
-
-            <!-- COMBINED TASKS & SOCIAL LINKS CONTAINER -->
-            <div class="nested-box-container">
-                <div class="nested-title-header">
-                    <span>⚡</span> Tasks & Socials
-                </div>
-                <div class="nested-btn-split">
-                    <a href="tasks.html">
-                        <button class="sub-nav-btn btn-tasks">Enter Tasks</button>
-                    </a>
-                    <a href="socials.html">
-                        <button class="sub-nav-btn btn-socials">Social Links</button>
-                    </a>
-                </div>
-            </div>
-
-            <!-- COMBINED USER & SUPPORT CONTAINER -->
-            <div class="nested-box-container">
-                <div class="nested-title-header">
-                    <span>👥</span> User & Support
-                </div>
-                <div class="nested-btn-split">
-                    <a href="user-profile.html">
-                        <button class="sub-nav-btn btn-user">Profile</button>
-                    </a>
-                    <a href="supports.html">
-                        <button class="sub-nav-btn btn-support">Support</button>
-                    </a>
-                </div>
-            </div>
-
-            <!-- PODCAST MANAGEMENT MODULE (4 BUTTONS) -->
-            <div class="nested-box-container">
-                <div class="nested-title-header">
-                    <span>🎙️</span> Podcast Channels
-                </div>
-                <div class="nested-btn-grid-4">
-                    <a href="broadcast.html">
-                        <button class="sub-nav-btn btn-pod-news">📢 News</button>
-                    </a>
-                    <a href="sports.html">
-                        <button class="sub-nav-btn btn-pod-sports">⚽ Sports</button>
-                    </a>
-                    <a href="wos.html">
-                        <button class="sub-nav-btn btn-pod-world">🌍 World</button>
-                    </a>
-                    <a href="bus.html">
-                        <button class="sub-nav-btn btn-pod-biz">💼 Business</button>
-                    </a>
-                </div>
-            </div>
-
-            <a href="ecosystem.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-ecosystem" style="width: 100%;">
-                    <span class="icon">🌐</span> Ecosystem Matrix
-                </button>
-            </a>
-            <a href="money.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-money" style="width: 100%;">
-                    <span class="icon">💰</span> Money Controller
-                </button>
-            </a>
-            <a href="security.html" style="text-decoration: none;">
-                <button class="role-nav-btn btn-role-secure" style="width: 100%;">
-                    <span class="icon">🛡️</span> System Security
-                </button>
-            </a>
-        </div>
-
-        <div id="stats-panel" class="metrics-grid">
-            <div class="metric-card">
-                <p>Global Active Users</p>
-                <h2 id="metric-total-users">0</h2>
-            </div>
-            <div class="metric-card vault">
-                <p>Total User Liabilities balance</p>
-                <h2><span id="metric-total-vault">0.00</span> ETB</h2>
-            </div>
-            <div class="metric-card lottery">
-                <p>Admin Capital Pool Balance</p>
-                <h2><span id="metric-lottery-vault">0.00</span> ETB</h2>
-            </div>
-        </div>
     </div>
 
+    <!-- Firebase Script -->
     <script type="module">
         import { db, ref, onValue } from "./db.js";
 

@@ -14,11 +14,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo - Updates Hub</title>
+    <title>BirrGo - News & Updates</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="news.css">
+    <style>
+        /* Responsive YouTube Video Wrapper inside Full Article */
+        .reader-video-container {
+            width: 100%;
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000000;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .reader-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        /* Full Article Image Frame Style */
+        .reader-image-frame {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .reader-image-frame img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Admin Action Buttons */
+        .admin-action-row {
+            display: flex;
+            justify-content: flex-end;
+            padding: 8px 12px 0 12px;
+        }
+        .admin-duplicate-btn {
+            background: #800020;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        .admin-duplicate-btn:hover {
+            background: #a00028;
+        }
+    </style>
 </head>
 <body>
 
@@ -86,7 +145,7 @@
         <main class="app-content">
             <div class="category-filter-row" id="filterPillsRow">
                 <span class="filter-pill active-pill" data-category="Sports News">Sports News</span>
-                <span class="filter-pill" data-category="System Releases"> Business News </span>
+                <span class="filter-pill" data-category="Business News">Business News</span>
                 <span class="filter-pill" data-category="Promo Rewards">Promo Rewards</span>
             </div>
 
@@ -118,7 +177,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, get, set, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, get, set, push, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -138,6 +197,9 @@
         let localCachedBroadcasts = [];
         let currentActiveCategoryFilter = "Sports News";
         let cardClockIntervalId = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const isAdminMode = urlParams.get('admin') === 'true';
 
         document.addEventListener('DOMContentLoaded', () => {
             const activeUserPhoneSession = localStorage.getItem('auth_session_phone');
@@ -164,6 +226,13 @@
             
             initiateLiveInterfaceClocks();
         });
+
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+        }
 
         function initiateLiveInterfaceClocks() {
             const cornerClockNode = document.getElementById('topCornerLiveClock');
@@ -198,7 +267,6 @@
             });
         }
 
-        // DATABASE READING ONLY: Fetch strictly from `newNews/sport`
         function streamLiveAdminUpdatesLog() {
             const sportsNewsRef = ref(db, `newNews/sport`);
             
@@ -300,6 +368,41 @@
             iframeDoc.close();
         }
 
+        window.duplicateAsAdmin = async function(itemId) {
+            const sourceItem = localCachedBroadcasts.find(n => n.id === itemId);
+            if (!sourceItem) {
+                triggerUiPopup("⚠️", "Error", "Target article to duplicate was not found.");
+                return;
+            }
+
+            try {
+                const clonedPayload = { ...sourceItem };
+                delete clonedPayload.id;
+
+                const now = Date.now();
+                clonedPayload.createdAtTimestamp = now;
+                clonedPayload.updatedAt = now;
+                clonedPayload.timestamp = now;
+                
+                if (clonedPayload.title) {
+                    clonedPayload.title = `${clonedPayload.title} (Copy)`;
+                }
+
+                if (clonedPayload.newsCode) {
+                    clonedPayload.newsCode = `${clonedPayload.newsCode}_COPY`;
+                }
+
+                const sportsNewsRef = ref(db, `newNews/sport`);
+                const newRef = push(sportsNewsRef);
+                await set(newRef, clonedPayload);
+
+                triggerUiPopup("✅", "Article Duplicated", "Successfully duplicated news item under newNews/sport.");
+            } catch (err) {
+                console.error("Duplication failed:", err);
+                triggerUiPopup("❌", "Duplication Error", "Failed to duplicate article into database.");
+            }
+        };
+
         function buildSingleNewsCardHTML(item) {
             const headline = item.title || "Platform Announcement";
             const fullContent = item.content || item.message || "";
@@ -320,18 +423,28 @@
             if (!numericalTime) numericalTime = Date.now(); 
 
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isSystem = category.trim().toLowerCase() === "system releases";
-            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+            const isBusiness = category.trim().toLowerCase() === "business news";
+            const pillBadgeClass = isBusiness ? "spotlight-pill system-badge" : "spotlight-pill";
 
             let imageHTML = "";
             if (imageUrl && imageUrl.trim().length > 0) {
                 imageHTML = `<div class="broadcast-image-frame" onclick="openFullNewsReader('${item.id}')"><img src="${imageUrl}" onload="this.classList.add('loaded')"></div>`;
             }
 
+            let adminBtnHTML = "";
+            if (isAdminMode) {
+                adminBtnHTML = `
+                    <div class="admin-action-row">
+                        <button class="admin-duplicate-btn" onclick="duplicateAsAdmin('${item.id}')">📋 Duplicate Post</button>
+                    </div>
+                `;
+            }
+
             return `
+                ${adminBtnHTML}
                 <div class="badge-meta-row">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Sports Match'}</span>
+                        <span class="${pillBadgeClass}">${category}</span>
                     </div>
                     <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
                 </div>
@@ -361,8 +474,12 @@
             const fullContent = item.content || item.message || "";
             const category = item.category || "Sports News";
             const imageUrl = item.imageUrl || "";
-            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
+            const videoUrl = item.videoUrl || "";
             
+            const rawDupVal = item.duplicateCoverInArticle;
+            const duplicateCoverInArticle = rawDupVal === true || rawDupVal === "true" || rawDupVal === 1 || rawDupVal === "1";
+            
+            const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
             const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
 
             let numericalTime = item.updatedAt || item.createdAtTimestamp || item.timestamp;
@@ -373,12 +490,22 @@
             if (!numericalTime) numericalTime = Date.now();
 
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isSystem = category.trim().toLowerCase() === "system releases";
-            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+            const isBusiness = category.trim().toLowerCase() === "business news";
+            const pillBadgeClass = isBusiness ? "spotlight-pill system-badge" : "spotlight-pill";
 
             let imageHTML = "";
-            if (imageUrl && imageUrl.trim().length > 0) {
-                imageHTML = `<div class="reader-image-frame"><img src="${imageUrl}"></div>`;
+            if (imageUrl && imageUrl.trim().length > 0 && duplicateCoverInArticle) {
+                imageHTML = `<div class="reader-image-frame"><img src="${imageUrl.trim()}" alt="${headline}"></div>`;
+            }
+
+            let videoHTML = "";
+            const embedUrl = getYouTubeEmbedUrl(videoUrl);
+            if (embedUrl) {
+                videoHTML = `
+                    <div class="reader-video-container">
+                        <iframe src="${embedUrl}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                    </div>
+                `;
             }
 
             let redirectBtnHTML = "";
@@ -393,15 +520,24 @@
                 `;
             }
 
+            let adminDuplicateBtnReader = "";
+            if (isAdminMode) {
+                adminDuplicateBtnReader = `
+                    <button class="admin-duplicate-btn" style="margin-bottom: 12px; width: 100%;" onclick="duplicateAsAdmin('${item.id}')">📋 Duplicate Article Entry</button>
+                `;
+            }
+
             readerBody.innerHTML = `
+                ${adminDuplicateBtnReader}
                 <div class="reader-meta-bar">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Sports Match'}</span>
+                        <span class="${pillBadgeClass}">${category}</span>
                     </div>
                     <span class="timestamp-log-text">${initialFormattedClock}</span>
                 </div>
                 <h1 class="reader-title">${headline}</h1>
                 ${imageHTML}
+                ${videoHTML}
                 <div class="reader-full-body">${fullContent}</div>
                 ${redirectBtnHTML}
             `;
@@ -435,9 +571,6 @@
 
             const filtered = localCachedBroadcasts.filter(item => {
                 const nodeCategory = (item.category || "Sports News").trim();
-                if (currentActiveCategoryFilter === "Sports News") {
-                    return nodeCategory.toLowerCase() === "sports news" || nodeCategory.toLowerCase() !== "system releases";
-                }
                 return nodeCategory.toLowerCase() === currentActiveCategoryFilter.trim().toLowerCase();
             });
 
@@ -555,7 +688,6 @@
             });
         }
 
-        // PROMO CLAIM: Strictly reads ONLY from `promoCodes/sport`
         async function processPromoClaim() {
             const inputField = document.getElementById('promoCodeInput');
             const claimBtn = document.getElementById('claimPromoBtn');
@@ -574,7 +706,6 @@
                 let matchedPromoData = null;
                 let matchedNodePath = null;
 
-                // Target promoCodes/sport exclusively
                 const sportPromoRef = ref(db, 'promoCodes/sport');
                 const sportPromoSnap = await get(sportPromoRef);
 
@@ -594,7 +725,6 @@
                     return;
                 }
 
-                // Check user claim history
                 const userHistoryRef = ref(db, `users/${activeUserPhone}/claimedPromos/${enteredCode}`);
                 const historySnap = await get(userHistoryRef);
                 if (historySnap.exists()) {

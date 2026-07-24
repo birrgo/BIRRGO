@@ -19,6 +19,28 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="news.css">
+    <style>
+        /* Responsive YouTube Video Wrapper inside Full Article */
+        .reader-video-container {
+            width: 100%;
+            margin: 16px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #000000;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            height: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .reader-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+    </style>
 </head>
 <body>
 
@@ -57,7 +79,7 @@
             <div class="search-box-header">
                 <div class="search-input-wrapper">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter World News Code..." autocomplete="off">
+                    <input type="text" class="search-news-field" id="newsCodeSearchInput" placeholder="Enter News Code..." autocomplete="off">
                 </div>
                 <button class="close-search-btn" id="closeSearchDrawerBtn">Cancel</button>
             </div>
@@ -85,8 +107,8 @@
 
         <main class="app-content">
             <div class="category-filter-row" id="filterPillsRow">
-                <span class="filter-pill active-pill" data-category="World News"> Entertainment News</span>
-                <span class="filter-pill" data-category="System Releases">Social Media Review </span>
+                <span class="filter-pill active-pill" data-category="Entertainment News">Entertainment News</span>
+                <span class="filter-pill" data-category="Social Review">Social Media Review</span>
                 <span class="filter-pill" data-category="Promo Rewards">Promo Rewards</span>
             </div>
 
@@ -136,7 +158,7 @@
         
         let activeUserPhone = "912345678"; 
         let localCachedBroadcasts = [];
-        let currentActiveCategoryFilter = "World News";
+        let currentActiveCategoryFilter = "Entertainment News";
         let cardClockIntervalId = null;
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -164,6 +186,13 @@
             
             initiateLiveInterfaceClocks();
         });
+
+        function getYouTubeEmbedUrl(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+        }
 
         function initiateLiveInterfaceClocks() {
             const cornerClockNode = document.getElementById('topCornerLiveClock');
@@ -198,7 +227,7 @@
             });
         }
 
-        // WORLD NEWS DATABASE STREAMING (`newNews/wold` and fallback `newNews/world`)
+        // DATABASE STREAMING (`newNews/wold` and fallback `news`)
         function streamLiveAdminUpdatesLog() {
             const worldNewsRef = ref(db, `newNews/wold`);
             
@@ -223,7 +252,6 @@
 
                     renderFilteredBroadcasts();
                 } else {
-                    // Try fallback path if empty
                     checkWorldNewsFallback();
                 }
             }, (error) => {
@@ -235,7 +263,7 @@
 
         async function checkWorldNewsFallback() {
             try {
-                const fallbackRef = ref(db, `newNews/world`);
+                const fallbackRef = ref(db, `news`);
                 const snap = await get(fallbackRef);
                 localCachedBroadcasts = [];
                 
@@ -272,15 +300,15 @@
             if (currentActiveCategoryFilter === "Promo Rewards") {
                 container.innerHTML = `
                     <div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12.5px; font-weight:600;">
-                        Use the promo code box above to redeem active world reward vouchers.
+                        Use the promo code box above to redeem active reward vouchers.
                     </div>
                 `;
             } else {
                 container.innerHTML = `
                     <article class="featured-broadcast-card">
-                        <div class="badge-meta-row"><span class="spotlight-pill">World OK</span></div>
-                        <h2 class="broadcast-title">No World Updates</h2>
-                        <p class="broadcast-body-text">There are currently no world news updates posted under this filter category today.</p>
+                        <div class="badge-meta-row"><span class="spotlight-pill">OK</span></div>
+                        <h2 class="broadcast-title">No Updates Available</h2>
+                        <p class="broadcast-body-text">There are currently no updates posted under this filter category today.</p>
                         <div class="card-footer-branding-row"><div></div><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
                     </article>
                 `;
@@ -334,9 +362,9 @@
         }
 
         function buildSingleNewsCardHTML(item) {
-            const headline = item.title || "World News Update";
+            const headline = item.title || "News Update";
             const fullContent = item.content || item.message || "";
-            const category = item.category || "World News";
+            const category = item.category || "Entertainment News";
             const imageUrl = item.imageUrl || "";
 
             const maxPreviewLen = 120;
@@ -353,8 +381,8 @@
             if (!numericalTime) numericalTime = Date.now(); 
 
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isSystem = category.trim().toLowerCase() === "system releases";
-            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+            const isSocial = category.trim().toLowerCase() === "social review";
+            const pillBadgeClass = isSocial ? "spotlight-pill system-badge" : "spotlight-pill";
 
             let imageHTML = "";
             if (imageUrl && imageUrl.trim().length > 0) {
@@ -364,7 +392,7 @@
             return `
                 <div class="badge-meta-row">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Global Headline'}</span>
+                        <span class="${pillBadgeClass}">${category}</span>
                     </div>
                     <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
                 </div>
@@ -390,10 +418,12 @@
 
             if (!readerOverlay || !readerBody) return;
 
-            const headline = item.title || "World News Update";
+            const headline = item.title || "News Update";
             const fullContent = item.content || item.message || "";
-            const category = item.category || "World News";
+            const category = item.category || "Entertainment News";
             const imageUrl = item.imageUrl || "";
+            const videoUrl = item.videoUrl || "";
+            const duplicateCoverInArticle = !!item.duplicateCoverInArticle;
             const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
             
             const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
@@ -406,12 +436,24 @@
             if (!numericalTime) numericalTime = Date.now();
 
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isSystem = category.trim().toLowerCase() === "system releases";
-            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+            const isSocial = category.trim().toLowerCase() === "social review";
+            const pillBadgeClass = isSocial ? "spotlight-pill system-badge" : "spotlight-pill";
 
+            // Cover Image Logic
             let imageHTML = "";
-            if (imageUrl && imageUrl.trim().length > 0) {
+            if (imageUrl && imageUrl.trim().length > 0 && duplicateCoverInArticle) {
                 imageHTML = `<div class="reader-image-frame"><img src="${imageUrl}"></div>`;
+            }
+
+            // Embedded Video Logic
+            let videoHTML = "";
+            const embedUrl = getYouTubeEmbedUrl(videoUrl);
+            if (embedUrl) {
+                videoHTML = `
+                    <div class="reader-video-container">
+                        <iframe src="${embedUrl}" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+                    </div>
+                `;
             }
 
             let redirectBtnHTML = "";
@@ -429,12 +471,13 @@
             readerBody.innerHTML = `
                 <div class="reader-meta-bar">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Global Headline'}</span>
+                        <span class="${pillBadgeClass}">${category}</span>
                     </div>
                     <span class="timestamp-log-text">${initialFormattedClock}</span>
                 </div>
                 <h1 class="reader-title">${headline}</h1>
                 ${imageHTML}
+                ${videoHTML}
                 <div class="reader-full-body">${fullContent}</div>
                 ${redirectBtnHTML}
             `;
@@ -467,10 +510,7 @@
             }
 
             const filtered = localCachedBroadcasts.filter(item => {
-                const nodeCategory = (item.category || "World News").trim();
-                if (currentActiveCategoryFilter === "World News") {
-                    return nodeCategory.toLowerCase() === "world news" || nodeCategory.toLowerCase() !== "system releases";
-                }
+                const nodeCategory = (item.category || "Entertainment News").trim();
                 return nodeCategory.toLowerCase() === currentActiveCategoryFilter.trim().toLowerCase();
             });
 
@@ -588,7 +628,7 @@
             });
         }
 
-        // PROMO CLAIM: Strictly reads ONLY from `promoCodes/wold` (with `promoCodes/world` fallback)
+        // PROMO CLAIM
         async function processPromoClaim() {
             const inputField = document.getElementById('promoCodeInput');
             const claimBtn = document.getElementById('claimPromoBtn');
@@ -607,7 +647,6 @@
                 let matchedPromoData = null;
                 let matchedNodePath = null;
 
-                // Check promoCodes/wold first
                 const woldPromoRef = ref(db, 'promoCodes/wold');
                 const woldPromoSnap = await get(woldPromoRef);
 
@@ -622,7 +661,6 @@
                     });
                 }
 
-                // Fallback check under promoCodes/world if not found
                 if (!matchedPromoData) {
                     const worldPromoRef = ref(db, 'promoCodes/world');
                     const worldPromoSnap = await get(worldPromoRef);
@@ -644,7 +682,6 @@
                     return;
                 }
 
-                // Check user claim history
                 const userHistoryRef = ref(db, `users/${activeUserPhone}/claimedPromos/${enteredCode}`);
                 const historySnap = await get(userHistoryRef);
                 if (historySnap.exists()) {

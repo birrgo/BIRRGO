@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>BirrGo - Admin News & Promo Manager</title>
+    <title>BirrGo - Admin Business & Sports News & Promo Manager</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;500;600;700;800&display=swap" rel="stylesheet">
@@ -190,6 +190,36 @@
             resize: vertical;
         }
 
+        /* Image Box & Duplicate Option Styling */
+        .image-preview-box {
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            background: var(--bg-light);
+            border: 1px dashed var(--border-light);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 6px;
+        }
+
+        .preview-img-element {
+            max-height: 180px;
+            width: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+
+        .duplicate-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
+        }
+
         .btn-row { display: flex; gap: 10px; margin-top: 10px; }
 
         .btn-admin-action {
@@ -342,10 +372,11 @@
         </div>
     </div>
 
+    <!-- PREVIEW MODAL SHOWING BOTH COVER AND FULL BODY IMAGES -->
     <div class="modal-overlay" id="previewNewsModal">
-        <div class="modal-box">
+        <div class="modal-box" style="max-width: 500px;">
             <h3 class="modal-title" id="previewModalTitle">Article Preview</h3>
-            <div id="previewModalDetails" style="margin-top: 12px;"></div>
+            <div id="previewModalDetails" style="margin-top: 12px; max-height: 70vh; overflow-y: auto;"></div>
             <div class="btn-row" style="margin-top: 16px;">
                 <button class="btn-admin-action btn-modal-close" style="width: 100%;" id="closePreviewBtn">Close Preview</button>
             </div>
@@ -361,7 +392,7 @@
         <div class="header-brand-row">
             <div class="brand-title-group">
                 <img class="brand-logo-img" src="birrgo-logo.png" alt="BirrGo Logo" onerror="this.style.display='none'">
-                <h3 class="section-title">Sports News & Promo Manager</h3>
+                <h3 class="section-title">Business & Sports News & Promo Manager</h3>
             </div>
         </div>
 
@@ -375,7 +406,7 @@
             <label>Target Category</label>
             <select class="form-select" id="postCategory">
                 <option value="Sports News">1. Sports News (newNews/sport)</option>
-                <option value="System Releases">2. System Releases (news/releases)</option>
+                <option value="Business News">2. Business News (newNews/sport)</option>
                 <option value="Promo Rewards">3. Promo Rewards (Announcement News)</option>
                 <option value="Promo Code - Sport">4. Promo Code - Sport (promoCodes/sport)</option>
             </select>
@@ -393,9 +424,25 @@
                 <input class="admin-input" type="text" id="newsTitle" placeholder="e.g. Big Match Updates & Rewards">
             </div>
 
+            <!-- HEADER IMAGE URL & LIVE PREVIEW / DUPLICATE BOX -->
             <div class="input-field-wrapper">
                 <label>Header Image URL (Optional)</label>
                 <input class="admin-input" type="url" id="newsImageUrl" placeholder="https://example.com/image.jpg">
+                
+                <!-- Live Image Preview Box -->
+                <div class="image-preview-box" id="imgPreviewBox">
+                    <img id="liveImgElement" class="preview-img-element" src="" alt="Header Preview">
+                    <label class="duplicate-toggle-row">
+                        <input type="checkbox" id="duplicateImageToggle">
+                        <span>Duplicate / Display image inside full article body as well</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- YOUTUBE / VIDEO URL FIELD (Dynamic disable/hide when duplicating image) -->
+            <div class="input-field-wrapper" id="videoUrlWrapper">
+                <label id="videoUrlLabel">YouTube / Video URL (Optional)</label>
+                <input class="admin-input" type="url" id="newsVideoUrl" placeholder="https://www.youtube.com/watch?v=XXXXX">
             </div>
 
             <div class="input-field-wrapper">
@@ -455,7 +502,7 @@
             <div class="filter-btn-grid">
                 <button class="filter-btn active" data-filter="ALL">All</button>
                 <button class="filter-btn" data-filter="Sports News">Sports</button>
-                <button class="filter-btn" data-filter="System Releases">Releases</button>
+                <button class="filter-btn" data-filter="Business News">Business</button>
                 <button class="filter-btn" data-filter="Promo Rewards">Rewards</button>
                 <button class="filter-btn" data-filter="Promo Code News">Codes</button>
             </div>
@@ -485,6 +532,41 @@
             const isPromoOption = e.target.value.startsWith('Promo Code');
             document.getElementById('standardFormFields').classList.toggle('hidden-fields', isPromoOption);
             document.getElementById('promoFormFields').classList.toggle('hidden-fields', !isPromoOption);
+        });
+
+        // Live Image Preview Handler
+        const imgUrlInput = document.getElementById('newsImageUrl');
+        const imgPreviewBox = document.getElementById('imgPreviewBox');
+        const liveImgElement = document.getElementById('liveImgElement');
+
+        function updateImagePreview() {
+            const url = imgUrlInput.value.trim();
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+                liveImgElement.src = url;
+                imgPreviewBox.style.display = 'flex';
+            } else {
+                imgPreviewBox.style.display = 'none';
+            }
+        }
+
+        imgUrlInput.addEventListener('input', updateImagePreview);
+
+        // Toggle YouTube Field state when Image Duplication is toggled
+        const duplicateImageToggle = document.getElementById('duplicateImageToggle');
+        const videoUrlWrapper = document.getElementById('videoUrlWrapper');
+        const newsVideoUrl = document.getElementById('newsVideoUrl');
+
+        duplicateImageToggle.addEventListener('change', () => {
+            if (duplicateImageToggle.checked) {
+                videoUrlWrapper.style.opacity = '0.5';
+                videoUrlWrapper.style.pointerEvents = 'none';
+                newsVideoUrl.disabled = true;
+                newsVideoUrl.value = ''; // Reset YouTube URL when duplicated image is active
+            } else {
+                videoUrlWrapper.style.opacity = '1';
+                videoUrlWrapper.style.pointerEvents = 'auto';
+                newsVideoUrl.disabled = false;
+            }
         });
 
         document.querySelectorAll('.filter-btn').forEach(btn => {
@@ -518,7 +600,7 @@
             setTimeout(() => t.style.display='none', 3500);
         }
 
-        // Realtime Database Listeners - Reading ONLY Sport Promos & Sports News
+        // Realtime Database Listeners
         onValue(ref(db, SPORTS_NODE), snapshot => { 
             sportsNewsState = snapshot.val() || {}; 
             render(); 
@@ -656,9 +738,16 @@
                 document.getElementById('newsCustomCode').value = item.code || item.newsCode || '';
                 document.getElementById('newsTitle').value = item.title || '';
                 document.getElementById('newsImageUrl').value = item.imageUrl || '';
+                document.getElementById('newsVideoUrl').value = item.videoUrl || '';
                 document.getElementById('newsMessage').value = item.content || item.message || '';
                 document.getElementById('newsRedirectUrl').value = item.link || item.redirectUrl || '';
                 document.getElementById('newsButtonLabel').value = item.buttonLabel || item.actionButtonLabel || '';
+
+                const isDuplicated = item.duplicateCoverInArticle === true || item.duplicateImage === true;
+                duplicateImageToggle.checked = isDuplicated;
+                duplicateImageToggle.dispatchEvent(new Event('change'));
+
+                updateImagePreview();
 
                 document.getElementById('editingBanner').style.display = 'flex';
                 document.getElementById('editingNewsCode').innerText = `${item.code || k}`;
@@ -666,7 +755,7 @@
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }));
 
-            // Preview Handlers
+            // Preview Handlers (Rendering Cover & Full Article Body Images)
             container.querySelectorAll('.preview-btn').forEach(btn => btn.addEventListener('click', () => {
                 const k = btn.getAttribute('data-key');
                 const nodeName = btn.getAttribute('data-node');
@@ -674,13 +763,31 @@
 
                 if(!item) return;
 
+                const isDupActive = item.duplicateCoverInArticle === true || item.duplicateImage === true;
+
+                const coverImgHtml = item.imageUrl ? `
+                    <div style="margin-bottom:12px;">
+                        <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">🖼️ Cover Header Image</span>
+                        <img src="${item.imageUrl}" style="width:100%; max-height:160px; object-fit:cover; border-radius:8px; border:1px solid var(--border-light); margin-top:4px;">
+                    </div>` : '';
+
+                const fullBodyImgHtml = (isDupActive && item.imageUrl) ? `
+                    <div style="margin-top:12px;">
+                        <span style="font-size:11px; font-weight:800; color:var(--primary-burgundy); text-transform:uppercase;">🖼️ Duplicated Full Body Image</span>
+                        <img src="${item.imageUrl}" style="width:100%; max-height:160px; object-fit:cover; border-radius:8px; border:1px solid var(--border-light); margin-top:4px;">
+                    </div>` : '';
+
                 document.getElementById('previewModalDetails').innerHTML = `
+                    ${coverImgHtml}
                     <div class="modal-data-row"><span class="modal-data-label">Code:</span><span class="modal-data-value">${item.code || item.newsCode || 'N/A'}</span></div>
                     <div class="modal-data-row"><span class="modal-data-label">Title:</span><span class="modal-data-value">${item.title || 'Untitled'}</span></div>
                     <div class="modal-data-row"><span class="modal-data-label">Category:</span><span class="modal-data-value">${item.category || 'Sports News'}</span></div>
-                    <div class="modal-data-row"><span class="modal-data-label">Link:</span><span class="modal-data-value">${item.link || item.redirectUrl || 'None'}</span></div>
-                    <div style="background:var(--bg-light); padding:12px; border-radius:10px; margin-top:10px; font-size:13px; color:var(--text-dark); max-height:120px; overflow-y:auto; line-height:1.4;">
+                    <div class="modal-data-row"><span class="modal-data-label">YouTube Link:</span><span class="modal-data-value">${item.videoUrl || 'Disabled / None'}</span></div>
+
+                    <div style="background:var(--bg-light); padding:12px; border-radius:10px; margin-top:10px; font-size:13px; color:var(--text-dark); line-height:1.4;">
+                        <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:4px;">📝 Full Article Body</span>
                         ${item.content || item.message || 'No content description body provided.'}
+                        ${fullBodyImgHtml}
                     </div>
                 `;
                 document.getElementById('previewNewsModal').classList.add('active');
@@ -702,13 +809,19 @@
             document.getElementById('newsCustomCode').value = '';
             document.getElementById('newsTitle').value = '';
             document.getElementById('newsImageUrl').value = '';
+            document.getElementById('newsVideoUrl').value = '';
             document.getElementById('newsMessage').value = '';
             document.getElementById('newsRedirectUrl').value = '';
             document.getElementById('newsButtonLabel').value = '';
 
+            duplicateImageToggle.checked = false;
+            duplicateImageToggle.dispatchEvent(new Event('change'));
+
             document.getElementById('promoCode').value = '';
             document.getElementById('promoMaxClaims').value = '';
             document.getElementById('promoRewardAmount').value = '';
+
+            updateImagePreview();
         }
 
         // Check duplicates strictly inside promoCodes/sport
@@ -772,9 +885,11 @@
                 return;
             }
 
-            // Handle News Articles (Sports News routes to `newNews/sport`)
+            // Handle News Articles (Sports News & Business News route to `newNews/sport`)
             const title = document.getElementById('newsTitle').value.trim();
             const imageUrl = document.getElementById('newsImageUrl').value.trim();
+            const duplicateImage = duplicateImageToggle.checked;
+            const videoUrl = duplicateImage ? '' : document.getElementById('newsVideoUrl').value.trim();
             const message = document.getElementById('newsMessage').value.trim();
             const redirectUrl = document.getElementById('newsRedirectUrl').value.trim();
             const buttonLabel = document.getElementById('newsButtonLabel').value.trim();
@@ -789,7 +904,7 @@
                 newsCode = `SN-${Math.floor(1000 + Math.random() * 9000)}`;
             }
 
-            const targetNode = cat === 'Sports News' ? SPORTS_NODE : NEWS_NODE;
+            const targetNode = (cat === 'Sports News' || cat === 'Business News') ? SPORTS_NODE : NEWS_NODE;
             
             buttonText.innerText = currentEditingKey ? "Updating..." : "Publishing...";
 
@@ -799,6 +914,9 @@
                 category: cat, 
                 title: title, 
                 imageUrl: imageUrl,
+                videoUrl: videoUrl,
+                duplicateImage: duplicateImage,
+                duplicateCoverInArticle: duplicateImage,
                 content: message, 
                 message: message,
                 link: redirectUrl,

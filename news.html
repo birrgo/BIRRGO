@@ -85,8 +85,8 @@
 
         <main class="app-content">
             <div class="category-filter-row" id="filterPillsRow">
-                <span class="filter-pill active-pill" data-category="All Updates">Ethiopia News</span>
-                <span class="filter-pill" data-category="System Releases">World News </span>
+                <span class="filter-pill active-pill" data-category="Ethiopia News">Ethiopia News</span>
+                <span class="filter-pill" data-category="World News">World News</span>
                 <span class="filter-pill" data-category="Promo Rewards">Promo Rewards</span>
             </div>
 
@@ -136,8 +136,15 @@
         
         let activeUserPhone = "912345678"; 
         let localCachedBroadcasts = [];
-        let currentActiveCategoryFilter = "All Updates";
+        let currentActiveCategoryFilter = "Ethiopia News";
         let cardClockIntervalId = null;
+
+        function parseYouTubeId(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = String(url).trim().match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
 
         document.addEventListener('DOMContentLoaded', () => {
             const activeUserPhoneSession = localStorage.getItem('auth_session_phone');
@@ -198,7 +205,6 @@
             });
         }
 
-        // Helper function to resolve any timestamp format to a valid Unix Epoch integer
         function extractValidTimestamp(item) {
             const raw = item.updatedAt || item.createdAtTimestamp || item.timestamp || item.createdAt || item.date;
 
@@ -234,7 +240,6 @@
                         });
                     });
                     
-                    // Strict sorting: Newest posts at the top
                     localCachedBroadcasts.sort((a, b) => {
                         if (b.resolvedTimestamp !== a.resolvedTimestamp) {
                             return b.resolvedTimestamp - a.resolvedTimestamp;
@@ -268,7 +273,7 @@
                     <article class="featured-broadcast-card">
                         <div class="badge-meta-row"><span class="spotlight-pill">System OK</span></div>
                         <h2 class="broadcast-title">All Systems Nominal</h2>
-                        <p class="broadcast-body-text">There are no updates or notices posted under this filter category today.</p>
+                        <p class="broadcast-body-text">There are no updates posted under ${currentActiveCategoryFilter} today.</p>
                         <div class="card-footer-branding-row"><div></div><img class="inline-card-logo" src="birrgo-logo.png" alt="BirrGo Token"></div>
                     </article>
                 `;
@@ -322,20 +327,20 @@
         }
 
         function buildSingleNewsCardHTML(item) {
-            const headline = item.title || "Platform Announcement";
+            const headline = item.title || item.newsTitle || "Platform Announcement";
             const fullContent = item.content || item.message || "";
-            const category = item.category || "All Updates";
-            const imageUrl = item.imageUrl || "";
+            const category = item.category || "Ethiopia News";
+            const imageUrl = item.imageUrl || item.image || "";
 
             const maxPreviewLen = 120;
             const isLongText = fullContent.length > maxPreviewLen;
             const previewContent = isLongText ? fullContent.substring(0, maxPreviewLen).trim() + "..." : fullContent;
 
             const numericalTime = item.resolvedTimestamp || Date.now();
-
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isSystem = category.trim().toLowerCase() === "system releases";
-            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
+            
+            const isWorld = category.trim().toLowerCase() === "world news";
+            const pillBadgeClass = isWorld ? "spotlight-pill system-badge" : "spotlight-pill";
 
             let imageHTML = "";
             if (imageUrl && imageUrl.trim().length > 0) {
@@ -345,7 +350,7 @@
             return `
                 <div class="badge-meta-row">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
+                        <span class="${pillBadgeClass}">${category}</span>
                     </div>
                     <span class="timestamp-log-text" data-timestamp="${numericalTime}">${initialFormattedClock}</span>
                 </div>
@@ -371,23 +376,44 @@
 
             if (!readerOverlay || !readerBody) return;
 
-            const headline = item.title || "Platform Announcement";
+            const headline = item.title || item.newsTitle || "Platform Announcement";
             const fullContent = item.content || item.message || "";
-            const category = item.category || "All Updates";
-            const imageUrl = item.imageUrl || "";
+            const category = item.category || "Ethiopia News";
+            const imageUrl = item.imageUrl || item.image || "";
             const targetRedirectUrl = item.link || item.redirectUrl || item.url || item.targetUrl || "";
             
+            const isDuplicateActive = (item.duplicateCoverInArticle === true || item.duplicateImageInArticle === true || item.duplicateImage === true);
+            const videoUrl = item.videoUrl || item.youtubeUrl || item.video || "";
+            const ytId = item.youtubeId || parseYouTubeId(videoUrl);
+
             const customActionLabel = item.actionButtonLabel || item.actionLabel || item.buttonLabel || item.btnLabel || "Visit External Source / Link";
-
             const numericalTime = item.resolvedTimestamp || Date.now();
-
             const initialFormattedClock = formatExactTimestampWithSeconds(numericalTime);
-            const isSystem = category.trim().toLowerCase() === "system releases";
-            const pillBadgeClass = isSystem ? "spotlight-pill system-badge" : "spotlight-pill";
 
-            let imageHTML = "";
-            if (imageUrl && imageUrl.trim().length > 0) {
-                imageHTML = `<div class="reader-image-frame"><img src="${imageUrl}"></div>`;
+            let mainMediaHTML = "";
+
+            if (isDuplicateActive) {
+                // Duplicate active: Only show top cover image (bottom image removed)
+                if (imageUrl && imageUrl.trim().length > 0) {
+                    mainMediaHTML = `
+                        <div class="reader-image-frame" style="margin-bottom:12px;"><img src="${imageUrl}"></div>
+                        <div class="reader-full-body">${fullContent}</div>`;
+                } else {
+                    mainMediaHTML = `<div class="reader-full-body">${fullContent}</div>`;
+                }
+            } else {
+                // Duplicate inactive: Show YouTube video instead of image
+                let videoIframeHTML = "";
+                if (ytId && ytId.length === 11) {
+                    videoIframeHTML = `
+                        <div style="margin-bottom:14px; width:100%; border-radius:12px; overflow:hidden; aspect-ratio:16/9; background:#000;">
+                            <iframe src="https://www.youtube.com/embed/${ytId}" style="width:100%; height:100%; border:none;" allowfullscreen></iframe>
+                        </div>`;
+                }
+
+                mainMediaHTML = `
+                    ${videoIframeHTML}
+                    <div class="reader-full-body">${fullContent}</div>`;
             }
 
             let redirectBtnHTML = "";
@@ -405,13 +431,12 @@
             readerBody.innerHTML = `
                 <div class="reader-meta-bar">
                     <div style="display:flex; align-items:center; gap:6px;">
-                        <span class="${pillBadgeClass}">${isSystem ? 'System Upgrade' : 'Announcement'}</span>
+                        <span class="spotlight-pill">${category}</span>
                     </div>
                     <span class="timestamp-log-text">${initialFormattedClock}</span>
                 </div>
                 <h1 class="reader-title">${headline}</h1>
-                ${imageHTML}
-                <div class="reader-full-body">${fullContent}</div>
+                ${mainMediaHTML}
                 ${redirectBtnHTML}
             `;
 
@@ -443,10 +468,7 @@
             }
 
             const filtered = localCachedBroadcasts.filter(item => {
-                const nodeCategory = (item.category || "All Updates").trim();
-                if (currentActiveCategoryFilter === "All Updates") {
-                    return nodeCategory.toLowerCase() !== "system releases";
-                }
+                const nodeCategory = (item.category || "Ethiopia News").trim();
                 return nodeCategory.toLowerCase() === currentActiveCategoryFilter.trim().toLowerCase();
             });
 
@@ -540,7 +562,7 @@
 
             const matchedNews = localCachedBroadcasts.filter(item => {
                 const code = String(item.newsCode || item.code || item.id || '').toLowerCase();
-                const title = String(item.title || '').toLowerCase();
+                const title = String(item.title || item.newsTitle || '').toLowerCase();
                 const content = String(item.content || item.message || '').toLowerCase();
 
                 return code.includes(cleanQuery) || title.includes(cleanQuery) || content.includes(cleanQuery);
@@ -583,7 +605,6 @@
                 let matchedNodePath = null;
                 let isLegacySingleFormat = false;
 
-                // 1. Search under primary "promoCodes" collection
                 const promoCodesRef = ref(db, 'promoCodes');
                 const promoCodesSnap = await get(promoCodesRef);
 
@@ -598,7 +619,6 @@
                     });
                 }
 
-                // 2. Fallback check under "globalPromoCampaign"
                 if (!matchedPromoData) {
                     const campaignRef = ref(db, 'globalPromoCampaign');
                     const campaignSnap = await get(campaignRef);

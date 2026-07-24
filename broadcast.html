@@ -156,6 +156,7 @@
             flex-direction: column;
             gap: 6px;
             margin-bottom: 16px;
+            transition: opacity 0.2s ease;
         }
 
         .input-field-wrapper label {
@@ -185,27 +186,45 @@
             box-shadow: 0 0 0 3px var(--accent-glow);
         }
 
+        .admin-input:disabled {
+            background-color: #e2e8f0;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
         textarea.admin-input {
             min-height: 90px;
             resize: vertical;
         }
 
-        /* Image Preview Box */
-        .image-preview-container {
+        /* Image Box & Duplicate Option Styling */
+        .image-preview-box {
             display: none;
-            margin-top: 8px;
-            text-align: center;
+            flex-direction: column;
+            gap: 10px;
             background: var(--bg-light);
             border: 1px dashed var(--border-light);
-            padding: 10px;
             border-radius: 12px;
+            padding: 12px;
+            margin-top: 6px;
         }
-        .image-preview-container img {
-            max-width: 100%;
+
+        .preview-img-element {
             max-height: 180px;
-            border-radius: 8px;
+            width: 100%;
             object-fit: cover;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border-radius: 8px;
+            border: 1px solid var(--border-light);
+        }
+
+        .duplicate-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-dark);
+            cursor: pointer;
         }
 
         .btn-row { display: flex; gap: 10px; margin-top: 10px; }
@@ -244,14 +263,14 @@
 
         .filter-btn-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 6px;
             margin-bottom: 16px;
         }
 
         .filter-btn {
-            padding: 8px 6px;
-            font-size: 11px;
+            padding: 8px 4px;
+            font-size: 10px;
             font-weight: 800;
             border-radius: 10px;
             border: 1px solid var(--border-light);
@@ -361,10 +380,11 @@
         </div>
     </div>
 
+    <!-- Article Preview Modal showing Header & Full Body Media -->
     <div class="modal-overlay" id="previewNewsModal">
-        <div class="modal-box">
-            <h3 class="modal-title" id="previewModalTitle">News Article Preview</h3>
-            <div id="previewModalDetails" style="margin-top: 12px;"></div>
+        <div class="modal-box" style="max-width: 500px;">
+            <h3 class="modal-title" id="previewModalTitle">Article Preview</h3>
+            <div id="previewModalDetails" style="margin-top: 12px; max-height: 70vh; overflow-y: auto;"></div>
             <div class="btn-row" style="margin-top: 16px;">
                 <button class="btn-admin-action btn-modal-close" style="width: 100%;" id="closePreviewBtn">Close Preview</button>
             </div>
@@ -392,8 +412,8 @@
         <div class="input-field-wrapper">
             <label>Target Category</label>
             <select class="form-select" id="postCategory">
-                <option value="All Updates">1. All Updates (General Feed Post)</option>
-                <option value="System Releases">2. System Releases (Version Update Post)</option>
+                <option value="Ethiopia News">1. Ethiopia News</option>
+                <option value="World News">2. World News</option>
                 <option value="Promo Rewards">3. Promo Rewards (Standard Announcement News)</option>
                 <option value="Promo Code News">4. Promo Code News (Claimable Gift Code)</option>
             </select>
@@ -406,21 +426,33 @@
             </div>
 
             <div class="input-field-wrapper">
-                <label>Broadcast Title</label>
-                <input class="admin-input" type="text" id="newsTitle" placeholder="e.g. System Upgrade Live!">
+                <label>Title / Headline</label>
+                <input class="admin-input" type="text" id="newsTitle" placeholder="e.g. Breaking Update">
             </div>
 
-            <!-- Image Link Field positioned centrally between Title & Content -->
+            <!-- HEADER IMAGE URL & LIVE PREVIEW / DUPLICATE BOX -->
             <div class="input-field-wrapper">
-                <label>🖼️ Cover Image / Banner URL (Optional)</label>
+                <label>Header Image URL (Optional)</label>
                 <input class="admin-input" type="url" id="newsImageUrl" placeholder="https://example.com/banner.jpg">
-                <div class="image-preview-container" id="imagePreviewBox">
-                    <img id="imagePreviewElement" src="" alt="Image Preview" onerror="this.parentElement.style.display='none'">
+                
+                <!-- Live Image Preview Box with Duplicate Toggle -->
+                <div class="image-preview-box" id="imgPreviewBox">
+                    <img id="liveImgElement" class="preview-img-element" src="" alt="Header Preview">
+                    <label class="duplicate-toggle-row">
+                        <input type="checkbox" id="duplicateImageToggle">
+                        <span>Duplicate / Display image inside full article body as well</span>
+                    </label>
                 </div>
             </div>
 
+            <!-- YOUTUBE / VIDEO URL FIELD (Dynamic disable/hide when duplicating image) -->
+            <div class="input-field-wrapper" id="videoUrlWrapper">
+                <label id="videoUrlLabel">YouTube / Video URL (Optional)</label>
+                <input class="admin-input" type="url" id="newsVideoUrl" placeholder="https://www.youtube.com/watch?v=XXXXX">
+            </div>
+
             <div class="input-field-wrapper">
-                <label>Broadcast Message Content</label>
+                <label>Content / Message Body</label>
                 <textarea class="admin-input" id="newsMessage" placeholder="Type article content or update detail..."></textarea>
             </div>
 
@@ -474,9 +506,10 @@
             
             <div class="filter-btn-grid">
                 <button class="filter-btn active" data-filter="ALL">1. All Items</button>
-                <button class="filter-btn" data-filter="All Updates">2. News Feed</button>
-                <button class="filter-btn" data-filter="System Releases">3. Releases</button>
-                <button class="filter-btn" data-filter="Promo">4. Promo Codes</button>
+                <button class="filter-btn" data-filter="Ethiopia News">2. Ethiopia</button>
+                <button class="filter-btn" data-filter="World News">3. World</button>
+                <button class="filter-btn" data-filter="Promo Rewards">4. Rewards</button>
+                <button class="filter-btn" data-filter="Promo">5. Promos</button>
             </div>
 
             <div id="manageNewsCardsContainer"></div>
@@ -501,18 +534,47 @@
             document.getElementById('promoFormFields').classList.toggle('hidden-fields', !isPromoCodeOption);
         });
 
-        // Live image preview listener
-        const imageUrlInput = document.getElementById('newsImageUrl');
-        const imagePreviewBox = document.getElementById('imagePreviewBox');
-        const imagePreviewElement = document.getElementById('imagePreviewElement');
+        // Live Image Preview & Duplicate Control Logic
+        const imgUrlInput = document.getElementById('newsImageUrl');
+        const imgPreviewBox = document.getElementById('imgPreviewBox');
+        const liveImgElement = document.getElementById('liveImgElement');
+        const duplicateImageToggle = document.getElementById('duplicateImageToggle');
 
-        imageUrlInput.addEventListener('input', (e) => {
-            const url = e.target.value.trim();
-            if(url) {
-                imagePreviewElement.src = url;
-                imagePreviewBox.style.display = 'block';
+        const videoUrlWrapper = document.getElementById('videoUrlWrapper');
+        const newsVideoUrl = document.getElementById('newsVideoUrl');
+
+        function extractYouTubeId(url) {
+            if (!url) return '';
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.trim().match(regExp);
+            return (match && match[2].length === 11) ? match[2] : url.trim();
+        }
+
+        function updateImagePreview() {
+            const url = imgUrlInput.value.trim();
+            if (url.startsWith('http://') || url.startsWith('https://')) {
+                liveImgElement.src = url;
+                imgPreviewBox.style.display = 'flex';
             } else {
-                imagePreviewBox.style.display = 'none';
+                imgPreviewBox.style.display = 'none';
+                duplicateImageToggle.checked = false;
+                duplicateImageToggle.dispatchEvent(new Event('change'));
+            }
+        }
+
+        imgUrlInput.addEventListener('input', updateImagePreview);
+
+        // Mutual exclusivity logic between Image Duplication and Video URL
+        duplicateImageToggle.addEventListener('change', () => {
+            if (duplicateImageToggle.checked) {
+                videoUrlWrapper.style.opacity = '0.5';
+                videoUrlWrapper.style.pointerEvents = 'none';
+                newsVideoUrl.disabled = true;
+                newsVideoUrl.value = ''; // Clear video URL when duplicated image is active
+            } else {
+                videoUrlWrapper.style.opacity = '1';
+                videoUrlWrapper.style.pointerEvents = 'auto';
+                newsVideoUrl.disabled = false;
             }
         });
 
@@ -580,7 +642,7 @@
 
             let renderedItemsCount = 0;
 
-            // Render all promo codes under `globalPromoCampaign`
+            // Render promo codes under `globalPromoCampaign`
             if (activeCategoryFilter === 'ALL' || activeCategoryFilter === 'Promo') {
                 if (typeof globalPromoState === 'object' && globalPromoState !== null) {
                     Object.keys(globalPromoState).forEach(k => {
@@ -615,7 +677,7 @@
                 const nodeName = itemObj.node;
                 const newsCode = item.newsCode || item.code || 'N-NONE';
                 const tagClass = nodeName === 'news' ? 'node-tag-old' : 'node-tag-new';
-                const itemCategory = item.category || 'All Updates';
+                const itemCategory = item.category || 'Ethiopia News';
 
                 let isMatch = false;
                 if (activeCategoryFilter === 'ALL') isMatch = true;
@@ -674,7 +736,7 @@
                 currentEditingKey = k;
                 currentEditingNode = nodeName;
                 
-                document.getElementById('postCategory').value = item.category || 'All Updates';
+                document.getElementById('postCategory').value = item.category || 'Ethiopia News';
                 document.getElementById('standardFormFields').classList.remove('hidden-fields');
                 document.getElementById('promoFormFields').classList.add('hidden-fields');
 
@@ -683,24 +745,25 @@
                 
                 const imgUrl = item.imageUrl || item.image || '';
                 document.getElementById('newsImageUrl').value = imgUrl;
-                if(imgUrl) {
-                    imagePreviewElement.src = imgUrl;
-                    imagePreviewBox.style.display = 'block';
-                } else {
-                    imagePreviewBox.style.display = 'none';
-                }
 
+                const isDuplicated = item.duplicateCoverInArticle === true || item.duplicateImageInArticle === true || item.duplicateImage === true;
+                duplicateImageToggle.checked = isDuplicated;
+                duplicateImageToggle.dispatchEvent(new Event('change'));
+
+                document.getElementById('newsVideoUrl').value = item.videoUrl || item.youtubeUrl || '';
                 document.getElementById('newsMessage').value = item.content || item.message || '';
                 document.getElementById('newsRedirectUrl').value = item.link || item.redirectUrl || '';
-                document.getElementById('newsButtonLabel').value = item.buttonLabel || '';
+                document.getElementById('newsButtonLabel').value = item.buttonLabel || item.actionButtonLabel || '';
+
+                updateImagePreview();
 
                 document.getElementById('editingBanner').style.display = 'flex';
-                document.getElementById('editingNewsCode').innerText = `${item.newsCode || k} [${nodeName}]`;
+                document.getElementById('editingNewsCode').innerText = `${item.newsCode || item.code || k} [${nodeName}]`;
                 document.getElementById('buttonText').innerText = "Update Existing Post";
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }));
 
-            // Preview Handlers
+            // Preview Handler
             container.querySelectorAll('.preview-btn').forEach(btn => btn.addEventListener('click', () => {
                 const k = btn.getAttribute('data-key');
                 const nodeName = btn.getAttribute('data-node');
@@ -708,18 +771,43 @@
 
                 if(!item) return;
 
-                const imgHtml = (item.imageUrl || item.image) 
-                    ? `<div style="text-align:center; margin:10px 0;"><img src="${item.imageUrl || item.image}" style="max-width:100%; border-radius:8px; max-height:160px; object-fit:cover;"></div>` 
-                    : '';
+                const imgUrl = item.imageUrl || item.image || '';
+                const videoUrl = item.videoUrl || item.youtubeUrl || '';
+                const ytId = item.youtubeId || extractYouTubeId(videoUrl);
+                const isDupActive = item.duplicateCoverInArticle === true || item.duplicateImageInArticle === true || item.duplicateImage === true;
+
+                const coverImgHtml = imgUrl ? `
+                    <div style="margin-bottom:12px;">
+                        <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">🖼️ Cover Header Image</span>
+                        <img src="${imgUrl}" style="width:100%; max-height:160px; object-fit:cover; border-radius:8px; border:1px solid var(--border-light); margin-top:4px;">
+                    </div>` : '';
+
+                let fullBodyMediaHtml = '';
+                if (isDupActive && imgUrl) {
+                    fullBodyMediaHtml = `
+                        <div style="margin-top:12px;">
+                            <span style="font-size:11px; font-weight:800; color:var(--primary-burgundy); text-transform:uppercase;">🖼️ Duplicated Full Body Image</span>
+                            <img src="${imgUrl}" style="width:100%; max-height:160px; object-fit:cover; border-radius:8px; border:1px solid var(--border-light); margin-top:4px;">
+                        </div>`;
+                } else if (ytId && ytId.length === 11) {
+                    fullBodyMediaHtml = `
+                        <div style="margin-top:12px;">
+                            <span style="font-size:11px; font-weight:800; color:var(--primary-burgundy); text-transform:uppercase;">🎬 YouTube Video</span>
+                            <iframe src="https://www.youtube.com/embed/${ytId}" style="width:100%; height:180px; border-radius:8px; border:none; margin-top:4px;" allowfullscreen></iframe>
+                        </div>`;
+                }
 
                 document.getElementById('previewModalDetails').innerHTML = `
+                    ${coverImgHtml}
                     <div class="modal-data-row"><span class="modal-data-label">Code:</span><span class="modal-data-value">${item.newsCode || item.code || 'N/A'}</span></div>
                     <div class="modal-data-row"><span class="modal-data-label">Title:</span><span class="modal-data-value">${item.title || item.newsTitle || 'Untitled'}</span></div>
-                    <div class="modal-data-row"><span class="modal-data-label">Category:</span><span class="modal-data-value">${item.category || 'General'}</span></div>
-                    ${imgHtml}
-                    <div class="modal-data-row"><span class="modal-data-label">Link:</span><span class="modal-data-value">${item.link || item.redirectUrl || 'None'}</span></div>
-                    <div style="background:var(--bg-light); padding:12px; border-radius:10px; margin-top:10px; font-size:13px; color:var(--text-dark); max-height:120px; overflow-y:auto; line-height:1.4;">
-                        ${item.content || item.message || 'No content message provided.'}
+                    <div class="modal-data-row"><span class="modal-data-label">Category:</span><span class="modal-data-value">${item.category || 'Ethiopia News'}</span></div>
+                    <div class="modal-data-row"><span class="modal-data-label">Video Link:</span><span class="modal-data-value">${videoUrl || 'Disabled / None'}</span></div>
+
+                    <div style="background:var(--bg-light); padding:12px; border-radius:10px; margin-top:10px; font-size:13px; color:var(--text-dark); line-height:1.4;">
+                        <span style="font-size:11px; font-weight:800; color:var(--text-muted); text-transform:uppercase; display:block; margin-bottom:4px;">📝 Full Article Body</span>
+                        ${item.content || item.message || 'No content body provided.'}
+                        ${fullBodyMediaHtml}
                     </div>
                 `;
                 document.getElementById('previewNewsModal').classList.add('active');
@@ -734,37 +822,43 @@
             document.getElementById('editingBanner').style.display = 'none';
             document.getElementById('buttonText').innerText = "Publish Feed Item";
             
-            document.getElementById('postCategory').value = 'All Updates';
+            document.getElementById('postCategory').value = 'Ethiopia News';
             document.getElementById('standardFormFields').classList.remove('hidden-fields');
             document.getElementById('promoFormFields').classList.add('hidden-fields');
 
             document.getElementById('newsCustomCode').value = '';
             document.getElementById('newsTitle').value = '';
             document.getElementById('newsImageUrl').value = '';
-            imagePreviewBox.style.display = 'none';
+            document.getElementById('newsVideoUrl').value = '';
             document.getElementById('newsMessage').value = '';
             document.getElementById('newsRedirectUrl').value = '';
             document.getElementById('newsButtonLabel').value = '';
 
+            duplicateImageToggle.checked = false;
+            duplicateImageToggle.dispatchEvent(new Event('change'));
+
             document.getElementById('promoCode').value = '';
             document.getElementById('promoMaxClaims').value = '';
             document.getElementById('promoRewardAmount').value = '';
+
+            updateImagePreview();
         }
 
-        // Publish Action
+        // Publish Action Handler
         document.getElementById('publishNewsBtn').addEventListener('click', async () => {
             const cat = document.getElementById('postCategory').value;
             const publishBtn = document.getElementById('publishNewsBtn');
             const buttonText = document.getElementById('buttonText');
 
-            publishBtn.disabled = true;
-
-            const timestampWithTime = new Date().toLocaleString('en-US', {
+            const nowEpoch = Date.now();
+            const timestampFormatted = new Date().toLocaleString('en-US', {
                 month: 'short', day: 'numeric', year: 'numeric',
                 hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true
             });
 
-            // Option 4: Add Promo Code into `globalPromoCampaign` node
+            publishBtn.disabled = true;
+
+            // Promo Code Submission
             if (cat === 'Promo Code News') {
                 const promoCode = document.getElementById('promoCode').value.trim().toUpperCase();
                 const maxClaims = parseInt(document.getElementById('promoMaxClaims').value, 10);
@@ -782,8 +876,8 @@
                     maxClaims: maxClaims,
                     rewardAmount: rewardAmount,
                     currentClaimCount: 0,
-                    createdAt: timestampWithTime,
-                    timestamp: Date.now()
+                    createdAt: timestampFormatted,
+                    timestamp: nowEpoch
                 };
 
                 try {
@@ -799,9 +893,13 @@
                 return;
             }
 
-            // Options 1, 2, 3: Standard News Feed Posts
+            // Standard News Feed Posts
             const title = document.getElementById('newsTitle').value.trim();
             const imageUrl = document.getElementById('newsImageUrl').value.trim();
+            const duplicateImage = duplicateImageToggle.checked;
+            const videoUrl = duplicateImage ? '' : newsVideoUrl.value.trim();
+            const youtubeId = extractYouTubeId(videoUrl);
+
             const message = document.getElementById('newsMessage').value.trim();
             const redirectUrl = document.getElementById('newsRedirectUrl').value.trim();
             const buttonLabel = document.getElementById('newsButtonLabel').value.trim();
@@ -819,15 +917,28 @@
             buttonText.innerText = currentEditingKey ? "Updating..." : "Publishing...";
 
             const newsDataPayload = { 
+                code: newsCode,
                 newsCode: newsCode,
                 category: cat, 
                 title: title, 
+                newsTitle: title,
                 imageUrl: imageUrl,
+                image: imageUrl,
+                duplicateImage: duplicateImage,
+                duplicateImageInArticle: duplicateImage,
+                duplicateCoverInArticle: duplicateImage,
+                videoUrl: videoUrl,
+                youtubeUrl: videoUrl,
+                youtubeId: youtubeId,
                 content: message, 
+                message: message,
                 link: redirectUrl,
+                redirectUrl: redirectUrl,
                 buttonLabel: buttonLabel,
-                updatedAt: timestampWithTime,
-                timestamp: Date.now()
+                actionButtonLabel: buttonLabel,
+                updatedAt: nowEpoch,
+                timestamp: nowEpoch,
+                date: timestampFormatted
             };
 
             try {
@@ -835,7 +946,7 @@
                     await update(ref(db, `${currentEditingNode}/${currentEditingKey}`), newsDataPayload);
                     triggerAdminAlert(`Updated [${newsCode}] in ${currentEditingNode}!`);
                 } else {
-                    newsDataPayload.date = timestampWithTime;
+                    newsDataPayload.createdAtTimestamp = nowEpoch;
                     await set(push(ref(db, 'newNews')), newsDataPayload);
                     triggerAdminAlert(`Published to newNews! Code: [${newsCode}]`);
                 }
@@ -850,7 +961,7 @@
             }
         });
 
-        // Purge All Database Records
+        // Purge Action
         document.getElementById('deleteAllCategoriesBtn').addEventListener('click', async () => {
             if(!await openModal("CRITICAL PURGE", "Permanently delete ALL news and promo entries across database?", [{label:"Target Nodes:", value:"news, newNews, globalPromoCampaign"}], "btn-delete", "Delete Everything")) return;
             try {
