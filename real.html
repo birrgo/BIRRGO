@@ -45,6 +45,119 @@
             border-bottom: none; 
             padding-bottom: 5px;
         }
+
+        /* Light Header Title and Copy-to-Clipboard Button Styles */
+        .drawer-step-light-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #6e0018;
+            background: rgba(110, 0, 24, 0.06);
+            border: 1px solid rgba(110, 0, 24, 0.15);
+            padding: 8px 12px;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .account-number-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-copy-acc {
+            background: #6e0018;
+            color: #ffffff;
+            border: none;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-copy-acc:active {
+            transform: scale(0.95);
+            background: #4d0011;
+        }
+
+        /* System OCR Check Badge */
+        .ocr-system-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0d5c3a;
+            background: #e6f4ea;
+            border: 1px dashed #0d5c3a;
+            padding: 6px 10px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        /* Full Screen System Checking Loading Overlay UI */
+        .system-check-loading-card {
+            background: #ffffff;
+            width: 88%;
+            max-width: 340px;
+            padding: 24px 20px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .system-spinner {
+            width: 42px;
+            height: 42px;
+            border: 4px solid rgba(110, 0, 24, 0.15);
+            border-top: 4px solid #6e0018;
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-title-heading {
+            font-size: 15px;
+            font-weight: 800;
+            color: #111111;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .loading-subtitle-status {
+            font-size: 12px;
+            font-weight: 500;
+            color: #666666;
+            margin-top: -4px;
+        }
+
+        .loading-progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 6px;
+        }
+
+        .loading-progress-bar-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #6e0018, #aa1432);
+            transition: width 0.3s ease;
+        }
     </style>
 </head>
 <body>
@@ -150,6 +263,18 @@
             </a>
         </div>
 
+        <!-- System Loading Verification Modal Overlay -->
+        <div class="modal-overlay" id="ocrLoadingModal">
+            <div class="system-check-loading-card">
+                <div class="system-spinner"></div>
+                <div class="loading-title-heading">System Check Your Payment</div>
+                <div class="loading-subtitle-status" id="systemCheckingSubtext">Scanning receipt & verifying payment...</div>
+                <div class="loading-progress-bar-container">
+                    <div class="loading-progress-bar-fill" id="systemCheckingProgressBar"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- PIN Verification Modal -->
         <div class="modal-overlay" id="passwordModal">
             <div class="centered-popup-card">
@@ -192,8 +317,11 @@
                     </div>
                 </div>
 
-                <!-- Step 2: Transfer Details & OCR Check (Account Number Hidden) -->
+                <!-- Step 2: Transfer Details & OCR Check -->
                 <div class="drawer-step" id="drawerStepDetails">
+                    
+                    <div class="drawer-step-light-title">Copy and Paid</div>
+
                     <div class="bank-details-box">
                         <div class="detail-row">
                             <span class="detail-label">Order Ref:</span>
@@ -202,6 +330,16 @@
                         <div class="detail-row">
                             <span class="detail-label">Merchant Name:</span>
                             <span class="detail-val" id="drawerDispMerchant">Loading...</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Account No:</span>
+                            <div class="account-number-wrapper">
+                                <span class="detail-val" id="drawerDispAccount">Loading...</span>
+                                <button type="button" class="btn-copy-acc" id="copyAccBtn" onclick="copyMerchantAccount()">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                    <span id="copyBtnText">Copy</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="detail-row" style="border-bottom: none;">
                             <span class="detail-label" style="color:var(--primary-burgundy);">Amount:</span>
@@ -213,11 +351,11 @@
                         <img id="imagePreview" class="receipt-thumbnail" src="" alt="Receipt Preview">
                         <span class="upload-receipt-title" id="receipt-title">Upload Transfer Receipt</span>
                         <p class="upload-receipt-sub" id="receipt-sub">Click to select screenshot from Gallery</p>
-                        <!-- Updated Input to open Gallery directly -->
-                        <input type="file" id="receipt-file" accept="image/png, image/jpeg, image/jpg, image/*" capture="environment" style="display:none;">
+                        <input type="file" id="receipt-file" accept="image/png, image/jpeg, image/jpg, image/*" style="display:none;">
                     </div>
 
                     <div id="ocrProgressStatus" class="ocr-progress-box" style="display:none;">
+                        <div class="ocr-system-badge">Payment Checked by System Only</div>
                         <span id="ocrStatusText">System OCR Scanner verifying transfer...</span>
                     </div>
 
@@ -231,7 +369,7 @@
     <!-- Application Script Engine -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getDatabase, ref, onValue, push, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getDatabase, ref, onValue, push, update, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCRHoIZf1ZPR9m3YYTv-I9CfwyGqsSOMWo",
@@ -254,6 +392,7 @@
         let userDailyTicketCount = 0;
         let activeNotifFilter = 'all';
         let userNotificationLogs = [];
+        let selectedFileBlob = null;
         const maxDailyTicketsLimit = 5;
         const totalTicketsCount = 3501;
 
@@ -275,6 +414,44 @@
             return phoneStr.replace(/\D/g, ''); 
         }
 
+        async function getFileHash(file) {
+            const buffer = await file.arrayBuffer();
+            const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function showSystemCheckingOverlay(text, percent) {
+            const modal = document.getElementById('ocrLoadingModal');
+            document.getElementById('systemCheckingSubtext').innerText = text;
+            document.getElementById('systemCheckingProgressBar').style.width = percent + '%';
+            modal.classList.add('active');
+        }
+
+        function hideSystemCheckingOverlay() {
+            document.getElementById('ocrLoadingModal').classList.remove('active');
+        }
+
+        function showSystemAlertModal(title, message, isError = false) {
+            hideSystemCheckingOverlay();
+            const modal = document.getElementById('statusAlertModal');
+            const icon = document.getElementById('statusAlertIcon');
+            document.getElementById('statusAlertTitle').innerText = title;
+            document.getElementById('statusAlertMessage').innerText = message;
+
+            if (isError) {
+                icon.className = "status-icon-circle error-state";
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
+            } else {
+                icon.className = "status-icon-circle success-state";
+                icon.style.background = "#e6f4ea";
+                icon.style.color = "#0d5c3a";
+                icon.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+            }
+
+            modal.classList.add('active');
+        }
+
         document.addEventListener('DOMContentLoaded', async () => {
             activeUserPhone = localStorage.getItem('auth_session_phone') || "251900000000";
             completeRawCardSequence = normalizePhoneNumber(activeUserPhone);
@@ -284,6 +461,10 @@
             listenToAdminPaymentAccounts();
             listenToUserNotifications();
             setupNotificationFilters();
+
+            document.getElementById('statusAlertCloseBtn').addEventListener('click', () => {
+                document.getElementById('statusAlertModal').classList.remove('active');
+            });
         });
 
         function attachRealtimeDatabaseListeners() {
@@ -603,55 +784,89 @@
 
             document.getElementById('drawerDispRef').innerText = currentOrderRef;
             document.getElementById('drawerDispMerchant').innerText = config.holder_name;
+            document.getElementById('drawerDispAccount').innerText = config.account;
 
             document.getElementById('drawerStepMethod').classList.remove('active');
             document.getElementById('drawerStepDetails').classList.add('active');
         };
 
+        window.copyMerchantAccount = function() {
+            const accountNo = document.getElementById('drawerDispAccount').innerText;
+            if (!accountNo || accountNo === 'Loading...') return;
+
+            navigator.clipboard.writeText(accountNo).then(() => {
+                const copyBtnText = document.getElementById('copyBtnText');
+                copyBtnText.innerText = 'Copied!';
+                setTimeout(() => {
+                    copyBtnText.innerText = 'Copy';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        };
+
         function handleReceiptSelect(e) {
             if (e.target.files.length > 0) {
-                const file = e.target.files[0];
+                selectedFileBlob = e.target.files[0];
                 const reader = new FileReader();
                 reader.onload = function(event) {
                     const imgPreview = document.getElementById('imagePreview');
                     imgPreview.src = event.target.result;
                     imgPreview.style.display = "block";
                     document.getElementById('receipt-title').innerText = "Receipt Attached";
-                    document.getElementById('receipt-sub').innerText = file.name;
+                    document.getElementById('receipt-sub').innerText = selectedFileBlob.name;
                 };
-                reader.readAsDataURL(file);
+                reader.readAsDataURL(selectedFileBlob);
             }
         }
 
-        // --- LEVEL-1 SYSTEM OCR CHECK (AMOUNT >= 3000 & ADMIN MERCHANT NAME) ---
+        // --- SUBMIT DEPOSIT PIPELINE WITH SYSTEM LOADING & OCR CHECK ---
         async function submitDepositAndTicketPipeline() {
             if (userDailyTicketCount >= maxDailyTicketsLimit) {
-                alert("Transaction Blocked: You have reached your daily maximum limit of 5 tickets.");
+                showSystemAlertModal("Transaction Blocked", "You have reached your daily maximum limit of 5 tickets.", true);
                 closeDrawer();
                 return;
             }
 
             const imgPreview = document.getElementById('imagePreview');
-            if (!imgPreview.src || imgPreview.style.display === "none") {
-                alert("Please upload your transfer screenshot receipt.");
+            if (!imgPreview.src || imgPreview.style.display === "none" || !selectedFileBlob) {
+                showSystemAlertModal("Receipt Missing", "Please select and upload your payment transfer screenshot.", true);
                 return;
             }
 
             const submitBtn = document.getElementById('submitDepositReceiptBtn');
-            const ocrStatus = document.getElementById('ocrProgressStatus');
-            const ocrText = document.getElementById('ocrStatusText');
-
             submitBtn.disabled = true;
-            ocrStatus.style.display = 'block';
-            ocrText.innerText = "Level-1 Check: Verifying amount and merchant name via OCR...";
+
+            // Step 1: Trigger Full Screen System Loading Animation
+            showSystemCheckingOverlay("System Check Your Payment: Verifying Receipt Hash...", 25);
 
             try {
-                // OCR Text Extraction
+                // Step 2: DUPLICATE RECEIPT CHECK VIA SHA-256 FILE HASH
+                const receiptHash = await getFileHash(selectedFileBlob);
+                const usedReceiptSnap = await get(ref(db, `usedReceiptHashes/${receiptHash}`));
+
+                if (usedReceiptSnap.exists()) {
+                    const prevData = usedReceiptSnap.val();
+                    submitBtn.disabled = false;
+                    closeDrawer();
+
+                    // Popup for Duplicate Receipt Decline
+                    showSystemAlertModal(
+                        "Transaction Declined", 
+                        `System Declined: This receipt was already used for previous payment (Ref: ${prevData.previousRef || 'N/A'}). You cannot submit duplicate receipts.`, 
+                        true
+                    );
+                    return;
+                }
+
+                // Step 3: OCR Text Extraction
+                showSystemCheckingOverlay("System Check Your Payment: Reading Transfer Data...", 50);
                 const result = await Tesseract.recognize(imgPreview.src, 'eng');
                 const rawExtractedText = result.data.text || "";
                 const extractedTextLower = rawExtractedText.toLowerCase();
 
-                // 1. Verify Numeric Amount (>= 3,000 Birr)
+                // Step 4: Verify Numeric Amount (>= 3,000 Birr)
+                showSystemCheckingOverlay("System Check Your Payment: Validating Amount...", 75);
                 const parsedNumbers = rawExtractedText
                     .replace(/,/g, '') 
                     .match(/\d+(\.\d+)?/g);
@@ -665,15 +880,13 @@
                 }
 
                 if (!hasValidAmount) {
-                    ocrStatus.style.display = 'none';
                     submitBtn.disabled = false;
-                    alert("Level 1 Check Failed: The receipt screenshot does not display a payment amount of at least 3,000 Birr. Please verify your receipt image.");
+                    showSystemAlertModal("OCR Check Failed", "System Declined: Receipt image does not show a transfer amount of at least 3,000 Birr.", true);
                     return;
                 }
 
-                // 2. Verify Admin Merchant Name Check
+                // Step 5: Verify Admin Merchant Name
                 const adminMerchantName = dynamicAdminAccounts[selectedMethodKey]?.holder_name || "";
-                // Split name words (length > 2) to match parts of merchant name in receipt
                 const merchantKeywords = adminMerchantName
                     .toLowerCase()
                     .split(/\s+/)
@@ -682,13 +895,12 @@
                 const hasValidMerchantName = merchantKeywords.some(keyword => extractedTextLower.includes(keyword));
 
                 if (!hasValidMerchantName && merchantKeywords.length > 0) {
-                    ocrStatus.style.display = 'none';
                     submitBtn.disabled = false;
-                    alert(`Level 1 Check Failed: The receipt screenshot does not match the Admin Merchant Name (${adminMerchantName}). Please verify you selected the correct payment method and screenshot.`);
+                    showSystemAlertModal("OCR Check Failed", `System Declined: Merchant name does not match ${adminMerchantName}.`, true);
                     return;
                 }
 
-                ocrText.innerText = "Level-1 Passed! Submitting for final Admin review...";
+                showSystemCheckingOverlay("System Check Your Payment: Finalizing Database Authorization...", 95);
 
                 const locationVal = document.getElementById('userLocation').value.trim();
                 const timestampStr = new Date().toLocaleString();
@@ -702,6 +914,13 @@
 
                 const atomicUpdates = {};
 
+                // Register Hash to Block Reuse
+                atomicUpdates[`/usedReceiptHashes/${receiptHash}`] = {
+                    usedBy: completeRawCardSequence,
+                    previousRef: currentOrderRef,
+                    timestamp: timestampNow
+                };
+
                 // Create Pending Deposit
                 atomicUpdates[`/deposits/${currentOrderDatabaseKey}`] = {
                     ref: currentOrderRef,
@@ -710,9 +929,10 @@
                     amount: 3000,
                     status: 'Pending',
                     receiptUrl: imgPreview.src,
+                    receiptHash: receiptHash,
                     timestamp: timestampNow,
                     campaign: 'BYD Song Plus',
-                    level1Check: 'AMOUNT_AND_MERCHANT_PASSED'
+                    level1Check: 'SYSTEM_OCR_APPROVED'
                 };
 
                 // Reserve Ticket Position
@@ -739,22 +959,20 @@
 
                 await update(ref(db), atomicUpdates);
 
-                ocrStatus.style.display = 'none';
                 submitBtn.disabled = false;
                 closeDrawer();
 
-                if (activeNotifFilter !== 'all' && activeNotifFilter !== 'pending') {
-                   const pendingBtn = document.querySelector('.notif-filter-btn[data-filter="pending"]');
-                   if(pendingBtn) pendingBtn.click();
-                }
-
-                document.getElementById('notifDrawerOverlay').classList.add('active');
+                // Step 6: Trigger Final Popup Result
+                showSystemAlertModal(
+                    "System Approved Your Payment", 
+                    "System Approved Your Payment — Note: System this is not real payment until final admin authorization.", 
+                    false
+                );
 
             } catch (err) {
                 console.error("Submission error:", err);
-                ocrStatus.style.display = 'none';
                 submitBtn.disabled = false;
-                alert("Level 1 System Check Error: Unable to scan receipt image. Please try uploading a clearer image.");
+                showSystemAlertModal("System Check Error", "Unable to scan receipt screenshot properly. Please make sure the transfer details are clear and legible.", true);
             }
         }
     </script>
